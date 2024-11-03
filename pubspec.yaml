@@ -1,0 +1,81 @@
+name: fitnest
+description: "FitNest is an innovative mobile application designed to bring sports enthusiasts together and simplify the organization of sporting activities. Whether you're a runner, cyclist, football lover, or engaged in any other sport, FitNest allows you to meet like-minded individuals and participate in local sporting events."
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.4 <4.0.0'
+
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Utility Packages
+  http:
+  intl:
+  logger:
+  lottie:
+  url_launcher:
+  connectivity_plus: ^5.0.1
+  flutter_native_splash:
+  smooth_page_indicator:
+  shimmer:
+
+
+  #Icons
+  iconsax: ^0.0.8
+  cupertino_icons: ^1.0.6
+  image_picker:
+
+  # State Management
+  get:
+  get_storage:
+
+
+#----------------------- ./ PACKAGES END ----------------------#
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.14.1
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logos/FN-logo.png"
+
+
+
+flutter:
+
+
+  uses-material-design: true
+  assets:
+    - assets/logos/
+    - assets/images/on_boarding_images/
+    - assets/images/animations/
+
+
+
+#----------------------- LOCAL FONTS ---------------------------#
+fonts:
+  - family: Poppins
+    fonts:
+      - asset: assets/fonts/Poppins-Light.ttf
+        weight: 300
+      - asset: assets/fonts/Poppins-Regular.ttf
+        weight: 400
+      - asset: assets/fonts/Poppins-Italic.ttf
+        style: italic
+      - asset: assets/fonts/Poppins-Medium.ttf
+        weight: 500
+      - asset: assets/fonts/Poppins-MediumItalic.ttf
+        weight: 500
+        style: italic
+      - asset: assets/fonts/Poppins-SemiBold.ttf
+        weight: 600
+      - asset: assets/fonts/Poppins-Bold.ttf
+        weight: 800
