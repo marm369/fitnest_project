@@ -1,6 +1,6 @@
-import 'package:fitnest/features/authentication/screens/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../features/authentication/screens/login/login.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../../utils/constants/text_strings.dart';
 import '../../../utils/helpers/helper_functions.dart';
@@ -9,12 +9,12 @@ import '../../styles/spacing_styles.dart';
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen(
       {super.key,
-        required this.image,
-        required this.title,
-        required this.subTitle,
-        required this.onPressed});
+      required this.image,
+      required this.title,
+      required this.subTitle,
+      required this.onPressed});
   final String image, title, subTitle;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class SuccessScreen extends StatelessWidget {
               // Image
               Image(
                 image: AssetImage(image),
-                width: HelperFunctions.screenWidth() * 0.6,
+                width: HelperFunctions.screenWidth() * 0.5,
               ),
               const SizedBox(height: MySizes.spaceBtwItems),
 
@@ -39,7 +39,7 @@ class SuccessScreen extends StatelessWidget {
               ),
               const SizedBox(height: MySizes.spaceBtwItems),
               Text(
-                'minouarim@gmail.com',
+                '',
                 style: Theme.of(context).textTheme.labelLarge,
                 textAlign: TextAlign.center,
               ),

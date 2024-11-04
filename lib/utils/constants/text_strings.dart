@@ -46,7 +46,7 @@ class MyTexts {
   static const String resendEmailIn = "Resend email in";
   static const String submit = "Submit";
   static const String done = "Done";
-  static const String appName = "E-Store";
+  static const String appName = "FitNest";
   static const String skip = "Skip";
   static const String next = "Next";
   // Authentication Headings Text
@@ -70,4 +70,15 @@ class MyTexts {
       "Your account successfully created!";
   static const String yourAccountCreatedSubTitle =
       "Welcome to Your Ultimate : Your Account is Created, Unleash the Joy of Seamless Online !";
+  static const String idProof =
+      "ID verification helps establish a safer online environment by confirming user identities.";
+  static const String dateOfBirth = "Date of Birth";
+  static const String selectGender = "Select Gender";
+  static const String interests = "Select your interests";
+  static const String lookingFor = "What are you looking for ?";
+
+  static const String personalDetails = "Personal Details";
+  static const String idProofTitle = "ID Proof";
+  static const String additionalInfos = "Additional Infos";
+  static const String profilePicture = "Pofile Picture";
 }

@@ -29,13 +29,13 @@ class OnBoardingSkip extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(MySizes.sm),
             side: BorderSide(
-              color: dark ? MyColors.white : MyColors.black,
+              color: dark ? MyColors.white : Colors.blue,
               width: MySizes.xs / 2,
             ),
           ),
         ).copyWith(
           overlayColor: MaterialStateProperty.resolveWith<Color?>(
-                (Set<MaterialState> states) {
+            (Set<MaterialState> states) {
               if (states.contains(MaterialState.hovered)) {
                 return MyColors.primaryBackground;
               }
@@ -46,6 +46,7 @@ class OnBoardingSkip extends StatelessWidget {
         child: const Text(
           'Skip',
           style: TextStyle(
+            color: Colors.blue,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

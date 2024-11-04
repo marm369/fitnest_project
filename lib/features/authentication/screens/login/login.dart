@@ -14,7 +14,6 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = HelperFunctions.isDarkMode(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -22,7 +21,7 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             children: [
               // Logo, Title & SubTitle
-              LoginHeader(dark: dark),
+              LoginHeader(),
               // Form
               const LoginForm(),
               // Divider

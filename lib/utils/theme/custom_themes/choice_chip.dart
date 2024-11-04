@@ -1,10 +1,9 @@
-import 'package:fitnest/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
-
 import '../../../common/widgets/custom_shapes/containers/circular_container.dart';
 import '../../constants/colors.dart';
+import '../../helpers/helper_functions.dart';
 
-/// -- Most of the Styling is already defined in the Utils -> Themes -> Chip Theme.dart
+
 class MyChoiceChip extends StatelessWidget {
   const MyChoiceChip({
     super.key,

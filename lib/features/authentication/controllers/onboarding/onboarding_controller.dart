@@ -10,6 +10,7 @@ class OnBoardingController extends GetxController {
   // Variables
   final pageController = PageController();
   Rx<int> currentPageIndex = 0.obs;
+  final storage = GetStorage();
 
   // Update Current Index when Page Scroll
   void updatePageIndicator(index) => currentPageIndex.value = index;
@@ -23,7 +24,6 @@ class OnBoardingController extends GetxController {
   // Update Current Index & jump to next page.
   void nextPage() {
     if (currentPageIndex.value == 3) {
-      final storage = GetStorage();
       storage.write('isFirstTime', false);
       Get.offAll(const LoginScreen());
     } else {

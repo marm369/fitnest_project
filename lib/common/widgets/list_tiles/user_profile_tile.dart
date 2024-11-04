@@ -1,9 +1,7 @@
 import 'dart:ffi';
-
-import 'package:fitnest/features/personalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-
+import '../../../features/personalization/controllers/user_controller.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/image_strings.dart';
 import '../images/circular_image.dart';

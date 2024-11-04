@@ -9,18 +9,39 @@ class MyImages {
 
   // OnBoarding Images
   static const String onBoardingImage1 =
-      "assets/images/on_boarding_images/sport.gif";
+      "assets/images/on-boarding-images/sport1.jpeg";
   static const String onBoardingImage2 =
-      "assets/images/on_boarding_images/fitness.gif";
+      "assets/images/on-boarding-images/fitness1.png";
   static const String onBoardingImage3 =
-      "assets/images/on_boarding_images/meet.png";
+      "assets/images/on-boarding-images/meet1.jpeg";
   static const String onBoardingImage4 =
-      "assets/images/on_boarding_images/competition.png";
+      "assets/images/on-boarding-images/competition1.jpeg";
 
   static const String deliveredEmailIllustration =
-      "assets/images/animations/sammy-line-come-back-later.png";
+      "assets/images/static-images/man-receives-email.png";
   static const String staticSuccessIllustration =
       "assets/images/animations/success.gif";
+  static const String additionalInfoIllustration =
+      "assets/images/static-images/info.png";
   static const String loadingIllustration =
-      "assets/images/animations/loading.gif";
+      "assets/images/static-images/info.png";
+
+  static String kHome = 'assets/icons/home.svg';
+  static String kSearch = 'assets/icons/search.svg';
+  static String kHeart = 'assets/icons/heart.svg';
+  static String kUserIcon = 'assets/icons/user.svg';
+  static String kChat = 'assets/icons/chat.svg';
+  static String kShare = 'assets/icons/share.svg';
+  static String kSaved = 'assets/icons/saved.svg';
+
+  //Images
+
+  static String kUser1 = 'assets/images/user1.jpg';
+  static String kUser2 = 'assets/images/user2.jpg';
+  static String kUser3 = 'assets/images/user3.jpg';
+  static String kUser4 = 'assets/images/user4.jpg';
+
+  static String kPost1 = 'assets/images/post1.jpeg';
+  static String kPost2 = 'assets/images/post2.jpeg';
+  static String profile = 'assets/images/profile.jpeg';
 }

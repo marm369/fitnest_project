@@ -1,4 +1,3 @@
-import 'package:fitnest/features/personalization/controllers/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -6,6 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/constants/text_strings.dart';
 import '../../../../../utils/validators/validation.dart';
+import '../../../controllers/user_controller.dart';
 
 class ReAuthLoginForm extends StatelessWidget {
   const ReAuthLoginForm({super.key});

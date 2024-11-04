@@ -52,4 +52,15 @@ class MyColors {
   static const Color softGrey = Color(0xFFF4F4F4);
   static const Color lightGrey = Color(0xFFF9F9F9);
   static const Color white = Color(0xFFFFFFFF);
+
+  // Other Color
+  static const red = Color(0xFFb3261e);
+  static const primaryColor1 = Color(0xFF3A7BD5); // Bleu vif
+  static const primaryColor2 = Color(0xFF4F9AFF); // Bleu clair
+
+  static const secondaryColor1 = Color(0xFF1E3A8A); // Bleu foncé
+  static const secondaryColor2 = Color(0xFF81A4FD); // Bleu pastel
+
+  static List<Color> get primaryG => [primaryColor1, primaryColor2];
+  static List<Color> get secondaryG => [secondaryColor1, secondaryColor2];
 }

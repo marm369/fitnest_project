@@ -1,14 +1,12 @@
-import 'package:fitnest/features/personalization/controllers/user_controller.dart';
-import 'package:fitnest/features/personalization/screens/profile/widgets/change_name.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
-
 import '../../../../common/widgets/appbar/appbar.dart';
 import '../../../../common/widgets/images/circular_image.dart';
 import '../../../../common/widgets/texts/section_heading.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
+import '../../controllers/user_controller.dart';
+import 'widgets/change_name.dart';
 import 'widgets/profile_menu.dart';
 
 class ProfileScreen extends StatelessWidget {

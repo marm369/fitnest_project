@@ -1,4 +1,3 @@
-import 'package:fitnest/features/authentication/screens/password_configuration/reset_password.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -6,12 +5,12 @@ import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/popups/full_screen_loader.dart';
 import '../../../../utils/popups/loaders.dart';
 import '../../../network_manager.dart';
+import '../../screens/password_configuration/reset_password.dart';
 
 class ForgetPasswordController extends GetxController {
   static ForgetPasswordController get instance => Get.find();
 
   final email = TextEditingController();
-  GlobalKey<FormState> forgetPasswordFormKey = GlobalKey<FormState>();
 
   sendPasswordResetEmail() async {
     try {
@@ -24,10 +23,13 @@ class ForgetPasswordController extends GetxController {
         return;
       }
 
+      /*
       if (!forgetPasswordFormKey.currentState!.validate()) {
         FullScreenLoader.stopLoading();
         return;
       }
+      */
+
       // await AuthenticationRepository.instance.sendPasswordResetEmail(email.text.trim());
 
       FullScreenLoader.stopLoading();

@@ -1,7 +1,7 @@
-import 'package:fitnest/utils/constants/colors.dart';
-import 'package:fitnest/utils/constants/sizes.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import '../../../utils/constants/colors.dart';
+import '../../../utils/constants/sizes.dart';
 
 class AnimationLoaderWidget extends StatelessWidget {
   final String text;

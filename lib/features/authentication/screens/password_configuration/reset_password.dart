@@ -1,5 +1,3 @@
-import 'package:fitnest/features/authentication/controllers/forget_password/forget_password_controller.dart';
-import 'package:fitnest/features/authentication/screens/login/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +5,7 @@ import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/text_strings.dart';
 import '../../../../utils/helpers/helper_functions.dart';
+import '../login/login.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   const ResetPasswordScreen({super.key, required this.email});
@@ -65,8 +64,7 @@ class ResetPasswordScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: TextButton(
-                onPressed: () => ForgetPasswordController.instance
-                    .resendPasswordResetEmail(email),
+                onPressed: () {},
                 child: const Text(MyTexts.resendEmail),
               ),
             ),

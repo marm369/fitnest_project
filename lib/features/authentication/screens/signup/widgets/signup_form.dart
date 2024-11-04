@@ -1,25 +1,70 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../../utils/constants/colors.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/constants/text_strings.dart';
-import '../../../controllers/signup/signup_controller.dart';
+import '../../../../../utils/helpers/helper_functions.dart';
 import '../../../../../utils/validators/validation.dart';
-import 'confirm_identity_form.dart';
+import '../../../controllers/signup/signup_controller.dart';
+import 'terms_conditions_checkbox.dart';
 
 class SignupForm extends StatelessWidget {
-  const SignupForm({
+  SignupForm({
     super.key,
   });
+  final SignupController controller = Get.put(SignupController());
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SignupController());
+    final dark = HelperFunctions.isDarkMode(context);
     return Form(
-      key: controller.signupFormKey,
+      key: controller.formKeyStep1,
       child: Column(
         children: [
+          Center(
+            child: GestureDetector(
+              onTap: controller
+                  .pickProfileImage, // Méthode pour sélectionner l'image
+              child: Obx(() {
+                return Column(
+                  children: [
+                    CircleAvatar(
+                      radius: 70,
+                      backgroundImage: controller
+                              .profileImagePath.value.isNotEmpty
+                          ? FileImage(File(controller.profileImagePath.value))
+                          : null, // Si aucune image n'est sélectionnée, ne pas définir l'image de fond
+                      backgroundColor: dark ? MyColors.white : MyColors.black,
+                      child: controller.profileImagePath.value.isEmpty
+                          ? Icon(
+                              Iconsax.user, // Icône de profil au lieu de caméra
+                              color: dark ? MyColors.black : MyColors.white,
+                              size: MySizes.iconxXLg,
+                            )
+                          : null, // Pas d'icône si l'image est sélectionnée
+                    ),
+                    SizedBox(height: MySizes.spaceBtwItems),
+                    if (controller.profileImageError.value.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          controller.profileImageError.value,
+                          style: TextStyle(
+                              color: MyColors.red,
+                              fontSize: MySizes.fontSizeMd),
+                        ),
+                      ),
+                    // Afficher un message d'erreur si l'image n'est pas valide
+                  ],
+                );
+              }),
+            ),
+          ),
+          const SizedBox(
+            height: MySizes.spaceBtwSections,
+          ),
           Row(
             children: [
               // Champ de First Name
@@ -91,16 +136,17 @@ class SignupForm extends StatelessWidget {
               prefixIcon: Icon(Iconsax.call),
             ),
           ),
+
           const SizedBox(
             height: MySizes.spaceBtwInputFields,
           ),
-          // Champs de Password
+          // Champ de Password
           Obx(
             () => TextFormField(
-              controller: controller.password,
-              validator: (value) => MyValidator.validatePassword(value),
-              obscureText: controller.hidePassword.value,
-              decoration: InputDecoration(
+                controller: controller.password,
+                obscureText: controller.hidePassword.value,
+                validator: (value) => MyValidator.validatePassword(value),
+                decoration: InputDecoration(
                   labelText: MyTexts.password,
                   prefixIcon: Icon(Iconsax.password_check),
                   suffixIcon: IconButton(
@@ -109,8 +155,8 @@ class SignupForm extends StatelessWidget {
                     icon: Icon(controller.hidePassword.value
                         ? Iconsax.eye_slash
                         : Iconsax.eye),
-                  )),
-            ),
+                  ),
+                )),
           ),
           const SizedBox(
             height: MySizes.spaceBtwInputFields,
@@ -118,10 +164,11 @@ class SignupForm extends StatelessWidget {
           // Champ de Confirmation de Password
           Obx(
             () => TextFormField(
-              controller: controller.password,
-              validator: (value) => MyValidator.validatePassword(value),
-              obscureText: controller.hidePassword.value,
-              decoration: InputDecoration(
+                controller: controller.confirmPassword,
+                obscureText: controller.hidePassword.value,
+                validator: (value) => MyValidator.validatePasswords(
+                    controller.password.text, value),
+                decoration: InputDecoration(
                   labelText: MyTexts.confirmPassword,
                   prefixIcon: Icon(Iconsax.password_check),
                   suffixIcon: IconButton(
@@ -130,34 +177,13 @@ class SignupForm extends StatelessWidget {
                     icon: Icon(controller.hidePassword.value
                         ? Iconsax.eye_slash
                         : Iconsax.eye),
-                  )),
-            ),
+                  ),
+                )),
           ),
           const SizedBox(
             height: MySizes.spaceBtwSections,
           ),
-          // Le bouton "Next" pour passer à la deuxième partie du formulaire concernant l'identité
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              OutlinedButton(
-                // On a commenter le test sur la validation de formulaire pour passer à la deuxième page sans remplir le formulaire
-                onPressed: () {
-                  //if (controller.signupFormKey.currentState!.validate()) {
-                  // Proceed to next step if the form is valid
-                  Get.to(() => const ConfirmIdentityForm());
-                  //}
-                },
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: MyColors.king,
-                  side: const BorderSide(color: MyColors.king, width: 2),
-                  padding: const EdgeInsets.only(left: 25, right: 25),
-                  textStyle: const TextStyle(fontSize: 18), // Style du texte
-                ),
-                child: const Text(MyTexts.next),
-              ),
-            ],
-          ),
+          TermsAndConditionsCheckbox(),
         ],
       ),
     );

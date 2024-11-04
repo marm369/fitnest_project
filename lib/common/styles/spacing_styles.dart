@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fitnest/utils/constants/sizes.dart';
+import '../../utils/constants/sizes.dart';
 
 class SpacingStyle {
   static const EdgeInsetsGeometry paddingWithAppBarHeight = EdgeInsets.only(

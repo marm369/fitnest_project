@@ -1,4 +1,9 @@
+import 'package:flutter/material.dart';
+
 class MyValidator {
+  final TextEditingController password = TextEditingController();
+  final TextEditingController confirmPassword = TextEditingController();
+
   static String? validateEmptyText(String? fieldName, String? value) {
     if (value == null || value.isEmpty) {
       return '$fieldName is required.';
@@ -50,6 +55,34 @@ class MyValidator {
       return 'Invalid phone number format (10 digits required).';
     }
     return null;
+  }
+
+  static String? validateImagePath(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      return 'Identity Image must be selected.';
+    }
+    return null;
+  }
+
+  static String? validateProfileImage(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      return 'Profile image must be selected.';
+    }
+    return null;
+  }
+
+  static String? validatePasswords(String? password, String? confirmPassword) {
+    if (confirmPassword != password) {
+      return "Passwords do not match.";
+    }
+    return null;
+  }
+
+  static String? validateAcceptTerms(bool acceptTerms) {
+    if (!acceptTerms) {
+      return "You must accept the Privacy Policy and Terms of Use.";
+    }
+    return "";
   }
 }
 // Regular expression for phone number validation (assuming a 10-digit US phone number format)

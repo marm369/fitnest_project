@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:fitnest/common/widgets/success_screen/success_screen.dart';
 import 'package:get/get.dart';
 
 import '../../../../utils/constants/image_strings.dart';

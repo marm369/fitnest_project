@@ -1,9 +1,8 @@
-import 'package:fitnest/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../common/widgets/loaders/animation_loader.dart';
 import '../constants/colors.dart';
+import '../helpers/helper_functions.dart';
 
 class FullScreenLoader {
   static void openLoadingDialog(String text, String animation) {

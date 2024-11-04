@@ -6,7 +6,7 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.4 <4.0.0'
+  sdk: '>=3.4.3 <4.0.0'
 
 
 dependencies:
@@ -23,12 +23,25 @@ dependencies:
   flutter_native_splash:
   smooth_page_indicator:
   shimmer:
-
-
-  #Icons
-  iconsax: ^0.0.8
-  cupertino_icons: ^1.0.6
+  dynamic_multi_step_form:
+  iconsax:
+  cupertino_icons:
+  fl_chart: ^0.62.0
+  animated_toggle_switch: ^0.6.2
+  simple_animation_progress_bar: ^1.6.0
+  simple_circular_progress_bar: ^1.0.2
+  dotted_dashed_line: ^0.0.3
+  google_maps_flutter:
+  readmore: ^2.1.0
   image_picker:
+  flutter_map: ^4.0.0
+  flutter_map_marker_cluster: ^1.1.1
+  geolocator: ^13.0.1
+  latlong2: ^0.8.0
+  flutter_google_places: ^0.3.0
+  convex_bottom_bar: ^3.2.0
+  flutter_svg: ^2.0.1
+  flutter_staggered_animations: ^1.1.1
 
   # State Management
   get:
@@ -42,7 +55,7 @@ dev_dependencies:
   flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.14.1
 
-flutter_launcher_icons:
+flutter_icons:
   android: true
   ios: true
   image_path: "assets/logos/FN-logo.png"
@@ -55,8 +68,11 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logos/
-    - assets/images/on_boarding_images/
+    - assets/images/on-boarding-images/
     - assets/images/animations/
+    - assets/images/static-images/
+    - assets/icons/
+    - assets/images/
 
 
 
