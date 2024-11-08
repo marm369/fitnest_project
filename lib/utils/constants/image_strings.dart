@@ -20,7 +20,7 @@ class MyImages {
   static const String deliveredEmailIllustration =
       "assets/images/static-images/man-receives-email.png";
   static const String staticSuccessIllustration =
-      "assets/images/animations/success.gif";
+      "assets/images/static-images/success.png";
   static const String additionalInfoIllustration =
       "assets/images/static-images/info.png";
   static const String loadingIllustration =

@@ -1,9 +1,8 @@
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
-import '../../features/authentication/screens/login/login.dart';
 import '../../features/authentication/screens/onboarding/onboarding.dart';
+import '../../features/authentication/screens/signin/signin.dart';
 
 class AuthenticationRepository extends GetxController {
   static AuthenticationRepository get instance => Get.find();
@@ -21,7 +20,7 @@ class AuthenticationRepository extends GetxController {
     // Local Storage
     devicesStorage.writeIfNull('IsFirstTime', true);
     devicesStorage.read('IsFirstTime') != true
-        ? Get.offAll(() => const LoginScreen())
+        ? Get.offAll(() => const SignInScreen())
         : Get.offAll(const OnBoardingScreen());
   }
 }

@@ -15,6 +15,7 @@ dependencies:
 
   # Utility Packages
   http:
+  dio:
   intl:
   logger:
   lottie:
@@ -42,6 +43,8 @@ dependencies:
   convex_bottom_bar: ^3.2.0
   flutter_svg: ^2.0.1
   flutter_staggered_animations: ^1.1.1
+  flutter_tesseract_ocr:
+  json_annotation:
 
   # State Management
   get:
@@ -54,6 +57,8 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.14.1
+  build_runner:
+  json_serializable:
 
 flutter_icons:
   android: true

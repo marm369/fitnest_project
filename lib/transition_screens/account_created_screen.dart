@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../common/widgets/success_screen/success_screen.dart';
 import '../../../../utils/constants/image_strings.dart';
-import '../features/authentication/screens/login/login.dart';
+import '../features/authentication/screens/signin/signin.dart';
 
 class AccountCreatedScreen extends StatelessWidget {
   const AccountCreatedScreen({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class AccountCreatedScreen extends StatelessWidget {
       title: 'Account Created Successfully!',
       subTitle: 'You can now start using the app and explore all its features.',
       onPressed: () {
-        Get.to(() => const LoginScreen());
+        Get.to(() => const SignInScreen());
       },
     );
   }

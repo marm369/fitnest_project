@@ -6,10 +6,8 @@ import '../helpers/helper_functions.dart';
 
 class FullScreenLoader {
   static void openLoadingDialog(String text, String animation) {
-    showDialog(
-      context: Get.overlayContext!,
-      barrierDismissible: false,
-      builder: (_) => PopScope(
+    Get.dialog(
+      PopScope(
         canPop: false,
         child: Container(
           color: HelperFunctions.isDarkMode(Get.context!)
@@ -17,14 +15,20 @@ class FullScreenLoader {
               : MyColors.white,
           width: double.infinity,
           height: double.infinity,
-          child: Column(
-            children: [
-              const SizedBox(height: 250),
-              AnimationLoaderWidget(text: text, animation: animation),
-            ],
+          child: SingleChildScrollView(
+            // This enables scrolling if content overflows
+            child: Column(
+              mainAxisAlignment:
+                  MainAxisAlignment.center, // Centering the content vertically
+              children: [
+                const SizedBox(height: 250),
+                AnimationLoaderWidget(text: text, animation: animation),
+              ],
+            ),
           ),
         ),
       ),
+      barrierDismissible: false,
     );
   }
 

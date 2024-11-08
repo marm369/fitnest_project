@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/text_strings.dart';
+import '../../../../utils/popups/loaders.dart';
 import '../../controllers/signup/signup_controller.dart';
 import 'widgets/additional_infos_form.dart';
 import 'widgets/confirm_identity.dart';
@@ -90,8 +91,16 @@ class SignupScreen extends StatelessWidget {
                   () => ElevatedButton(
                     onPressed: controller.currentStep.value == 2
                         ? () {
-                            // Appel à la méthode signup lorsque l'utilisateur est à la dernière étape
-                            controller.signup();
+                            if (controller.formKeyStep3.currentState!
+                                .validate()) {
+                              controller.signup();
+                            } else {
+                              Loaders.warningSnackBar(
+                                title: 'Validation Error',
+                                message:
+                                    'Please fill in all the fields correctly for Step 3.',
+                              );
+                            }
                           }
                         : controller.nextStep,
                     style: ElevatedButton.styleFrom(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import '../../screens/login/login.dart';
+import '../../screens/signin/signin.dart';
 
 class AdditionalInfosFormController extends GetxController {
   static AdditionalInfosFormController get instance => Get.find();
@@ -25,7 +25,7 @@ class AdditionalInfosFormController extends GetxController {
     if (currentPageIndex.value == 3) {
       final storage = GetStorage();
       storage.write('isFirstTime', false);
-      Get.offAll(const LoginScreen());
+      Get.offAll(const SignInScreen());
     } else {
       int page = currentPageIndex.value + 1;
       pageController.jumpToPage(page);

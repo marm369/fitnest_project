@@ -4,7 +4,7 @@ import '../../../utils/constants/image_strings.dart';
 import '../../../utils/popups/full_screen_loader.dart';
 import '../../../utils/popups/loaders.dart';
 import '../../network_manager.dart';
-import '../screens/profile/profile.dart';
+import '../../profile/screens/settings.dart';
 import 'user_controller.dart';
 
 /// Controller to manage user-related functionality.
@@ -63,7 +63,7 @@ class UpdateNameController extends GetxController {
           title: 'Congratulations', message: 'Your Name has been updated.');
 
       // Move to previous screen.
-      Get.off(() => const ProfileScreen());
+      // Get.off(() => const ProfileScreen());
     } catch (e) {
       FullScreenLoader.stopLoading();
       Loaders.errorSnackBar(title: 'Oops', message: e.toString());

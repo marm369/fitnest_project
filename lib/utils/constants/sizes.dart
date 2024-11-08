@@ -31,6 +31,7 @@ class MySizes {
 
   // Default spacing between sections
   static const double defaultSpace = 24.0;
+  static const double standardSpace = 10.0;
   static const double spaceBtwItems = 16.0;
   static const double spaceBtwSections = 32.0;
 

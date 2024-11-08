@@ -26,17 +26,16 @@ class SquareButton extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: double.infinity, // Prend toute la largeur possible
+          width: double.infinity,
           height: 150,
           child: ElevatedButton(
             onPressed: onPressed,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFF8F8F8), // Fond couleur blanc cassé
+              backgroundColor: Color(0xFFF8F8F8),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              padding:
-                  EdgeInsets.zero, // Pas de padding pour utiliser tout l'espace
+              padding: EdgeInsets.zero,
             ),
             child: Stack(
               fit: StackFit.expand,
@@ -46,7 +45,7 @@ class SquareButton extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                     child: Image.file(
                       File(image!),
-                      fit: BoxFit.cover, // Remplit tout l'espace du bouton
+                      fit: BoxFit.cover,
                     ),
                   ),
                 if (image == null)
@@ -61,7 +60,7 @@ class SquareButton extends StatelessWidget {
                       SizedBox(height: MySizes.sm),
                       Text(
                         text,
-                        style: TextStyle(color: Colors.black), // Texte en noir
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -69,14 +68,6 @@ class SquareButton extends StatelessWidget {
             ),
           ),
         ),
-        if (errorText != null) // Affiche le message d'erreur s'il existe
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Text(
-              errorText,
-              style: TextStyle(color: Colors.red, fontSize: 12),
-            ),
-          ),
       ],
     );
   }

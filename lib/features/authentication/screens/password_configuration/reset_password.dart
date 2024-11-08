@@ -5,7 +5,7 @@ import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/text_strings.dart';
 import '../../../../utils/helpers/helper_functions.dart';
-import '../login/login.dart';
+import '../signin/signin.dart';
 
 class ResetPasswordScreen extends StatelessWidget {
   const ResetPasswordScreen({super.key, required this.email});
@@ -56,7 +56,7 @@ class ResetPasswordScreen extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => Get.offAll(() => LoginScreen()),
+                onPressed: () => Get.offAll(() => SignInScreen()),
                 child: const Text(MyTexts.done),
               ),
             ),

@@ -57,9 +57,16 @@ class MyValidator {
     return null;
   }
 
-  static String? validateImagePath(String? imagePath) {
+  static String? validateBackIdImage(String? imagePath) {
     if (imagePath == null || imagePath.isEmpty) {
-      return 'Identity Image must be selected.';
+      return 'Back Identity Image must be selected.';
+    }
+    return null;
+  }
+
+  static String? validateFrontIdImage(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) {
+      return 'Front Identity Image must be selected.';
     }
     return null;
   }
@@ -82,7 +89,7 @@ class MyValidator {
     if (!acceptTerms) {
       return "You must accept the Privacy Policy and Terms of Use.";
     }
-    return "";
+    return null;
   }
 }
 // Regular expression for phone number validation (assuming a 10-digit US phone number format)

@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'features/dashboard/dashboard.dart';
 import 'features/events/create_event.dart';
-import 'features/home/home.dart';
+import 'features/home/screens/home.dart';
 import 'features/maps/screens/map.dart';
-import 'features/personalization/screens/profile/profile.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+
+import 'features/profile/screens/profile.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});
@@ -21,7 +22,7 @@ class _LandingPageState extends State<NavigationMenu> {
     MapScreen(),
     EventForm(),
     const DashboardScreen(),
-    const ProfileScreen(),
+    ProfileScreen(),
   ];
 
   @override

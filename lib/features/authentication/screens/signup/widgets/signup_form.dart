@@ -35,7 +35,7 @@ class SignupForm extends StatelessWidget {
                       backgroundImage: controller
                               .profileImagePath.value.isNotEmpty
                           ? FileImage(File(controller.profileImagePath.value))
-                          : null, // Si aucune image n'est sélectionnée, ne pas définir l'image de fond
+                          : null,
                       backgroundColor: dark ? MyColors.white : MyColors.black,
                       child: controller.profileImagePath.value.isEmpty
                           ? Icon(
@@ -46,14 +46,16 @@ class SignupForm extends StatelessWidget {
                           : null, // Pas d'icône si l'image est sélectionnée
                     ),
                     SizedBox(height: MySizes.spaceBtwItems),
-                    if (controller.profileImageError.value.isNotEmpty)
+                    if (controller.profileImageMessageError.value.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Text(
-                          controller.profileImageError.value,
-                          style: TextStyle(
-                              color: MyColors.red,
-                              fontSize: MySizes.fontSizeMd),
+                          controller.profileImageMessageError.value,
+                          style: const TextStyle(
+                            color: MyColors.red,
+                            fontSize: MySizes.fontSizeSm,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     // Afficher un message d'erreur si l'image n'est pas valide
