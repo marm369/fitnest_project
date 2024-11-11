@@ -1,16 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../../data/services/change_username_service.dart';
+import '../../../data/services/user_service.dart';
 import '../../../utils/popups/full_screen_loader.dart';
 import '../../../utils/popups/loaders.dart';
 
-class UpdateUsernameController extends GetxController {
-  static UpdateUsernameController get instance => Get.find();
+class UsernameController extends GetxController {
+  // Observable pour le nom de l'utilisateur
+  var userName = ''.obs;
+  final box = GetStorage();
+  final UserService _userService = UserService();
+  static UsernameController get instance => Get.find();
 
   final formKeyUsername = GlobalKey<FormState>(); // Formulaire de validation
   final username = TextEditingController(); // Contrôleur du champ "username"
 
   final ChangeUsernameService _changeUsernameService = ChangeUsernameService();
+  @override
+  void onInit() {
+    super.onInit();
+    int? userId = box.read('user_id');
+
+    if (userId != null) {
+      fetchUserName(userId);
+    } else {
+      print("Aucun ID utilisateur trouvé dans le stockage.");
+    }
+  }
+
+  // Méthode pour récupérer le nom de l'utilisateur
+  Future<void> fetchUserName(int userId) async {
+    userName.value = await _userService.fetchUserName(userId);
+  }
 
   // Fonction pour changer le nom d'utilisateur
   Future<void> changeUsername() async {

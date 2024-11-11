@@ -45,6 +45,8 @@ dependencies:
   flutter_staggered_animations: ^1.1.1
   flutter_tesseract_ocr:
   json_annotation:
+  image:
+  flutter_image_compress:
 
   # State Management
   get:

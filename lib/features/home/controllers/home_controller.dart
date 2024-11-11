@@ -25,6 +25,5 @@ class HomeController extends GetxController {
   // Méthode pour récupérer le nom de l'utilisateur
   Future<void> fetchUserName(int userId) async {
     userName.value = await _userService.fetchUserName(userId);
-    print(userName.value);
   }
 }

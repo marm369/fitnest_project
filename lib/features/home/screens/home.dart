@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:get/get.dart';
+import '../../../common/widgets/cards/event_scroll_widget.dart';
+import '../../../common/widgets/tabbutton/tab_item.dart';
 import '../../../utils/constants/image_strings.dart';
+import '../../../utils/constants/sizes.dart';
+import '../../authentication/controllers/signup/signup_controller.dart';
 import '../controllers/home_controller.dart';
 import '../enums/post_type.dart';
 import '../models/post_model.dart';
 import 'widgets/components/custom_icons.dart';
 import 'widgets/components/post_card.dart';
-import 'widgets/components/post_type_chips.dart'; // Assurez-vous d'importer le contrôleur
+import 'widgets/components/post_type_chips.dart';
 
-class HomeView extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // Instancier le contrôleur
-    final HomeController controller = Get.put(HomeController());
+    // Instantiate controllers
+    final HomeController controller1 = Get.put(HomeController());
+    final SignupController controller2 = Get.put(SignupController());
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -21,16 +26,10 @@ class HomeView extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Obx(() => Text(
-              'Hi ${controller.userName.value},', // Afficher le nom réel
+              'Hi ${controller1.userName.value},',
               style: const TextStyle(fontSize: 18, color: Colors.black),
             )),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CustomIcons(
-              src: MyImages.kHeart,
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.all(7.0),
             child: CustomIcons(
@@ -39,55 +38,70 @@ class HomeView extends StatelessWidget {
           ),
         ],
       ),
-      body: AnimationLimiter(
-        child: ListView(
-          children: AnimationConfiguration.toStaggeredList(
-            duration: const Duration(milliseconds: 375),
-            childAnimationBuilder: (widget) => SlideAnimation(
-              horizontalOffset: MediaQuery.of(context).size.width / 2,
-              child: FadeInAnimation(child: widget),
-            ),
-            children: [
-              const SizedBox(height: 20),
-              SizedBox(
-                height: 30,
-                child: ListView.separated(
-                  itemCount: PostType.values.length,
-                  padding: const EdgeInsets.only(left: 24),
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 10),
+      body: Column(
+        children: [
+          SizedBox(height: MySizes.defaultSpace),
+          // Interests Horizontal Scrollable List
+          Obx(
+            () => Flexible(
+              child: SizedBox(
+                height: 60,
+                child: ListView.builder(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 16), // Apply horizontal padding
                   scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
+                  itemCount: controller2.interests.length,
                   itemBuilder: (context, index) {
-                    PostTypeChips(
-                      isSelected: true,
-                      /* controller.selectedPostType.value == index,*/
-                      onTap: () {
-                        //controller.changePostType(index);
-                      },
-                      postType: PostType.values[index],
+                    final interest = controller2.interests[index]['name'];
+                    final isSelected =
+                        controller2.selectedInterests[interest] ?? false;
+                    final iconData = controller2.interests[index]['icon'];
+                    return GestureDetector(
+                      onTap: () => controller2.toggleInterest(interest),
+                      child: Row(
+                        children: [
+                          TabItem(
+                            text: interest,
+                            icon: Icon(
+                              iconData,
+                              color: isSelected ? Colors.blue : Colors.grey,
+                            ),
+                          ),
+                          SizedBox(
+                              width:
+                                  MySizes.spaceBtwItems), // Space between items
+                        ],
+                      ),
                     );
                   },
                 ),
               ),
-              const SizedBox(height: 20),
-              ListView.separated(
-                shrinkWrap: true,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                physics: const NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return PostCard(
-                    post: dummyPosts[index],
-                    onTap: () {},
-                  );
-                },
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
-                itemCount: dummyPosts.length,
-              ),
-            ],
+            ),
           ),
-        ),
+          EventScrollWidget(),
+          Expanded(
+            // Main content area with animations and scrollable list
+            child: ListView(
+              children: [
+                const SizedBox(height: 20),
+                ListView.separated(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return PostCard(
+                      post: dummyPosts[index],
+                      onTap: () {},
+                    );
+                  },
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 10),
+                  itemCount: dummyPosts.length,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

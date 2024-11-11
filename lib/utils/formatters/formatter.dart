@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:image/image.dart' as img;
 import 'package:intl/intl.dart';
 
 class Formatter {
@@ -43,5 +45,25 @@ class Formatter {
       i = end;
     }
     return "gg";
+  }
+
+  static String formatDateForBackend(String inputDate) {
+    DateFormat inputFormat = DateFormat('dd/MM/yyyy');
+    DateFormat backendFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    DateTime dateTime = inputFormat.parse(inputDate);
+    return backendFormat.format(dateTime);
+  }
+
+  static Future<File> resizeImage(File imageFile) async {
+    // Décoder l'image d'origine
+    img.Image originalImage = img.decodeImage(imageFile.readAsBytesSync())!;
+
+    // Encoder en JPEG avec une haute qualité
+    final jpgBytes = img.encodeJpg(originalImage, quality: 95);
+    File jpegFile = File(
+        imageFile.path.replaceFirst(RegExp(r'\.png$'), '_highQuality.jpg'));
+    await jpegFile.writeAsBytes(jpgBytes);
+
+    return jpegFile;
   }
 }

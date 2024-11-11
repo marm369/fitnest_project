@@ -31,7 +31,9 @@ class ConfirmIdentityForm extends StatelessWidget {
                       SquareButton(
                         text: 'Front ID',
                         icon: Iconsax.camera,
-                        onPressed: controller.pickFrontImage,
+                        onPressed: () {
+                          controller.pickImage(controller.frontImagePath);
+                        },
                         image: controller.frontImagePath.value.isNotEmpty
                             ? controller.frontImagePath.value
                             : null,
@@ -63,7 +65,9 @@ class ConfirmIdentityForm extends StatelessWidget {
                       SquareButton(
                         text: 'Back ID',
                         icon: Iconsax.camera,
-                        onPressed: controller.pickBackImage,
+                        onPressed: () {
+                          controller.pickImage(controller.backImagePath);
+                        },
                         image: controller.backImagePath.value.isNotEmpty
                             ? controller.backImagePath.value
                             : null,

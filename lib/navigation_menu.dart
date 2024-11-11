@@ -18,7 +18,7 @@ class NavigationMenu extends StatefulWidget {
 class _LandingPageState extends State<NavigationMenu> {
   int selectedIndex = 0;
   List<dynamic> pages = [
-    HomeView(),
+    HomeScreen(),
     MapScreen(),
     EventForm(),
     const DashboardScreen(),

@@ -1,33 +1,79 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../configuration/config.dart';
 
 class SignUpService {
-  final String authUrl = 'http://192.168.43.97:8080/auth/register';
-  final String userUrl = 'http://192.168.43.97:8080/users/add';
+  // Verifying username and email
+  final String emailUrl = '$baseUrl/auth/check';
+  // Create Account
+  final String authUrl = '$baseUrl/auth/register';
+  // Add user infos
+  final String userUrl = '$baseUrl/users/add';
+  // Verify email address
+  final String emailVerifyUrl = '$baseUrl/auth';
 
-  // Méthode pour créer un compte et récupérer un token
-  Future<String?> createAccount(Map<String, dynamic> accountInfo) async {
+  // Method to check if the email or the username exists already in the DB
+  Future<bool?> checkEmailAndUsername(
+      Map<String, dynamic> emailUsername) async {
     try {
-      // Envoi de la requête POST avec 'http'
       final response = await http.post(
-        Uri.parse(authUrl), // Utilisation de Uri.parse() avec http.post
-        headers: {"Content-Type": "application/json"}, // Headers appropriés
-        body: jsonEncode(accountInfo), // Corps de la requête JSON
+        Uri.parse(emailUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(emailUsername),
       );
       if (response.statusCode == 200) {
-        // Décodage de la réponse JSON
+        return true;
+      } else if (response.statusCode == 409) {
+        return false;
+      }
+    } catch (e) {
+      print('Connexion Error: $e');
+      return false;
+    }
+  }
+
+  // Method to verify the email
+  Future<void> sendVerificationEmail(String email) async {
+    final url = Uri.parse('$baseUrl/send-verification-email');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+
+      if (response.statusCode == 200) {
+        print('Verification email sent successfully');
+      } else {
+        print('Failed to send email: ${response.body}');
+      }
+    } catch (e) {
+      print('Error sending verification email: $e');
+    }
+  }
+
+  // Method to create an account and retrieve a token
+  Future<String?> createAccount(Map<String, dynamic> accountInfo) async {
+    try {
+      final response = await http.post(
+        Uri.parse(authUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(accountInfo),
+      );
+      if (response.statusCode == 200) {
         final token = jsonDecode(response.body)['token'];
-        return token; // Retourne le token de la réponse
+        return token;
       } else {
         print('Erreur de création de compte: ${response.statusCode}');
         return null;
       }
     } catch (e) {
-      print('Erreur de connexion: $e');
+      print('Connexion Error: $e');
       return null;
     }
   }
 
+  // Method to save personal information
   Future<void> savePersonalInfo(
       Map<String, dynamic> personalInfo, String token) async {
     try {
@@ -39,15 +85,13 @@ class SignUpService {
         },
         body: jsonEncode(personalInfo),
       );
-
       if (response.statusCode == 200) {
-        print('Informations personnelles sauvegardées');
+        print('Personal information saved');
       } else {
-        print(
-            'Erreur lors de l\'enregistrement des informations personnelles: ${response.statusCode}');
+        print('Error saving personal information: ${response.statusCode}');
       }
     } catch (e) {
-      print('Erreur de connexion: $e');
+      print('Connexion Error: $e');
     }
   }
 }

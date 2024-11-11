@@ -1,10 +1,10 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../../configuration/config.dart';
+
 class ChangeUsernameService {
-  // URL de l'API pour changer le nom d'utilisateur
-  final String authUrl =
-      'http://172.20.214.77:8080/auth/change-username'; // Mettez à jour l'URL de l'API si nécessaire.
+  final String authUrl = '$baseUrl/auth/change-username';
 
   // Méthode pour changer le nom d'utilisateur
   Future<String?> changeUsername(Map<String, dynamic> accountInfo) async {

@@ -6,6 +6,7 @@ import '../../../common/widgets/texts/section_heading.dart';
 import '../../../utils/constants/image_strings.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../personalization/screens/profile/widgets/profile_menu.dart';
+import '../controllers/controller_username.dart';
 import 'widgets/update_dateofbirth.dart';
 import 'widgets/update_email.dart';
 import 'widgets/update_firstname.dart';
@@ -14,8 +15,8 @@ import 'widgets/update_phonenumber.dart';
 import 'widgets/update_username.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-
+  SettingsScreen({super.key});
+  final UsernameController controller1 = Get.put(UsernameController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get_storage/get_storage.dart';
 import 'app.dart';

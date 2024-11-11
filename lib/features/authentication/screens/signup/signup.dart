@@ -1,4 +1,3 @@
-// SignupScreen.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../utils/constants/sizes.dart';
@@ -9,7 +8,7 @@ import 'widgets/additional_infos_form.dart';
 import 'widgets/confirm_identity.dart';
 import 'widgets/signup_form.dart';
 import 'functions/step_content.dart';
-import 'functions/step_indicator.dart'; // Chemin vers les constantes MyTexts, MySizes, etc.
+import 'functions/step_indicator.dart';
 
 class SignupScreen extends StatelessWidget {
   final SignupController controller = Get.put(SignupController());

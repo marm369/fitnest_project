@@ -1,19 +1,19 @@
-import 'package:fitnest/utils/validators/validation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../../../../common/widgets/success_screen/success_screen.dart';
 import '../../../../data/services/event_service.dart';
+import '../../../../data/services/id_check_service.dart';
 import '../../../../data/services/signup_service.dart';
 import '../../../../utils/constants/icons.dart';
 import '../../../../utils/constants/image_strings.dart';
+import '../../../../utils/formatters/formatter.dart';
 import '../../../../utils/popups/full_screen_loader.dart';
 import '../../../../utils/popups/loaders.dart';
+import '../../../../utils/validators/validation.dart';
 import '../../../network_manager.dart';
 import '../../screens/signin/signin.dart';
 
@@ -27,13 +27,13 @@ class SignupController extends GetxController {
   var currentStep = 0.obs;
 
   var profileImageMessageError = ''.obs;
-  var profileImagePath = ''.obs;
+  RxString profileImagePath = ''.obs;
 
   var privacyPolicyMessageError = ''.obs;
   var privacyPolicy = false.obs;
 
-  var frontImagePath = ''.obs;
-  var backImagePath = ''.obs;
+  RxString frontImagePath = ''.obs;
+  RxString backImagePath = ''.obs;
   var frontImageMessageError = ''.obs;
 
   var backImageMessageError = ''.obs;
@@ -69,7 +69,6 @@ class SignupController extends GetxController {
 
   // Step3
   final birthDate = TextEditingController();
-
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
   RxString selectedGender = ''.obs;
 
@@ -84,9 +83,11 @@ class SignupController extends GetxController {
     }
   }
 
+  // call for services
   final SignUpService _signUpService = SignUpService();
+  final IdCheckService _idCheckService = IdCheckService();
 
-  void nextStep() {
+  Future<void> nextStep() async {
     if (currentStep.value == 0) {
       if (this.profileImagePath.value.isEmpty) {
         this.profileImageMessageError.value =
@@ -129,20 +130,23 @@ class SignupController extends GetxController {
       } else {
         this.backImageMessageError.value = "";
       }
+      String? result = await checkId(
+          File(frontImagePath.value), firstName.text, lastName.text);
+      if (result != null) {
+        Loaders.warningSnackBar(
+          title: 'Id Validation Error',
+          message: result,
+        );
+      }
       // Validate Step 2
       if (formKeyStep2.currentState!.validate() &&
           this.frontImagePath.value.isNotEmpty &&
-          this.backImagePath.value.isNotEmpty) {
+          this.backImagePath.value.isNotEmpty &&
+          result == null) {
         currentStep.value++;
         pageController.nextPage(
           duration: Duration(milliseconds: 300),
           curve: Curves.ease,
-        );
-      } else {
-        Loaders.warningSnackBar(
-          title: 'Validation Error',
-          message:
-              'Please choose the images for your front and back ID for Step 2.',
         );
       }
     } else if (currentStep.value == 2) {
@@ -170,40 +174,65 @@ class SignupController extends GetxController {
     }
   }
 
-  Future<void> pickImage(Rx<File?> targetFile) async {
-    final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      targetFile.value = File(pickedFile.path);
-    }
-  }
-
-  Future<void> pickProfileImage() async {
+  Future<void> pickImage(RxString imagePath) async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      profileImagePath.value = image.path;
+      imagePath.value = image.path;
     }
   }
 
-  // Méthode pour sélectionner l'image de face
-  Future<void> pickFrontImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      frontImagePath.value = image.path;
+  // Method for verifying ID validity
+
+  Future<String?> checkId(
+      File frontIdImage, String firstName, String lastName) async {
+    File resizedImage = await Formatter.resizeImage(frontIdImage);
+    // Extract text from the ID image
+    final message = await _idCheckService.extractTextFromImage(frontIdImage);
+    if (message != null) {
+      // Check if the extracted text contains the Moroccan ID card phrase
+      if (!message!.contains("ROYAUME DU MAROC") &&
+          !message!.contains("CARTE NATIONALE D'IDENTITE")) {
+        return "It is not a Moroccan ID card.";
+      }
+      // Check if the extracted name and surname match the ones entered
+      else if (!message.toLowerCase().contains(firstName.toLowerCase()) ||
+          !message.toLowerCase().contains(lastName.toLowerCase())) {
+        return "First name and last name do not match.";
+      }
+      // Check for the validity date, assuming the format "Valide jusqu'au dd.MM.yyyy"
+      else if (message.contains("Valable jusqu'au")) {
+        final dateRegex = RegExp(r"Valable jusqu'au (\d{2}.\d{2}.\d{4})");
+        final dateMatch = dateRegex.firstMatch(message);
+
+        if (dateMatch != null) {
+          final expiryDateString = dateMatch.group(1);
+          final DateTime expiryDate =
+              DateFormat('dd.MM.yyyy').parse(expiryDateString!);
+          print(expiryDate);
+          final DateTime currentDate = DateTime.now();
+
+          if (expiryDate.isBefore(currentDate)) {
+            return "The ID card has expired.";
+          } else {
+            return "The ID card is valid.";
+          }
+        } else {
+          return "Validity date not found on the card.";
+        }
+      }
+
+      // Check if the extracted text is valid (not blurry or unreadable)
+      else if (message.contains("Erreur") || message.isEmpty) {
+        return "The image is blurry, or the text could not be extracted correctly.";
+      } else {
+        return null;
+      }
+    } else {
+      return null;
     }
   }
 
-  // Méthode pour sélectionner l'image de dos
-  Future<void> pickBackImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      backImagePath.value = image.path;
-    }
-  }
-
-  // Date Of Birth and Gender Part
-
-  // Méthode pour sélectionner la date
+  // Method for selecting the date
   Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -230,31 +259,24 @@ class SignupController extends GetxController {
     }
   }
 
-  // Méthode pour mettre à jour le genre sélectionné
+  // Method to update the selected gender
   void setGender(String gender) {
     selectedGender.value = gender;
   }
 
-  @override
-  void onClose() {
-    birthDate.dispose();
-    super.onClose();
-  }
-
   // Interests Part
-
   Future<void> loadInterests() async {
     try {
       // Appel de la méthode du service
       final data = await _userService.fetchInterests();
 
-      // Transformation des données pour correspondre aux variables du contrôleur
+      // Data transformation to match the controller variables
       interests.value = data.map((category) {
         final iconName = category['iconName'] as String? ?? 'help_outline';
         final categoryName = category['name'] as String;
         final iconData = iconMapping[iconName] ?? Icons.help_outline;
 
-        // Initialiser la sélection d'intérêts
+        // Initialize interest selection
         selectedInterests[categoryName] = false;
 
         return {
@@ -267,7 +289,7 @@ class SignupController extends GetxController {
     }
   }
 
-  // Méthode pour basculer l'état de sélection d'un intérêt
+  // Method to toggle the selection state of an interest
   void toggleInterest(String interest) {
     if (selectedInterests.containsKey(interest)) {
       selectedInterests[interest] = !selectedInterests[interest]!;
@@ -282,7 +304,7 @@ class SignupController extends GetxController {
   }
   // Goals Part
 
-  // Méthode pour changer l'état de sélection d'un objectif
+  // Method to change the selection state of a goal
   void toggleGoal(String goal) {
     selectedGoals[goal] = !selectedGoals[goal]!;
   }
@@ -293,71 +315,46 @@ class SignupController extends GetxController {
           'Processing your information...', MyImages.loadingIllustration);
       final isConnected = await networkManager.isConnected();
       if (!isConnected) {
-        FullScreenLoader.stopLoading();
         Loaders.errorSnackBar(
-          title: 'Connexion échouée',
-          message: 'Vérifiez votre connexion Internet.',
+          title: 'Connection Failed',
+          message: 'Please check your Internet connection.',
         );
         return;
       }
-      // Appel du service pour créer un compte
-      final token = await _signUpService.createAccount({
+
+      final emailAndUsernameCheck = await _signUpService.checkEmailAndUsername({
         'username': username.text.trim(),
-        'password': password.text.trim(),
         'email': email.text.trim(),
       });
-      if (token != null) {
-        // Préparation des données utilisateur
-        final personalInfo = {
-          "firstName": firstName.text.trim(),
-          "lastName": lastName.text.trim(),
-          "email": email.text.trim(),
-          "userName": username.text.trim(),
-          "password": password.text.trim(),
-          "idFace": base64Encode(
-              File(frontImagePath.value as String).readAsBytesSync()),
-          "idBack": base64Encode(
-              File(backImagePath.value as String).readAsBytesSync()),
-          "profilePicture": base64Encode(
-              File(profileImagePath.value as String).readAsBytesSync()),
-          "phoneNumber": int.parse(phoneNumber.text.trim()),
-          "birthDate": formatDateForBackend(birthDate.text.trim()),
-          "gender": selectedGender.trim(),
-          "description": "",
-          "interests": getSelectedInterests()
-        };
-        // Envoi des informations personnelles avec le token
-        await _signUpService.savePersonalInfo(personalInfo, token);
-/*
-        FullScreenLoader.stopLoading();
-        Loaders.successSnackBar(
-          title: 'Félicitations',
-          message: 'Compte créé avec succès!',
-        );
+      if (emailAndUsernameCheck == true) {
+        /* // Send a verification email instead of creating the account right away
 
- */
-        // Get.to(() => VerifyEmailScreen(email: email.text.trim()));
-        Get.to(() => SuccessScreen(
-              image: MyImages
-                  .staticSuccessIllustration, // Remplacez par la vraie valeur de l'image
-              title: 'Inscription réussie',
-              subTitle: 'Votre compte a été créé avec succès.',
-              onPressed: () {
-                // Lors du clic sur le bouton, naviguez vers VerifyEmailScreen
-                Get.to(() => SignInScreen());
-              },
-            ));
+        final verificationToken = await _signUpService.sendVerificationEmail({
+          'email': email.text.trim(),
+        });
+
+        if (verificationToken != null) {
+          Get.to(() => VerifyEmailScreen(email: email.text.trim()));
+        } else {
+          Loaders.errorSnackBar(
+            title: 'Verification Failed',
+            message: 'Could not send verification email. Please try again.',
+          );
+        }*/
+      } else {
+        Loaders.errorSnackBar(
+          title: 'Registration Failed',
+          message: 'Username or email already exists. Please try another.',
+        );
       }
     } catch (e) {
-      FullScreenLoader.stopLoading();
       Loaders.errorSnackBar(title: 'Erreur', message: e.toString());
     }
   }
 
-  String formatDateForBackend(String inputDate) {
-    DateFormat inputFormat = DateFormat('dd/MM/yyyy');
-    DateFormat backendFormat = DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-    DateTime dateTime = inputFormat.parse(inputDate);
-    return backendFormat.format(dateTime);
+  @override
+  void onClose() {
+    birthDate.dispose();
+    super.onClose();
   }
 }

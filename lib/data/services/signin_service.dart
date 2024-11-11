@@ -1,10 +1,12 @@
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../configuration/config.dart';
 
 class SignInService {
-  final String authUrl = 'http://192.168.0.128:8080/auth/authenticate';
+  final String authUrl = '$baseUrl/auth/authenticate';
   final box = GetStorage();
+
   // Method to sign in and retrieve a token
   Future<String?> signIn(Map<String, dynamic> accountInfo) async {
     try {
@@ -20,10 +22,9 @@ class SignInService {
           box.write('user_id', jsonResponse['user_id']);
           box.write('token', jsonResponse['token']);
           return jsonResponse['token'];
-          // Retourne le token si trouvé
         } else {
           print('Token is missing in the response');
-          return null; // Si le token est manquant
+          return null;
         }
       } else if (response.statusCode == 401) {
         print('Incorrect login or password');
@@ -32,8 +33,7 @@ class SignInService {
       }
     } catch (e) {
       print('Connection error: $e');
-
-      return null; // Retourne null en cas d'erreur
+      return null;
     }
   }
 }

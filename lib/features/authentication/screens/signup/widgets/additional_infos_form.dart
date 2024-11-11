@@ -72,7 +72,6 @@ class AdditionalInfosForm extends StatelessWidget {
             const SizedBox(height: MySizes.spaceBtwItems),
 
             // Section 2: Interests
-
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

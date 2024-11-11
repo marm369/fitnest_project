@@ -25,8 +25,9 @@ class SignupForm extends StatelessWidget {
         children: [
           Center(
             child: GestureDetector(
-              onTap: controller
-                  .pickProfileImage, // Méthode pour sélectionner l'image
+              onTap: () {
+                controller.pickImage(controller.profileImagePath);
+              },
               child: Obx(() {
                 return Column(
                   children: [
