@@ -20,7 +20,7 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MyAppBar(
+      appBar: const MyAppBar(
         title: Text('Profile'),
         showBackArrow: true,
       ),

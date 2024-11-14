@@ -15,3 +15,11 @@ Future<void> main() async {
 
   runApp(App(isFirstTime: isFirstTime));
 }
+
+
+/*
+*
+git stash          # Saves your changes in a stash and clears your working directory
+git pull           # Pulls the latest changes from the remote
+git stash pop      # Applies the stashed changes back and removes them from the stash list
+*/
