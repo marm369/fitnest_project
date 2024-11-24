@@ -5,9 +5,10 @@ import 'package:intl/intl.dart';
 import 'dart:io';
 import 'dart:convert';
 import '../../../../common/widgets/success_screen/success_screen.dart';
-import '../../../../data/services/event_service.dart';
-import '../../../../data/services/id_check_service.dart';
-import '../../../../data/services/signup_service.dart';
+import '../../../../data/services/event/event_service.dart';
+import '../../../../data/services/authentication/id_check_service.dart';
+import '../../../../data/services/authentication/signup_service.dart';
+import '../../../../data/services/profile/user_service.dart';
 import '../../../../utils/constants/icons.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/formatters/formatter.dart';
@@ -268,8 +269,8 @@ class SignupController extends GetxController {
   Future<void> loadInterests() async {
     try {
       // Appel de la méthode du service
-      final data = await _userService.fetchInterests();
-
+      //final data = await _userService.fetchInterests();
+      final data = null;
       // Data transformation to match the controller variables
       interests.value = data.map((category) {
         final iconName = category['iconName'] as String? ?? 'help_outline';

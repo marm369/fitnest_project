@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../../../../data/services/signin_service.dart';
+import '../../../../data/services/authentication/signin_service.dart';
 import '../../../../utils/popups/loaders.dart';
 import '../../../network_manager.dart';
 

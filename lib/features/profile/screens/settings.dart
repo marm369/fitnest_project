@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:fitnest/features/profile/screens/widgets/profile_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../common/widgets/appbar/appbar.dart';
@@ -5,8 +9,7 @@ import '../../../common/widgets/images/circular_image.dart';
 import '../../../common/widgets/texts/section_heading.dart';
 import '../../../utils/constants/image_strings.dart';
 import '../../../utils/constants/sizes.dart';
-import '../../personalization/screens/profile/widgets/profile_menu.dart';
-import '../controllers/controller_username.dart';
+import '../controllers/profile_controller.dart';
 import 'widgets/update_dateofbirth.dart';
 import 'widgets/update_email.dart';
 import 'widgets/update_firstname.dart';
@@ -16,9 +19,10 @@ import 'widgets/update_username.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
-  final UsernameController controller1 = Get.put(UsernameController());
+  final ProfileController controller = Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
+    final userProfile = controller.userProfile.value!;
     return Scaffold(
       appBar: MyAppBar(
         title: Text('Profile'),
@@ -33,11 +37,34 @@ class SettingsScreen extends StatelessWidget {
                 width: double.infinity,
                 child: Column(
                   children: [
-                    CircularImage(
-                        image: MyImages.google, width: 80, height: 80),
+                    // Décodage de l'image base64 avant de l'utiliser
+                    Builder(
+                      builder: (context) {
+                        try {
+                          // Décodage de l'image base64
+                          final imageBytes =
+                              base64Decode(userProfile.profilePicture ?? '');
+
+                          return CircleAvatar(
+                            radius:
+                                40, // Ajustez la taille du cercle comme vous le souhaitez
+                            backgroundImage: MemoryImage(
+                                imageBytes), // Utilisez MemoryImage pour afficher l'image
+                          );
+                        } catch (e) {
+                          // Si l'image ne peut pas être décodée, afficher une image par défaut
+                          return CircleAvatar(
+                            radius: 40,
+                            backgroundImage:
+                                AssetImage(MyImages.defaultImageProfile),
+                          );
+                        }
+                      },
+                    ),
                     TextButton(
-                        onPressed: () {},
-                        child: const Text('Change Profile Picture')),
+                      onPressed: () {},
+                      child: const Text('Change Profile Picture'),
+                    ),
                   ],
                 ),
               ),
@@ -49,13 +76,12 @@ class SettingsScreen extends StatelessWidget {
               const SizedBox(height: MySizes.spaceBtwItems),
               ProfileMenu(
                   title: 'Username',
-                  value: "minou",
-                  //value: controller.user.value.fullName,
+                  value: userProfile.userName,
                   onPressed: () => Get.to(() => const UpdateUsername())),
 
               ProfileMenu(
                   title: 'Email',
-                  value: "minouarim@gmail.com",
+                  value: userProfile.email,
                   onPressed: () => Get.to(() => const UpdateEmail())),
               const SizedBox(height: MySizes.spaceBtwItems),
               const Divider(),
@@ -67,19 +93,19 @@ class SettingsScreen extends StatelessWidget {
               const SizedBox(height: MySizes.spaceBtwItems),
               ProfileMenu(
                   title: 'First Name',
-                  value: "maryem",
+                  value: userProfile.firstName,
                   onPressed: () => Get.to(() => const UpdateFirstName())),
               ProfileMenu(
                   title: 'Last Name',
-                  value: "minouari",
+                  value: userProfile.lastName,
                   onPressed: () => Get.to(() => const UpdateLastName())),
               ProfileMenu(
                   title: 'Phone Number',
-                  value: "0700467496",
+                  value: userProfile.phoneNumber.toString(),
                   onPressed: () => Get.to(() => const UpdatePhoneNumber())),
               ProfileMenu(
                   title: 'Date of Birth',
-                  value: '10 Fév, 2003',
+                  value: userProfile.dateBirth.toString(),
                   onPressed: () => Get.to(() => const UpdateDateOfBirth())),
               ProfileMenu(title: 'Gender', value: 'Female', onPressed: () {}),
               const Divider(),

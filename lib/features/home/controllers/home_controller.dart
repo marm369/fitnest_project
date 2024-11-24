@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../../../data/services/user_service.dart';
+import '../../../data/services/profile/user_service.dart';
 
 class HomeController extends GetxController {
   // Observable pour le nom de l'utilisateur

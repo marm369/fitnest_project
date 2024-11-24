@@ -161,7 +161,6 @@ class AdditionalInfosForm extends StatelessWidget {
                       final goal = controller.goals[index];
                       final isSelected =
                           controller.selectedGoals[goal] ?? false;
-
                       return GestureDetector(
                         onTap: () => controller.toggleGoal(goal),
                         child: Container(
