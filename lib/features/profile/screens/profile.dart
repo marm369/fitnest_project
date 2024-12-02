@@ -17,7 +17,6 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final userProfile = controller.userProfile.value!;
     final futureEvents = eventController.getEventsByUser(userProfile.id);
-
     return DefaultTabController(
       length: 1,
       child: Scaffold(

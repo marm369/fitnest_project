@@ -4,12 +4,13 @@ import 'package:get_storage/get_storage.dart';
 import '../../../data/services/category/category_service.dart';
 import '../../../data/services/profile/user_service.dart';
 import '../../../utils/constants/icons.dart';
+import '../../../utils/popups/loaders.dart';
 import '../../events/models/category.dart';
 import '../models/event_scroll.dart';
 
 class HomeController extends GetxController {
   var userName = ''.obs; // Nom d'utilisateur réactif
-  final selectedCategories = <String, bool>{}.obs; // Catégories sélectionnées
+  final selectedCategorie = <String, bool>{}.obs;
   final RxList<Map<String, dynamic>> categories =
       <Map<String, dynamic>>[].obs; // Liste des catégories
   final RxList<EventScroll> events =
@@ -22,10 +23,8 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    //loadCategories(); // Charger les catégories
-    loadEventsByCategories(
-        'Skiing'); // Charger les événements pour la catégorie Skiing
-
+    loadCategories(); // Charger les catégories
+    loadEventsByCategories('Skiing');
     // Lire l'ID utilisateur depuis le stockage
     int? userId = box.read('user_id');
     if (userId != null) {
@@ -52,7 +51,7 @@ class HomeController extends GetxController {
         final String iconName = category.iconName ?? 'help_outline';
         final String categoryName = category.name;
         final iconData = iconMapping[iconName] ?? Icons.help_outline;
-        selectedCategories[categoryName] = false;
+        selectedCategorie[categoryName] = false;
 
         // Retourner les données formatées
         return {
@@ -78,8 +77,9 @@ class HomeController extends GetxController {
 
   // Basculer entre les catégories sélectionnées
   void toggleCategory(String category) {
-    selectedCategories.updateAll(
+    selectedCategorie.updateAll(
         (key, value) => false); // Désélectionner toutes les catégories
-    selectedCategories[category] = true; // Sélectionner la catégorie actuelle
+    selectedCategorie[category] = true;
+    loadEventsByCategories(category); // Sélectionner la catégorie actuelle
   }
 }

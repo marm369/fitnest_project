@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../../utils/constants/sizes.dart';
 
 class EventCard extends StatelessWidget {
   final String eventImage;
   final String title;
-  final String date;
+  final DateTime date;
   final String profileImage;
   final String organizer;
 
@@ -38,11 +41,49 @@ class EventCard extends StatelessWidget {
           ClipRRect(
             borderRadius:
                 BorderRadius.vertical(top: Radius.circular(MySizes.sm)),
-            child: Image.network(
-              eventImage,
-              height: 80,
-              width: double.infinity,
-              fit: BoxFit.cover, // ensures the image maintains its aspect ratio
+            child: Builder(
+              builder: (context) {
+                try {
+                  // Vérifier si l'image est encodée en base64
+                  final isBase64Image = eventImage.isNotEmpty &&
+                      RegExp(r'^[A-Za-z0-9+/=]+\s*$').hasMatch(eventImage);
+
+                  if (isBase64Image) {
+                    // Décoder l'image base64
+                    final imageBytes = base64Decode(eventImage);
+
+                    return Image.memory(
+                      imageBytes,
+                      height: 80,
+                      width: double.infinity,
+                      fit: BoxFit.cover, // Maintient le ratio de l'image
+                    );
+                  } else {
+                    // Si l'image n'est pas en base64, utiliser une URL réseau
+                    return Image.network(
+                      eventImage,
+                      height: 80,
+                      width: double.infinity,
+                      fit: BoxFit.cover, // Maintient le ratio de l'image
+                    );
+                  }
+                } catch (e) {
+                  // En cas d'erreur, retourner un conteneur vide ou un widget alternatif
+                  return SizedBox(
+                    height: 80,
+                    width: double.infinity,
+                    child: Center(
+                      child: Text(
+                        'Image indisponible',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              },
             ),
           ),
           Padding(
@@ -61,7 +102,7 @@ class EventCard extends StatelessWidget {
                 ),
                 SizedBox(height: MySizes.xs / 2),
                 Text(
-                  date,
+                  DateFormat('dd-MM-yyyy').format(date),
                   style: TextStyle(
                     fontSize: MySizes.fontSizeXs,
                     color: Colors.grey[600],
@@ -70,19 +111,37 @@ class EventCard extends StatelessWidget {
                 Divider(color: Colors.grey),
                 Row(
                   children: [
-                    CircleAvatar(
-                      backgroundImage: NetworkImage(profileImage),
-                      radius: MySizes.md,
+                    // Affichage de l'image dans un CircleAvatar avec gestion des erreurs
+                    Builder(
+                      builder: (context) {
+                        try {
+                          // Décoder l'image base64
+                          final imageBytes = base64Decode(profileImage);
+                          return CircleAvatar(
+                            radius: MySizes.md, // Ajustez la taille du cercle
+                            backgroundImage: MemoryImage(
+                                imageBytes), // Afficher l'image à partir de la mémoire
+                          );
+                        } catch (e) {
+                          // En cas d'erreur, retourner un CircleAvatar vide
+                          return CircleAvatar(
+                            radius: MySizes.md,
+                          );
+                        }
+                      },
                     ),
-                    SizedBox(width: MySizes.sm),
+                    SizedBox(
+                        width:
+                            MySizes.sm), // Espacement entre l'image et le texte
                     Expanded(
                       child: Text(
                         organizer,
                         style: TextStyle(
-                            fontSize: MySizes.fontSizeSm,
-                            color: Colors.black87),
-                        overflow:
-                            TextOverflow.ellipsis, // handles overflow text
+                          fontSize: MySizes.fontSizeSm,
+                          color: Colors.black87,
+                        ),
+                        overflow: TextOverflow
+                            .ellipsis, // Gère le débordement du texte
                       ),
                     ),
                     IconButton(
@@ -92,7 +151,7 @@ class EventCard extends StatelessWidget {
                         size: MySizes.iconMd,
                       ),
                       onPressed: () {
-                        // Action for the map icon
+                        // Action pour l'icône de carte
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Open Map for $title')),
                         );

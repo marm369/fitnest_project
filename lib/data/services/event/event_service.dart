@@ -14,25 +14,26 @@ class EventService {
     String? partDay,
   }) async {
     String url;
-
-    if (category != null && dateFilter != null && dateFilter != 'AnyDay') {
-      dateFilter = dateFilter.replaceAll(' ', '');
+    print("category: $category");
+    print("dateFilter: $dateFilter");
+    print("partDay $partDay");
+    if (category != null && dateFilter != '' && partDay != '') {
+      dateFilter = dateFilter?.replaceAll(' ', '') ?? '';
+      url = '$gatewayEventUrl/api/events/filter/$category/$dateFilter/$partDay';
+    } else if (category != null && dateFilter != '') {
+      dateFilter = dateFilter?.replaceAll(' ', '') ?? '';
       url =
-      '$gatewayEventUrl/api/events/filterByCategoryAndDate/$category/$dateFilter';
-    } else if (dateFilter != null) {
-      dateFilter = dateFilter.replaceAll(' ', '');
+          '$gatewayEventUrl/api/events/filterByCategoryAndDate/$category/$dateFilter';
+    } else if (dateFilter != '') {
+      dateFilter = dateFilter?.replaceAll(' ', '') ?? '';
       url = '$gatewayEventUrl/api/events/filterByDate/$dateFilter';
     } else if (category != null) {
       url = '$gatewayEventUrl/api/categories/events/$category';
-    }
-    else if (partDay != null) {
-      print("parDayyyy");
+    } else if (partDay != null) {
       url = '$gatewayEventUrl/api/events/byPartOfDay/$partDay';
-    }
-    else {
+    } else {
       url = '$gatewayEventUrl/api/events/all-details';
     }
-
     try {
       final response = await http.get(Uri.parse(url));
 
@@ -59,8 +60,8 @@ class EventService {
           throw Exception('Format JSON inattendu : attendu une liste');
         }
       } else {
-        print('Échec du chargement des événements. Code de statut: ${response
-            .statusCode}');
+        print(
+            'Échec du chargement des événements. Code de statut: ${response.statusCode}');
         throw Exception('Échec du chargement des événements');
       }
     } catch (e) {
@@ -69,7 +70,7 @@ class EventService {
     }
   }
 
-    Future<List<Event>> fetchEventsWithDetails() async {
+  Future<List<Event>> fetchEventsWithDetails() async {
     try {
       final response =
           await http.get(Uri.parse('$gatewayEventUrl/api/events/all-details'));
