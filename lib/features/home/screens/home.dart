@@ -12,7 +12,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Instantiate controllers
     final HomeController homeController = Get.put(HomeController());
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: NestedScrollView(
@@ -35,45 +34,44 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: MySizes.defaultSpace / 2),
-                  SizedBox(
-                    height: 60,
-                    child: Obx(
-                      () => ListView.builder(
+                  Obx(
+                    () => SizedBox(
+                      height: 60,
+                      child: ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         scrollDirection: Axis.horizontal,
                         itemCount: homeController.categories.length,
                         itemBuilder: (context, index) {
-                          final category = homeController.categories[index];
-                          final interest = category['name'];
-                          final iconData =
-                              category['icon']; // Récupérez l'icône ici
-
-                          return GestureDetector(
-                            onTap: () =>
-                                homeController.toggleCategory(interest),
-                            child: Row(
-                              children: [
-                                TabItem(
-                                  text: interest,
-                                  icon: Icon(
-                                    iconData,
-                                    color: homeController
-                                                .selectedCategorie[interest] ==
-                                            true
-                                        ? Colors.blue
-                                        : Colors.grey,
-                                  ),
+                          final interest =
+                              homeController.categories[index]['name'];
+                          return Obx(() => GestureDetector(
+                                onTap: () =>
+                                    homeController.toggleCategory(interest),
+                                child: Row(
+                                  children: [
+                                    TabItem(
+                                      text: interest,
+                                      icon: Icon(
+                                        homeController.categories[index]
+                                            ['icon'],
+                                        color: homeController.selectedCategorie[
+                                                    interest] ==
+                                                true
+                                            ? Colors.blue
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                    SizedBox(width: MySizes.spaceBtwItems),
+                                  ],
                                 ),
-                                SizedBox(width: MySizes.spaceBtwItems),
-                              ],
-                            ),
-                          );
+                              ));
                         },
                       ),
                     ),
                   ),
                   SizedBox(height: MySizes.xs),
                   EventScrollWidget(),
+                  SizedBox(height: MySizes.sm),
                 ],
               ),
             ),
