@@ -23,11 +23,6 @@ class SignInScreen extends StatelessWidget {
               SignInHeader(),
               // Form
               SignInForm(),
-              // Divider
-              FormDivider(dividerText: MyTexts.orSignInWith.capitalize!),
-              const SizedBox(
-                height: MySizes.spaceBtwItems,
-              ),
               // Footer
               //const SocialButtons(),
             ],

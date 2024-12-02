@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../data/services/authentication/signup_service.dart';
 import '../../../features/authentication/screens/signin/signin.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../../utils/constants/text_strings.dart';
@@ -11,10 +12,8 @@ class SuccessScreen extends StatelessWidget {
       {super.key,
       required this.image,
       required this.title,
-      required this.subTitle,
-      required this.onPressed});
+      required this.subTitle});
   final String image, title, subTitle;
-  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,6 @@ class SuccessScreen extends StatelessWidget {
                 width: HelperFunctions.screenWidth() * 0.5,
               ),
               const SizedBox(height: MySizes.spaceBtwItems),
-
               // Title & SubTitle
               Text(
                 title,

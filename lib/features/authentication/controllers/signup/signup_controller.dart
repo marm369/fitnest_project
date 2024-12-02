@@ -14,6 +14,7 @@ import '../../../../utils/popups/loaders.dart';
 import '../../../../utils/validators/validation.dart';
 import '../../../network_manager.dart';
 
+
 class SignupController extends GetxController {
   static SignupController get instance => Get.find();
   final NetworkManager networkManager = Get.put(NetworkManager());
@@ -37,7 +38,6 @@ class SignupController extends GetxController {
 
   final selectedInterests = <String, bool>{}.obs;
   final UserService _userService = UserService();
-
   final List<String> goals = [
     'Make new friends',
     'Track health and fitness goals',
@@ -68,6 +68,9 @@ class SignupController extends GetxController {
   final birthDate = TextEditingController();
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
   RxString selectedGender = ''.obs;
+
+  Map<String, dynamic> accountInfo = {};
+  Map<String, dynamic> personalInfo = {};
 
   final RxList<Map<String, dynamic>> interests = <Map<String, dynamic>>[].obs;
 
@@ -147,8 +150,6 @@ class SignupController extends GetxController {
         );
       }
     } else if (currentStep.value == 2) {
-      // Validate Step 3 or Final Step
-
       // Continue with Step 3 validation
       if (formKeyStep3.currentState!.validate()) {
         // Get.to(AccountCreatedScreen());

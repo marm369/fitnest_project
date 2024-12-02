@@ -1,20 +1,33 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import '../../../data/services/category/category_service.dart';
 import '../../../data/services/profile/user_service.dart';
+import '../../../utils/constants/icons.dart';
+import '../../events/models/category.dart';
+import '../models/event_scroll.dart';
 
 class HomeController extends GetxController {
-  // Observable pour le nom de l'utilisateur
-  var userName = ''.obs;
-  final box = GetStorage();
-  final UserService _userService =
-      UserService(); // Correction : Instanciation du service
+  var userName = ''.obs; // Nom d'utilisateur réactif
+  final selectedCategories = <String, bool>{}.obs; // Catégories sélectionnées
+  final RxList<Map<String, dynamic>> categories =
+      <Map<String, dynamic>>[].obs; // Liste des catégories
+  final RxList<EventScroll> events =
+      RxList<EventScroll>(); // Liste des événements
+  final box = GetStorage(); // Instance de stockage local
+  final UserService _userService = UserService(); // Service utilisateur
+  final CategoryService categoryService =
+      CategoryService(); // Service des catégories
 
   @override
   void onInit() {
     super.onInit();
+    //loadCategories(); // Charger les catégories
+    loadEventsByCategories(
+        'Skiing'); // Charger les événements pour la catégorie Skiing
+
     // Lire l'ID utilisateur depuis le stockage
     int? userId = box.read('user_id');
-
     if (userId != null) {
       fetchUserName(userId);
     } else {
@@ -22,8 +35,51 @@ class HomeController extends GetxController {
     }
   }
 
-  // Méthode pour récupérer le nom de l'utilisateur
+  // Récupérer le nom de l'utilisateur
   Future<void> fetchUserName(int userId) async {
-    userName.value = await _userService.fetchUserName(userId);
+    try {
+      userName.value = await _userService.fetchUserName(userId);
+    } catch (e) {
+      print("Error fetching user name: $e");
+    }
+  }
+
+  // Charger les catégories
+  Future<void> loadCategories() async {
+    try {
+      final List<Category> data = await categoryService.fetchCategories();
+      categories.value = data.map((category) {
+        final String iconName = category.iconName ?? 'help_outline';
+        final String categoryName = category.name;
+        final iconData = iconMapping[iconName] ?? Icons.help_outline;
+        selectedCategories[categoryName] = false;
+
+        // Retourner les données formatées
+        return {
+          'name': categoryName,
+          'icon': iconData,
+        };
+      }).toList();
+    } catch (e) {
+      print("Error while loading categories: $e");
+    }
+  }
+
+  // Charger les événements par catégorie
+  Future<void> loadEventsByCategories(String category) async {
+    try {
+      final List<EventScroll> data =
+          await categoryService.fetchEventByCategories(category);
+      events.value = data; // Met à jour la liste des événements
+    } catch (e) {
+      print("Error while loading events: $e");
+    }
+  }
+
+  // Basculer entre les catégories sélectionnées
+  void toggleCategory(String category) {
+    selectedCategories.updateAll(
+        (key, value) => false); // Désélectionner toutes les catégories
+    selectedCategories[category] = true; // Sélectionner la catégorie actuelle
   }
 }

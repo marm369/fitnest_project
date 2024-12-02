@@ -11,26 +11,44 @@ class EventService {
   Future<List<Event>> fetchEvents({
     String? category,
     String? dateFilter,
+    String? partDay,
   }) async {
     String url;
 
-    if (category != null && dateFilter != null) {
+    if (category != null && dateFilter != null && dateFilter != 'AnyDay') {
       dateFilter = dateFilter.replaceAll(' ', '');
       url =
-          '$gatewayEventUrl/api/events/filterByCategoryAndDate/$category/$dateFilter';
+      '$gatewayEventUrl/api/events/filterByCategoryAndDate/$category/$dateFilter';
     } else if (dateFilter != null) {
       dateFilter = dateFilter.replaceAll(' ', '');
       url = '$gatewayEventUrl/api/events/filterByDate/$dateFilter';
     } else if (category != null) {
       url = '$gatewayEventUrl/api/categories/events/$category';
-    } else {
+    }
+    else if (partDay != null) {
+      print("parDayyyy");
+      url = '$gatewayEventUrl/api/events/byPartOfDay/$partDay';
+    }
+    else {
       url = '$gatewayEventUrl/api/events/all-details';
     }
 
     try {
       final response = await http.get(Uri.parse(url));
+
+      print("URL appelée: $url");
+      print("Code de statut: ${response.statusCode}");
+      print("Réponse brute: ${response.body}");
+
       if (response.statusCode == 200) {
         final eventsJson = json.decode(utf8.decode(response.bodyBytes));
+
+        // Si la réponse est null ou vide, afficher un message et retourner une liste vide
+        if (eventsJson == null || eventsJson.isEmpty) {
+          print("Réponse vide ou null reçue");
+          return [];
+        }
+
         if (eventsJson is List) {
           return eventsJson
               .where((event) => event != null && event is Map<String, dynamic>)
@@ -38,18 +56,20 @@ class EventService {
             return Event.fromJson(event as Map<String, dynamic>);
           }).toList();
         } else {
-          throw Exception('Unexpected JSON format: expected a List');
+          throw Exception('Format JSON inattendu : attendu une liste');
         }
       } else {
-        throw Exception('Failed to load events: ${response.statusCode}');
+        print('Échec du chargement des événements. Code de statut: ${response
+            .statusCode}');
+        throw Exception('Échec du chargement des événements');
       }
     } catch (e) {
-      print('Error fetching events: $e');
-      throw Exception('Failed to fetch events');
+      print('Erreur lors de la récupération des événements: $e');
+      throw Exception('Échec de la récupération des événements');
     }
   }
 
-  Future<List<Event>> fetchEventsWithDetails() async {
+    Future<List<Event>> fetchEventsWithDetails() async {
     try {
       final response =
           await http.get(Uri.parse('$gatewayEventUrl/api/events/all-details'));

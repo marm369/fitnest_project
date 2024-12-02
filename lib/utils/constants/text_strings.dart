@@ -69,6 +69,8 @@ class MyTexts {
       "Didn't get the email? Check your junk/spam or resend it.";
   static const String yourAccountCreatedTitle =
       "Your account successfully created!";
+  static const String successScreenSubTitle =
+      "Click continue to proceed to the login screen and access all the features of our app.";
   static const String yourAccountCreatedSubTitle =
       "Welcome to Your Ultimate : Your Account is Created, Unleash the Joy of Seamless Online !";
   static const String idProof =

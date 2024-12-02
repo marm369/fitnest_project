@@ -3,14 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';
-import '../../events/controllers/event_controller.dart';
+import '../../events/controllers/create_event_controller.dart';
+import '../../events/controllers/event_user_controller.dart';
 import '../../events/models/event.dart';
 import '../../events/screens/detail_event.dart';
 import '../controllers/profile_controller.dart';
 import 'settings.dart';
 
 class ProfileScreen extends StatelessWidget {
-  final EventController eventController = EventController();
+  final EventUserController eventController = EventUserController();
   final ProfileController controller = Get.put(ProfileController());
 
   ProfileScreen({super.key});

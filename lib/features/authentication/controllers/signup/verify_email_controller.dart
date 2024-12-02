@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 
+import '../../../../common/widgets/success_screen/success_screen.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/text_strings.dart';
 import '../../../../utils/popups/loaders.dart';
@@ -11,7 +12,6 @@ class VerifyEmailController extends GetxController {
   @override
   void onInit() {
     sendEmailVerification();
-    setTimeForAutoRedirect();
     super.onInit();
   }
 
@@ -24,47 +24,5 @@ class VerifyEmailController extends GetxController {
     } catch (e) {
       Loaders.errorSnackBar(title: 'Oops!', message: e.toString());
     }
-  }
-
-  setTimeForAutoRedirect() {
-    Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) async {
-        /*
-        if (user?.emailVerified ?? false) {
-          timer.cancel();
-          Get.off(
-            () => SuccessScreen(
-              image: MyImages.staticSuccessIllustration,
-              title: MyTexts.yourAccountCreatedTitle,
-              subTitle: MyTexts.yourAccountCreatedSubTitle,
-              onPressed: () {},
-            ),
-          );
-        }
-
-         */
-      },
-    );
-  }
-
-  // Manually Chack if Email Verifed
-  checkEmailVerificationStatus() async {
-    /*
-    if (currentUser != null && currentUser.emailVerified) {
-      Get.off(
-        () => SuccessScreen(
-          image: MyImages.staticSuccessIllustration,
-          title: MyTexts.yourAccountCreatedTitle,
-          subTitle: MyTexts.yourAccountCreatedSubTitle,
-          onPressed: () => AuthenticationRepository.instance.screenRedirect(),
-        ),
-      );
-
-
-    }
-  }
-
-     */
   }
 }

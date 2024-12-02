@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -108,5 +110,11 @@ class HelperFunctions {
           i, i + rowSize > widgets.length ? widgets.length : i + rowSize);
     }
     return wrappedList;
+  }
+
+  static String generateVerificationCode() {
+    final random = Random();
+    return (1000 + random.nextInt(9000))
+        .toString(); // Génère un code entre 1000 et 9999
   }
 }
