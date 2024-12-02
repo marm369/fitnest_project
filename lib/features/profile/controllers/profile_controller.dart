@@ -67,11 +67,7 @@ class ProfileController extends GetxController {
 
       // Ensure events is a valid list of Event objects
       if (events.isNotEmpty) {
-        userEvents.clear(); // Vider la liste
-        for (var event in events) {
-          print('event $event');
-          userEvents.add(event); // Ajouter chaque événement individuellement
-        }
+        userEvents.value = events;
       } else {
         print("No events found");
       }
