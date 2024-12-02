@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../../../data/services/change_username_service.dart';
-import '../../../data/services/user_service.dart';
+import '../../../data/services/profile/change_username_service.dart';
+import '../../../data/services/profile/user_service.dart';
 import '../../../utils/popups/full_screen_loader.dart';
 import '../../../utils/popups/loaders.dart';
 
@@ -21,12 +21,8 @@ class UsernameController extends GetxController {
   void onInit() {
     super.onInit();
     int? userId = box.read('user_id');
-
-    if (userId != null) {
-      fetchUserName(userId);
-    } else {
-      print("Aucun ID utilisateur trouvé dans le stockage.");
-    }
+    String? token = box.read('token') ?? '';
+    //_profileData = fetchProfileData(userId);
   }
 
   // Méthode pour récupérer le nom de l'utilisateur

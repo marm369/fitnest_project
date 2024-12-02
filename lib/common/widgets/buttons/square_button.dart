@@ -6,7 +6,7 @@ class SquareButton extends StatelessWidget {
   final String text;
   final IconData icon;
   final VoidCallback onPressed;
-  final String? image; // Image optionnelle
+  final String? image;
   final String? Function(String?)? validator; // Fonction de validation
 
   SquareButton({

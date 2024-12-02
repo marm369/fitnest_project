@@ -44,4 +44,5 @@ class MyImages {
   static String kPost1 = 'assets/images/post1.jpeg';
   static String kPost2 = 'assets/images/post2.jpeg';
   static String profile = 'assets/images/profile.jpeg';
+  static String defaultImageProfile = 'default-user-profile-image.png';
 }

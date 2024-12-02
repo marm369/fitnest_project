@@ -161,7 +161,6 @@ class AdditionalInfosForm extends StatelessWidget {
                       final goal = controller.goals[index];
                       final isSelected =
                           controller.selectedGoals[goal] ?? false;
-
                       return GestureDetector(
                         onTap: () => controller.toggleGoal(goal),
                         child: Container(
@@ -178,13 +177,16 @@ class AdditionalInfosForm extends StatelessWidget {
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.start, // Align items to the start
+                            crossAxisAlignment: CrossAxisAlignment.center, // Align vertically in the center
                             children: [
-                              Icon(
-                                isSelected
-                                    ? Icons.check_circle
-                                    : Icons.circle_outlined,
-                                color:
-                                    isSelected ? Colors.blue : Colors.grey[600],
+                              Flexible(
+                                child: Icon(
+                                  isSelected
+                                      ? Icons.check_circle
+                                      : Icons.circle_outlined,
+                                  color: isSelected ? Colors.blue : Colors.grey[600],
+                                ),
                               ),
                               SizedBox(width: MySizes.sm),
                               Text(
