@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../utils/constants/sizes.dart';
+
 class EventCard extends StatelessWidget {
   final String eventImage;
   final String title;
@@ -19,13 +21,12 @@ class EventCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 250,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(MySizes.sm),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
+            color: Colors.grey.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 5,
           ),
@@ -35,32 +36,34 @@ class EventCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+            borderRadius:
+                BorderRadius.vertical(top: Radius.circular(MySizes.sm)),
             child: Image.network(
               eventImage,
-              height: 150,
+              height: 80,
               width: double.infinity,
-              fit: BoxFit.cover,
+              fit: BoxFit.cover, // ensures the image maintains its aspect ratio
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 2.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
                   style: TextStyle(
-                    fontSize: 18,
+                    fontSize: MySizes.fontSizeMd,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
+                  overflow: TextOverflow.ellipsis, // handles overflow text
                 ),
-                SizedBox(height: 4),
+                SizedBox(height: MySizes.xs / 2),
                 Text(
                   date,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: MySizes.fontSizeXs,
                     color: Colors.grey[600],
                   ),
                 ),
@@ -69,24 +72,27 @@ class EventCard extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       backgroundImage: NetworkImage(profileImage),
-                      radius: 16,
+                      radius: MySizes.md,
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: MySizes.sm),
                     Expanded(
                       child: Text(
                         organizer,
-                        style: TextStyle(fontSize: 14, color: Colors.black87),
-                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontSize: MySizes.fontSizeSm,
+                            color: Colors.black87),
+                        overflow:
+                            TextOverflow.ellipsis, // handles overflow text
                       ),
                     ),
                     IconButton(
                       icon: Icon(
                         Icons.map,
                         color: Colors.redAccent,
-                        size: 20,
+                        size: MySizes.iconMd,
                       ),
                       onPressed: () {
-                        // Action pour l'icône de carte
+                        // Action for the map icon
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Open Map for $title')),
                         );

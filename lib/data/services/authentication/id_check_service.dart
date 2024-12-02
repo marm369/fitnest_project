@@ -15,8 +15,10 @@ class IdCheckService {
 
     final request = http.MultipartRequest('POST', url)
       ..headers.addAll(headers)
-      ..fields['language'] = 'fre'
+      ..fields['language'] = 'fre' // Langue française
+      ..fields['OCREngine'] = '2' // Spécifier Engine 2
       ..files.add(await http.MultipartFile.fromPath('file', imageFile.path));
+
     try {
       // Send the request
       final response = await request.send();
@@ -30,10 +32,7 @@ class IdCheckService {
           print("Error: ${data['ErrorMessage'][0]}");
           return null;
         } else {
-          final extractedTextList = data['ParsedResults'][0]['ParsedText'];
-          final extractedText = (extractedTextList is List)
-              ? extractedTextList.join(" ")
-              : extractedTextList;
+          final extractedText = data['ParsedResults'][0]['ParsedText'];
           return extractedText;
         }
       } else {

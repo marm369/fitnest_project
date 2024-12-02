@@ -192,43 +192,6 @@ class EventController extends GetxController {
     return null;
   }
 
-  Future<List<Event>> getEvents({
-    String? category,
-    String? dateFilter,
-  }) async {
-    try {
-      // Check if neither category nor dateFilter is provided
-      if (category == null && dateFilter == null) {
-        // Fetch all events with details if no filters are provided
-        return await eventService.fetchEventsWithDetails();
-      } else {
-        // Fetch filtered events based on category or dateFilter
-        return await eventService.fetchEvents(
-            category: category, dateFilter: dateFilter);
-      }
-    } catch (e) {
-      // Log any errors that occur during the fetching process
-      print('Error fetching events: $e');
-      return []; // Return an empty list in case of an error
-    }
-  }
 
-  Future<List<Event>> getEventsByUser(int userId) async {
-    try {
-      // Await the fetch operation to get the data
-      final eventData = await eventService.fetchUserEvents(userId);
 
-      // Update the reactive list
-      eventInfos.value = eventData;
-
-      // Return the fetched data
-      return eventData;
-    } catch (e) {
-      // Log the error for debugging purposes
-      print('Error fetching user events: $e');
-
-      // Return an empty list in case of an error
-      return [];
-    }
-  }
 }

@@ -1,20 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import '../../../../common/widgets/success_screen/success_screen.dart';
+import '../../../../data/services/authentication/signup_service.dart';
 import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/text_strings.dart';
 import '../../../../utils/helpers/helper_functions.dart';
+import '../../../../utils/popups/loaders.dart';
+import '../../controllers/signup/signup_controller.dart';
 import '../../controllers/signup/verify_email_controller.dart';
 
 class VerifyEmailScreen extends StatelessWidget {
-  const VerifyEmailScreen({super.key, this.email});
+  const VerifyEmailScreen({super.key, this.email, this.code});
 
   final String? email;
+  final String? code;
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(VerifyEmailController());
+    final SignupController signupController = SignupController();
+    final TextEditingController codeController = TextEditingController();
+
+    // Fonction de vérification du code
+    void _verifyCode() {
+      String enteredCode = codeController.text;
+
+      if (enteredCode.length == 4 && enteredCode == code) {
+        Get.to(() => SuccessScreen(
+              image: MyImages.staticSuccessIllustration,
+              title: MyTexts.yourAccountCreatedTitle,
+              subTitle: MyTexts.successScreenSubTitle,
+            ));
+      } else {
+        // Si le code est incorrect, afficher un SnackBar
+        Loaders.errorSnackBar(
+            title: 'Verification Code incorrect',
+            message: 'Check your email, and enter the correct code');
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -53,19 +78,25 @@ class VerifyEmailScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: MySizes.spaceBtwSections),
-              // Buttons
+
+              // Code Input Field
+              TextField(
+                controller: codeController,
+                keyboardType: TextInputType.number,
+                maxLength: 4,
+                decoration: InputDecoration(
+                  labelText: 'Entrez le code à 4 chiffres',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: MySizes.spaceBtwItems),
+
+              // Verify Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => controller.checkEmailVerificationStatus(),
+                  onPressed: _verifyCode,
                   child: const Text(MyTexts.tcontinue),
-                ),
-              ),
-              SizedBox(
-                width: double.infinity,
-                child: TextButton(
-                  onPressed: () => controller.sendEmailVerification(),
-                  child: const Text(MyTexts.resendEmail),
                 ),
               ),
             ],

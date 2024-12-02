@@ -4,7 +4,7 @@ import '../../../configuration/config.dart';
 
 class SignUpService {
   // Définir l'URL de base pour le service d'authentification
-  final String authUrl = '$GatewayUrl/auth-event';
+  final String authUrl = '$GatewayUrl/auth-service/auth';
 
   // URL pour vérifier le nom d'utilisateur et l'adresse e-mail
   late final String emailUrl = '$authUrl/check';
@@ -13,10 +13,7 @@ class SignUpService {
   late final String registerUrl = '$authUrl/register';
 
   // URL pour ajouter des informations utilisateur
-  late final String userUrl = '$authUrl/users/add';
-
-  // URL pour vérifier l'adresse e-mail
-  late final String emailVerifyUrl = '$authUrl/verify-email';
+  late final String userUrl = '$GatewayUrl/auth-service/user/add';
 
   // Method to check if the email or the username exists already in the DB
   Future<bool?> checkEmailAndUsername(
@@ -39,30 +36,33 @@ class SignUpService {
   }
 
   // Method to verify the email
-  Future<void> sendVerificationEmail(String email) async {
-    final url = Uri.parse('$GatewayUrl/send-verification-email');
+  Future<bool> sendVerificationEmail(String email, String code) async {
+    final url = Uri.parse('$authUrl/send-verification-email');
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email}),
+        body: jsonEncode({'email': email, 'code': code}),
       );
-
       if (response.statusCode == 200) {
         print('Verification email sent successfully');
+        return true; // L'email a été envoyé avec succès
       } else {
         print('Failed to send email: ${response.body}');
+        return false; // L'email n'a pas été envoyé
       }
     } catch (e) {
       print('Error sending verification email: $e');
+      return false; // Erreur lors de l'envoi de l'email
     }
   }
 
   // Method to create an account and retrieve a token
   Future<String?> createAccount(Map<String, dynamic> accountInfo) async {
     try {
+      print('Account Info: $accountInfo');
       final response = await http.post(
-        Uri.parse(registerUrl),
+        Uri.parse("http://172.20.212.190:8888/auth-service/auth/register"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(accountInfo),
       );

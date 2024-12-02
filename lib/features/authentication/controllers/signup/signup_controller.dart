@@ -1,22 +1,18 @@
+import 'package:fitnest/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'dart:io';
-import 'dart:convert';
-import '../../../../common/widgets/success_screen/success_screen.dart';
-import '../../../../data/services/event/event_service.dart';
+import '../../../../data/services/category/category_service.dart';
 import '../../../../data/services/authentication/id_check_service.dart';
 import '../../../../data/services/authentication/signup_service.dart';
-import '../../../../data/services/profile/user_service.dart';
 import '../../../../utils/constants/icons.dart';
-import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/formatters/formatter.dart';
-import '../../../../utils/popups/full_screen_loader.dart';
 import '../../../../utils/popups/loaders.dart';
 import '../../../../utils/validators/validation.dart';
+import '../../../events/models/category.dart';
 import '../../../network_manager.dart';
-import '../../screens/signin/signin.dart';
+import '../../screens/signup/verify_email.dart';
 
 class SignupController extends GetxController {
   static SignupController get instance => Get.find();
@@ -24,7 +20,7 @@ class SignupController extends GetxController {
 
   final ImagePicker _picker = ImagePicker();
   final pageController = PageController();
-
+  String? token;
   var currentStep = 0.obs;
 
   var profileImageMessageError = ''.obs;
@@ -40,7 +36,7 @@ class SignupController extends GetxController {
   var backImageMessageError = ''.obs;
 
   final selectedInterests = <String, bool>{}.obs;
-  final UserService _userService = UserService();
+  final CategoryService categoryService = CategoryService();
 
   final List<String> goals = [
     'Make new friends',
@@ -72,6 +68,9 @@ class SignupController extends GetxController {
   final birthDate = TextEditingController();
   Rx<DateTime?> selectedDate = Rx<DateTime?>(null);
   RxString selectedGender = ''.obs;
+
+  Map<String, dynamic> accountInfo = {};
+  Map<String, dynamic> personalInfo = {};
 
   final RxList<Map<String, dynamic>> interests = <Map<String, dynamic>>[].obs;
 
@@ -151,8 +150,6 @@ class SignupController extends GetxController {
         );
       }
     } else if (currentStep.value == 2) {
-      // Validate Step 3 or Final Step
-
       // Continue with Step 3 validation
       if (formKeyStep3.currentState!.validate()) {
         // Get.to(AccountCreatedScreen());
@@ -188,7 +185,7 @@ class SignupController extends GetxController {
       File frontIdImage, String firstName, String lastName) async {
     File resizedImage = await Formatter.resizeImage(frontIdImage);
     // Extract text from the ID image
-    final message = await _idCheckService.extractTextFromImage(frontIdImage);
+    final message = await _idCheckService.extractTextFromImage(resizedImage);
     if (message != null) {
       // Check if the extracted text contains the Moroccan ID card phrase
       if (!message!.contains("ROYAUME DU MAROC") &&
@@ -200,33 +197,9 @@ class SignupController extends GetxController {
           !message.toLowerCase().contains(lastName.toLowerCase())) {
         return "First name and last name do not match.";
       }
-      // Check for the validity date, assuming the format "Valide jusqu'au dd.MM.yyyy"
-      else if (message.contains("Valable jusqu'au")) {
-        final dateRegex = RegExp(r"Valable jusqu'au (\d{2}.\d{2}.\d{4})");
-        final dateMatch = dateRegex.firstMatch(message);
-
-        if (dateMatch != null) {
-          final expiryDateString = dateMatch.group(1);
-          final DateTime expiryDate =
-              DateFormat('dd.MM.yyyy').parse(expiryDateString!);
-          print(expiryDate);
-          final DateTime currentDate = DateTime.now();
-
-          if (expiryDate.isBefore(currentDate)) {
-            return "The ID card has expired.";
-          } else {
-            return "The ID card is valid.";
-          }
-        } else {
-          return "Validity date not found on the card.";
-        }
-      }
-
       // Check if the extracted text is valid (not blurry or unreadable)
       else if (message.contains("Erreur") || message.isEmpty) {
         return "The image is blurry, or the text could not be extracted correctly.";
-      } else {
-        return null;
       }
     } else {
       return null;
@@ -268,24 +241,27 @@ class SignupController extends GetxController {
   // Interests Part
   Future<void> loadInterests() async {
     try {
-      // Appel de la méthode du service
-      //final data = await _userService.fetchInterests();
-      final data = null;
-      // Data transformation to match the controller variables
+      final List<Category> data = await categoryService.fetchCategories();
       interests.value = data.map((category) {
-        final iconName = category['iconName'] as String? ?? 'help_outline';
-        final categoryName = category['name'] as String;
+        final String iconName = category.iconName ?? 'help_outline';
+        print("iconName: $iconName");
+        // Nom de la catégorie
+        final String categoryName = category.name;
+
+        // Récupérer l'icône correspondante ou utiliser une icône par défaut
         final iconData = iconMapping[iconName] ?? Icons.help_outline;
 
-        // Initialize interest selection
+        // Initialiser l'état de sélection des intérêts
         selectedInterests[categoryName] = false;
 
+        // Retourner les données formatées
         return {
           'name': categoryName,
           'icon': iconData,
         };
       }).toList();
     } catch (e) {
+      // Gestion des erreurs et log de l'erreur
       print("Erreur lors du chargement des intérêts : $e");
     }
   }
@@ -311,37 +287,47 @@ class SignupController extends GetxController {
   }
 
   Future<void> signup() async {
+    accountInfo = {
+      'username': username.text.trim(),
+      'email': email.text.trim(),
+      'password': password.text.trim(),
+    };
+    print(accountInfo);
+    personalInfo = {
+      'firstName': firstName.text.trim(),
+      'lastName': lastName.text.trim(),
+      'phoneNumber': phoneNumber.text.trim(),
+      'dateBirth': birthDate.text.trim(),
+      'gender': selectedGender.value.trim(),
+      'description': '',
+      'idFace': frontImagePath.value.trim(),
+      'idBack': backImagePath.value.trim(),
+      'profilePicture': profileImagePath.value.trim(),
+      'userName': username.text.trim(),
+      'interests': selectedInterests.value
+    };
     try {
-      FullScreenLoader.openLoadingDialog(
-          'Processing your information...', MyImages.loadingIllustration);
-      final isConnected = await networkManager.isConnected();
-      if (!isConnected) {
-        Loaders.errorSnackBar(
-          title: 'Connection Failed',
-          message: 'Please check your Internet connection.',
-        );
-        return;
-      }
-
       final emailAndUsernameCheck = await _signUpService.checkEmailAndUsername({
         'username': username.text.trim(),
         'email': email.text.trim(),
       });
       if (emailAndUsernameCheck == true) {
-        /* // Send a verification email instead of creating the account right away
-
-        final verificationToken = await _signUpService.sendVerificationEmail({
-          'email': email.text.trim(),
-        });
-
-        if (verificationToken != null) {
-          Get.to(() => VerifyEmailScreen(email: email.text.trim()));
+        String verificationCode = HelperFunctions.generateVerificationCode();
+        print("-----------MySecretCode-----------");
+        print(verificationCode);
+        // Send a verification email instead of creating the account right away
+        bool success = await _signUpService.sendVerificationEmail(
+            email.text.trim(), verificationCode);
+        if (success) {
+          createAccount();
+          savePersonalInfo();
+          Get.to(() => VerifyEmailScreen(
+              email: email.text.trim(), code: verificationCode));
         } else {
           Loaders.errorSnackBar(
-            title: 'Verification Failed',
-            message: 'Could not send verification email. Please try again.',
-          );
-        }*/
+              title: 'Verification Failed',
+              message: 'Could not send verification email. Please try again.');
+        }
       } else {
         Loaders.errorSnackBar(
           title: 'Registration Failed',
@@ -351,6 +337,15 @@ class SignupController extends GetxController {
     } catch (e) {
       Loaders.errorSnackBar(title: 'Erreur', message: e.toString());
     }
+  }
+
+  Future<String?> createAccount() async {
+    token = await _signUpService.createAccount(accountInfo);
+    return token;
+  }
+
+  Future<void> savePersonalInfo() async {
+    await _signUpService.savePersonalInfo(personalInfo, token!);
   }
 
   @override

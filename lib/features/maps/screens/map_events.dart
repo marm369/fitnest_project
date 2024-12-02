@@ -1,225 +1,250 @@
+import 'package:fitnest/data/services/map/search_place.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../../data/services/event/event_service.dart';
 import '../../../utils/helpers/helper_functions.dart';
-import '../../events/controllers/event_controller.dart';
 import '../../events/models/event.dart';
+import '../../events/models/event_filters.dart';
 import '../../events/screens/detail_event.dart';
 import '../widgets/filters.dart';
+import 'package:fitnest/features/events/controllers/event_controller_management.dart';
+import '../../../configuration/config.dart';
 
 class EventsMapPage extends StatefulWidget {
+  final EventControllerManagement eventController =
+  EventControllerManagement(eventService: EventService());
+  final TextEditingController _searchController = TextEditingController();
+  final SearchPlace _mapService = SearchPlace(apiKey: ORSAPIKey);
+
+  EventsMapPage({Key? key}) : super(key: key);
+
   @override
   _EventsMapPageState createState() => _EventsMapPageState();
 }
 
 class _EventsMapPageState extends State<EventsMapPage> {
-  final EventController _eventController = EventController();
-  List<Event> _events = []; // List of Event objects
-  String? _selectedCategory;
-  String? _selectedDateFilter;
-  LatLng? _currentLocation;
-  final MapController _mapController = MapController(); // Map controller
+  String? selectedCategory;
+  String? selectedDateFilter;
+  String? selectedPartOfDay;
+  LatLng? currentLocation;
+  final MapController _mapController = MapController();
+  List<Event> events = [];
+  bool isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchEvents();
-    _determinePosition();
-  }
-
-  void _fetchEvents() async {
-    print(
-        'Fetching events with category: $_selectedCategory, dateFilter: $_selectedDateFilter');
+  Future<void> _fetchEvents() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
-      final events = await _eventController.getEvents(
-        category: _selectedCategory,
-        dateFilter: _selectedDateFilter,
+      await widget.eventController.getEvents(
+        category: selectedCategory,
+        dateFilter: selectedDateFilter,
+        partDay: selectedPartOfDay,
       );
-      print("---------dans map:-----------,$events");
       setState(() {
-        _events = events;
+        events = widget.eventController.events;
       });
     } catch (e) {
       print('Error fetching events: $e');
-      _showErrorDialog('Error loading events: $e');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
   void _onCategorySelected(String? category) {
     setState(() {
-      _selectedCategory = category;
-      _selectedDateFilter = null;
+      selectedCategory = category;
+    });
+    _fetchEvents();
+  }
+
+  void _onPartDaySelected(String? partDay) {
+    setState(() {
+      selectedPartOfDay = partDay;
     });
     _fetchEvents();
   }
 
   void _onFiltersApplied(EventFilters filters) {
     setState(() {
-      _selectedDateFilter = filters.date;
-      _selectedCategory = null;
+      selectedDateFilter = filters.date;
+      selectedPartOfDay = filters.time;
     });
     _fetchEvents();
   }
 
   Future<void> _determinePosition() async {
     try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-      if (permission == LocationPermission.whileInUse ||
-          permission == LocationPermission.always) {
-        Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
+      final permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.always ||
+          permission == LocationPermission.whileInUse) {
+        final position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
         setState(() {
-          _currentLocation = LatLng(position.latitude, position.longitude);
+          currentLocation = LatLng(position.latitude, position.longitude);
         });
       } else {
-        _showErrorDialog('Location permission is denied.');
+        print('Location permission denied.');
       }
     } catch (e) {
       print('Error getting current location: $e');
-      _showErrorDialog('Unable to retrieve current location.');
     }
   }
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Error'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+  void _locateMe() {
+    if (currentLocation != null) {
+      _mapController.move(currentLocation!, 15.0);
+    } else {
+      print('Current location is not available.');
+    }
   }
 
-  void _locateMe() {
-    if (_currentLocation != null) {
-      _mapController.move(
-          _currentLocation!, 15.0); // Focus and zoom to the location
+  Future<void> _searchLocation(String query) async {
+    final location = await widget._mapService.getCoordinatesFromAddress(query);
+    if (location != null) {
+      setState(() {
+        currentLocation = LatLng(location.latitude, location.longitude);
+      });
+      _mapController.move(currentLocation!, 15.0);
     } else {
-      _showErrorDialog('Current location is not available.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Location "$query" not found.')),
+      );
     }
   }
 
   @override
+  void initState() {
+    super.initState();
+    _determinePosition();
+    _fetchEvents();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final dark = HelperFunctions.isDarkMode(context);
+    final darkMode = HelperFunctions.isDarkMode(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Events on the Map'),
-        backgroundColor: dark ? Colors.black : Colors.white,
+        title: const Text('Events on the Map'),
+        backgroundColor: darkMode ? Colors.black : Colors.white,
         titleTextStyle: TextStyle(
-          color: dark ? Colors.white : Colors.black,
+          color: darkMode ? Colors.white : Colors.black,
           fontWeight: FontWeight.bold,
           fontSize: 18.0,
         ),
       ),
       body: Column(
         children: [
-          // Search Bar outside of Stack
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
+              controller: widget._searchController,
               decoration: InputDecoration(
-                hintText: 'Search for an Event',
-                prefixIcon: Icon(Icons.search),
+                hintText: 'Search for an Event or Location',
+                prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              onChanged: (query) {},
+              onSubmitted: _searchLocation,
             ),
           ),
           Expanded(
             child: Stack(
               children: [
-                // The Map
-                Positioned.fill(
-                  child: FlutterMap(
-                    mapController: _mapController, // Attach the map controller
-                    options: MapOptions(
-                      center: _currentLocation ?? LatLng(34.020882, -6.836455),
-                      zoom: 12.0,
+                FlutterMap(
+                  mapController: _mapController,
+                  options: MapOptions(
+                    center: currentLocation ?? LatLng(34.020882, -6.836455),
+                    zoom: 12.0,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      subdomains: ['a', 'b', 'c'],
                     ),
-                    children: [
-                      TileLayer(
-                        urlTemplate:
-                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        subdomains: ['a', 'b', 'c'],
-                      ),
-                      MarkerLayer(
-                        markers: [
-                          if (_currentLocation != null)
-                            Marker(
-                              point: _currentLocation!,
-                              builder: (ctx) => Icon(
-                                Icons.person_pin_circle,
-                                color: Colors.blue,
-                                size: 40,
-                              ),
+                    MarkerLayer(
+                      markers: [
+                        if (currentLocation != null)
+                          Marker(
+                            point: currentLocation!,
+                            builder: (ctx) => Icon(
+                              Icons.person_pin_circle,
+                              color: Colors.blue,
+                              size: 40,
                             ),
-                          ..._events
-                              .map((event) {
-                                if (event.location != null) {
-                                  final location = event.location!;
-                                  return Marker(
-                                    point: LatLng(
-                                        location.latitude, location.longitude),
-                                    builder: (ctx) => IconButton(
-                                      icon: Icon(Icons.location_on,
-                                          color: Colors.red),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                EventDetailPage(event: event),
-                                          ),
-                                        );
-                                      },
+                          ),
+                        ...events.map((event) {
+                          if (event.location != null) {
+                            final location = event.location!;
+                            return Marker(
+                              point: LatLng(location.latitude, location.longitude),
+                              builder: (ctx) => IconButton(
+                                icon: const Icon(
+                                  Icons.location_on,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          EventDetailPage(event: event),
                                     ),
                                   );
-                                } else {
-                                  return null;
-                                }
-                              })
-                              .whereType<Marker>()
-                              .toList(),
-                        ],
-                      ),
-                    ],
-                  ),
+                                },
+                              ),
+                            );
+                          }
+                          else if (event.route != null && event.route!.coordinatesFromPath.isNotEmpty) {
+                            // Vérification des coordonnées dans la route
+                            final routeCoordinates = event.route!.coordinatesFromPath[0];
+                            if (routeCoordinates.length >= 2) {
+                              return Marker(
+                                point: LatLng(routeCoordinates[0], routeCoordinates[1]),
+                                builder: (ctx) => IconButton(
+                                  icon: Icon(Icons.location_on, color: Colors.green),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EventDetailPage(event: event),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            }
+                          }
+                          return null;
+                        }).whereType<Marker>().toList(),
+                      ],
+                    ),
+                  ],
                 ),
-                // Filters Positioned Above the Map
+                if (isLoading)
+                  const Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 Positioned(
                   top: 0,
                   left: 0,
                   right: 0,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        // Filter Section
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-                          child: Filters(
-                            onCategorySelected: _onCategorySelected,
-                            onFiltersApplied: _onFiltersApplied,
-                          ),
-                        ),
-                      ],
+                    child: Filters(
+                      onCategorySelected: (category) {
+                        _onCategorySelected(category?.name);
+                      },
+                      onFiltersApplied: _onFiltersApplied,
+                      onPartDaySelected: _onPartDaySelected,
                     ),
                   ),
                 ),
@@ -230,7 +255,7 @@ class _EventsMapPageState extends State<EventsMapPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _locateMe,
-        child: Icon(Icons.my_location),
+        child: const Icon(Icons.my_location),
         tooltip: 'Locate Me',
       ),
     );

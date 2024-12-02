@@ -6,7 +6,7 @@ import '../../../utils/constants/icons.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../../utils/helpers/helper_functions.dart';
 import '../controllers/category_controller.dart';
-import '../controllers/event_controller.dart';
+import '../controllers/create_event_controller.dart';
 
 class EventScreen extends StatelessWidget {
   final EventController eventController = Get.put(EventController());
