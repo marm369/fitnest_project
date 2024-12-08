@@ -23,7 +23,6 @@ class ProfileScreen extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
     final futureEvents = eventController.getEventsByUser(userProfile.id);
-
     return DefaultTabController(
       length: 1,
       child: Scaffold(

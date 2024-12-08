@@ -37,35 +37,26 @@ class CategoryService {
 
         // Liste des événements enrichis
         RxList<EventScroll> eventList = RxList<EventScroll>();
-
         for (var eventJson in eventsData) {
-          print("Event data retrieved: ${eventJson['name']}");
-
           // Créer un objet EventScroll
           EventScroll event = EventScroll.fromJson(eventJson);
-
           // Récupérer l'ID de l'organisateur
-          String organiserId = eventJson['organizerId'];
-          print("Organizer ID: $organiserId");
-
+          int organizerId = eventJson['organizerId'];
           // Requête pour récupérer les informations de l'organisateur
           final userResponse = await http.get(
-            Uri.parse('$gatewayBaseUrl/auth-service/getUserById/$organiserId'),
+            Uri.parse('$GatewayUrl/auth-service/user/getUserById/$organizerId'),
           );
 
           if (userResponse.statusCode == 200) {
             // Décoder les données utilisateur
             String utf8UserBody = utf8.decode(userResponse.bodyBytes);
             Map<String, dynamic> userData = json.decode(utf8UserBody);
-
             // Ajouter les informations de l'organisateur à l'événement
-            event.organiserName =
+            event.organizerName =
                 "${userData['firstName']} ${userData['lastName']}";
-            event.organiserImage = userData['profilePicture'] ?? '';
-
-            print("Organizer Name: ${event.organiserName}");
+            event.organizerImage = userData['profilePicture'] ?? '';
           } else {
-            print("Failed to load organizer information for ID: $organiserId");
+            print("Failed to load organizer information for ID: $organizerId");
           }
 
           // Ajouter l'événement à la liste
