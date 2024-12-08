@@ -17,8 +17,6 @@ class UserService {
   Future<String> fetchUserName(int userId) async {
     final url = Uri.parse('$gatewayAthUrl/user/$userId/username');
 
-    print("Token is $token");
-
     try {
       final response = await http.get(
         url,
@@ -39,6 +37,8 @@ class UserService {
 
 // Method to fetch profile data
   Future<UserModel> fetchProfileData(int userId) async {
+    print("-----------");
+    print(userId);
     final url = Uri.parse('$gatewayAthUrl/user/getUserById/$userId');
     try {
       final response = await http.get(
@@ -52,6 +52,26 @@ class UserService {
         return UserModel.fromJson(data);
       } else {
         throw Exception('Error loading profile data');
+      }
+    } catch (e) {
+      throw Exception('Connection Error: $e');
+    }
+  }
+
+  // Method to fetch profile data and return JSON
+  Future<Map<String, dynamic>> fetchProfileDataAsJson(int userId) async {
+    final url = Uri.parse('$gatewayAthUrl/user/getUserById/$userId');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          if (token != null) 'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception('Error loading profile data: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Connection Error: $e');

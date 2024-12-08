@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../common/widgets/buttons/filter_button.dart';
-import '../../../../common/widgets/buttons/icon_button.dart';
-import '../../../../utils/constants/colors.dart';
 import '../../events/controllers/category_controller.dart';
 import '../../events/models/category.dart';
 import '../../events/models/event_filters.dart';
@@ -13,12 +11,18 @@ class Filters extends StatelessWidget {
   final ValueChanged<EventFilters> onFiltersApplied;
   final ValueChanged<Category?> onCategorySelected;
   final ValueChanged<String> onPartDaySelected;
+  final ValueChanged<String?> onDistanceSelected;
+  final double? latitude;
+  final double? longitude;
 
   const Filters({
     super.key,
     required this.onFiltersApplied,
     required this.onCategorySelected,
     required this.onPartDaySelected,
+    required this.onDistanceSelected,
+    required this.latitude,
+    required this.longitude,
   });
 
   @override
@@ -32,12 +36,6 @@ class Filters extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         children: [
-          IconButtonW(
-            iconColor: MyColors.darkerGrey,
-            icon: Icons.filter_list,
-            onPressed: () => _showFilterSheet(context, filterController),
-          ),
-          const SizedBox(width: 10),
           _buildFilterButton(
             context,
             filterController,
@@ -69,69 +67,40 @@ class Filters extends StatelessWidget {
     );
   }
 
-  void _showFilterSheet(BuildContext context, FiltersController controller) {
+  void _showCategoryFilter(BuildContext context,
+      CategoryController categoryController,) {
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        expand: false,
-        builder: (_, scrollController) => Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            controller: scrollController,
-            children: [
-              _buildDateSection(controller),
-              _buildTimeSection(controller),
-              _buildDistanceSection(controller),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _applyFilters(controller);
-                },
-                child: const Text('Apply'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showCategoryFilter(
-      BuildContext context,
-      CategoryController categoryController,
-      ) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Obx(() {
-        final categories = categoryController.categories;
-        return ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            ...categories.map(
-                  (category) => ListTile(
-                title: Text(category.name),
-                leading: Radio<Category?>(
-                  value: category,
-                  groupValue: categoryController.selectedCategory.value,
-                  onChanged: (value) {
-                    categoryController.setSelectedCategory(value!);
-                    onCategorySelected(value);
-                  },
+      builder: (context) =>
+          Obx(() {
+            final categories = categoryController.categories;
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                ...categories.map(
+                      (category) =>
+                      ListTile(
+                        title: Text(category.name),
+                        leading: Radio<Category?>(
+                          value: category,
+                          groupValue: categoryController.selectedCategory.value,
+                          onChanged: (value) {
+                            categoryController.setSelectedCategory(value!);
+                            onCategorySelected(value);
+                          },
+                        ),
+                      ),
                 ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _applyFilters(Get.find<FiltersController>());
-              },
-              child: const Text('Apply'),
-            ),
-          ],
-        );
-      }),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _applyFilters(Get.find<FiltersController>());
+                  },
+                  child: const Text('Apply'),
+                ),
+              ],
+            );
+          }),
     );
   }
 
@@ -139,26 +108,23 @@ class Filters extends StatelessWidget {
     final filters = EventFilters(
       date: controller.selectedDate.value,
       time: controller.selectedTime.value,
-      distance: controller.selectedDistance.value,
       category: controller.selectedCategory.value?.name,
+      distance: controller.selectedDistance.value,
     );
     onFiltersApplied(filters);
   }
 
-  Widget _buildFilterButton(
-      BuildContext context,
+  Widget _buildFilterButton(BuildContext context,
       FiltersController controller,
       String label,
       IconData icon,
-      Widget Function(FiltersController) sectionBuilder,
-      ) {
+      Widget Function(FiltersController) sectionBuilder,) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: FilterButton(
         icon: icon,
         label: label,
-        onPressed: () =>
-            _showFilterModal(context, controller, sectionBuilder),
+        onPressed: () => _showFilterModal(context, controller, sectionBuilder),
       ),
     );
   }
@@ -166,7 +132,7 @@ class Filters extends StatelessWidget {
   Widget _buildDateSection(FiltersController controller) {
     return _buildRadioSection(
       title: 'By Date',
-      options: ['Any day', 'Today', 'Tomorrow', 'This Week', 'After This Week'],
+      options: ['Today', 'Tomorrow', 'This Week', 'After This Week'],
       selectedValue: controller.selectedDate.value,
       onChanged: (value) => controller.updateDate(value!),
     );
@@ -175,7 +141,7 @@ class Filters extends StatelessWidget {
   Widget _buildTimeSection(FiltersController controller) {
     return _buildRadioSection(
       title: 'By Time',
-      options: ['Any Time', 'Morning', 'Afternoon', 'Evening', 'Night'],
+      options: ['Morning', 'Afternoon', 'Evening', 'Night'],
       selectedValue: controller.selectedTime.value,
       onChanged: (value) => controller.updateTime(value!),
     );
@@ -184,7 +150,7 @@ class Filters extends StatelessWidget {
   Widget _buildDistanceSection(FiltersController controller) {
     return _buildRadioSection(
       title: 'By Distance',
-      options: ['Any Distance', '< 5 km', '5 - 10 km', '10+ km'],
+      options: ['2 km', '5 km', '10 km', '25 km', '50 km', '100 km', '150 km'],
       selectedValue: controller.selectedDistance.value,
       onChanged: (value) => controller.updateDistance(value!),
     );
@@ -204,38 +170,38 @@ class Filters extends StatelessWidget {
           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
-        ...options.map((option) => RadioListTile<String?>(
-          title: Text(option),
-          value: option,
-          groupValue: selectedValue,
-          onChanged: onChanged,
-        )),
+        ...options.map((option) =>
+            RadioListTile<String?>(
+              title: Text(option),
+              value: option,
+              groupValue: selectedValue,
+              onChanged: onChanged,
+            )),
       ],
     );
   }
 
-  void _showFilterModal(
-      BuildContext context,
+  void _showFilterModal(BuildContext context,
       FiltersController controller,
-      Widget Function(FiltersController) sectionBuilder,
-      ) {
+      Widget Function(FiltersController) sectionBuilder,) {
     showModalBottomSheet(
       context: context,
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            sectionBuilder(controller),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _applyFilters(controller);
-              },
-              child: const Text('Apply'),
+      builder: (context) =>
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: ListView(
+              children: [
+                sectionBuilder(controller),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _applyFilters(controller);
+                  },
+                  child: const Text('Apply'),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 }

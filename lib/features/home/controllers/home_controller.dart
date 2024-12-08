@@ -66,13 +66,13 @@ class HomeController extends GetxController {
 
   // Charger les événements par catégorie
   Future<void> loadEventsByCategories(String category) async {
-    try {
-      final List<EventScroll> data =
-          await categoryService.fetchEventByCategories(category);
-      events.value = data; // Met à jour la liste des événements
-    } catch (e) {
-      print("Error while loading events: $e");
-    }
+      try {
+        final List<EventScroll> data =
+            await categoryService.fetchEventByCategories(category);
+        events.value = data; // Met à jour la liste des événements
+      } catch (e) {
+        print("Error while loading events: $e");
+      }
   }
 
   // Basculer entre les catégories sélectionnées

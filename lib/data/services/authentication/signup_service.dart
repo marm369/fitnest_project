@@ -60,9 +60,8 @@ class SignUpService {
   // Method to create an account and retrieve a token
   Future<String?> createAccount(Map<String, dynamic> accountInfo) async {
     try {
-      print('Account Info: $accountInfo');
       final response = await http.post(
-        Uri.parse("http://172.20.212.190:8888/auth-service/auth/register"),
+        Uri.parse("$authUrl/register"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode(accountInfo),
       );
@@ -81,7 +80,8 @@ class SignUpService {
 
   // Method to save personal information
   Future<void> savePersonalInfo(
-      Map<String, dynamic> personalInfo, String token) async {
+      Map<String, dynamic> personalInfo, String? token) async {
+    print(personalInfo['interests']);
     try {
       final response = await http.post(
         Uri.parse(userUrl),

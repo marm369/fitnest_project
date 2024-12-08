@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../../common/widgets/appbar/appbar.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/constants/text_strings.dart';
 import '../../../../../utils/validators/validation.dart';
+import '../../controllers/firstname_controller.dart';
+import '../../controllers/profile_controller.dart';
 
 class UpdateFirstName extends StatelessWidget {
   const UpdateFirstName({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // If you’re using a controller, make sure it's declared properly.
-    // final controller = Get.put(UpdateNameController());
+    final updateFirstNameController = Get.put(UpdateFirstNameController());
     return Scaffold(
       // Custom AppBar
       appBar: MyAppBar(
@@ -36,12 +38,12 @@ class UpdateFirstName extends StatelessWidget {
             // Text field and Button
             Form(
               // If using a key, uncomment the next line
-              // key: controller.updateUserNameFormKey,
+              key: updateFirstNameController.formKeyFirstName,
               child: Column(
                 children: [
                   TextFormField(
                     // Uncomment and set controller if needed
-                    // controller: controller.firstName,
+                    controller: updateFirstNameController.firstName,
                     validator: (value) =>
                         MyValidator.validateEmptyText("First Name", value),
                     decoration: const InputDecoration(
@@ -59,8 +61,7 @@ class UpdateFirstName extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Add functionality here or uncomment the next line if using a controller
-                  // controller.updateUserName();
+                  updateFirstNameController.updateFirstName();
                 },
                 child: const Text('Save'),
               ),

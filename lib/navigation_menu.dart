@@ -8,6 +8,7 @@ import 'features/maps/screens/map_events.dart';
 import 'features/profile/screens/profile.dart';
 import 'utils/constants/colors.dart';
 import 'utils/helpers/helper_functions.dart';
+import 'features/maps/screens/map_events.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});

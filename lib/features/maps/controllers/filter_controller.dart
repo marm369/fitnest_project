@@ -1,17 +1,26 @@
-import 'package:get/get.dart';
+import 'dart:convert';
 
+import 'package:dynamic_multi_step_form/dynamic_multi_step_form.dart';
+import 'package:fitnest/data/services/event/event_service.dart';
+import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
+
+import '../../../data/services/map/current_position.dart';
 import '../../events/models/category.dart';
+import '../../events/models/event.dart';
+import 'package:http/http.dart' as http;
 
 class FiltersController extends GetxController {
-  RxString selectedDate = 'Any day'.obs;
-  RxString selectedTime = 'Any Time'.obs;
-  RxString selectedDistance = 'Any Distance'.obs;
+  RxString selectedDate = ''.obs;
+  RxString selectedTime = ''.obs;
+  RxString selectedDistance = ''.obs;
   Rx<Category?> selectedCategory = Rx<Category?>(null);
-
+  RxList<Event> nearbyEvents = <Event>[].obs;
+  final CurrentPosition currentPositionService = CurrentPosition();
+  final EventService eventService = EventService();
   void updateCategory(Category? category) {
     selectedCategory.value = category;
   }
-
 
   void updateDate(String date) {
     selectedDate.value = date;
@@ -21,7 +30,7 @@ class FiltersController extends GetxController {
     selectedTime.value = time;
   }
 
-  void updateDistance(String distance) {
+  void updateDistance(String distance) async {
     selectedDistance.value = distance;
   }
 

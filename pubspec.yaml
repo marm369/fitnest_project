@@ -58,9 +58,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-  flutter_launcher_icons: ^0.14.1
+  flutter_launcher_icons: ^0.13.1
   build_runner:
   json_serializable:
+  dart_code_metrics: ^5.2.0
 
 flutter_icons:
   android: true
@@ -80,6 +81,7 @@ flutter:
     - assets/images/static-images/
     - assets/icons/
     - assets/images/
+    - assets/images/default_user.png
 
 
 
