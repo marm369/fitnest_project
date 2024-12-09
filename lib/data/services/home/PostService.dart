@@ -1,11 +1,13 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import '../../../configuration/config.dart';
-import '../../events/models/event.dart';
-import '../models/post_model.dart';
+import '../../../features/events/models/event.dart';
+import '../../../features/home/models/post_model.dart';
 
 class PostService {
-  final String baseUrl = 'http://192.168.169.176:8082/api/events'; // URL des événements
+  final String postUrl = '$GatewayUrl/api/events'; // URL des événements
 
   // Méthode pour récupérer tous les posts
   Future<List<PostModel>> fetchPosts() async {
@@ -14,15 +16,16 @@ class PostService {
 
       if (response.statusCode == 200) {
         final body = json.decode(utf8.decode(response.bodyBytes));
-        List<Event> events = (body as List)
-            .map((dynamic item) => Event.fromJson(item))
-            .toList();
+        List<Event> events =
+            (body as List).map((dynamic item) => Event.fromJson(item)).toList();
 
         // Convertir les événements en PostModel avec récupération des données utilisateur
         List<PostModel> posts = [];
         for (var event in events) {
-          final user = await _fetchUserById(event.organizerId);  // Fetch user data
-          final post = PostModel.fromEvent(event, user: user);   // Pass user data to PostModel
+          final user =
+              await _fetchUserById(event.organizerId); // Fetch user data
+          final post = PostModel.fromEvent(event,
+              user: user); // Pass user data to PostModel
           posts.add(post);
         }
 
