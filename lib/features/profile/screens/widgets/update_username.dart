@@ -5,61 +5,55 @@ import '../../../../../common/widgets/appbar/appbar.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/constants/text_strings.dart';
 import '../../../../../utils/validators/validation.dart';
-import '../../controllers/controller_username.dart';
+import '../../controllers/username_controller.dart';
 
-class UpdateUsername extends StatelessWidget {
-  const UpdateUsername({super.key});
-
+class UpdateUserName extends StatelessWidget {
+  final updateUserNameController = Get.put(UpdateUserNameController());
+  UpdateUserName({super.key});
   @override
   Widget build(BuildContext context) {
-    final controller =
-        Get.put(UsernameController()); // Utilisation du contrôleur
-
     return Scaffold(
-      // Custom Appbar
+      // Custom AppBar
       appBar: MyAppBar(
         showBackArrow: true,
-        title: Text('Change Username',
-            style: Theme.of(context).textTheme.headlineSmall),
-      ), // TAppBar
+        title: Text(
+          'Change User Name',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(MySizes.defaultSpace),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Headings
             Text(
-              'For the best experience, try selecting a username that’s unique and easy for others to remember.',
+              'Provide us with your User Name',
               style: Theme.of(context).textTheme.labelMedium,
             ),
             const SizedBox(height: MySizes.spaceBtwSections),
-
-            // Formulaire pour entrer le nom d'utilisateur
             Form(
-              key: controller.formKeyUsername,
+              key: updateUserNameController.formKeyUserName,
               child: Column(
                 children: [
                   TextFormField(
-                    controller:
-                        controller.username, // Liaison avec le contrôleur
-                    validator: (value) => MyValidator.validateEmptyText(
-                        'Username', value), // Validation personnalisée
+                    controller: updateUserNameController.userName,
+                    validator: (value) =>
+                        MyValidator.validateEmptyText("User Name", value),
                     decoration: const InputDecoration(
-                        labelText: MyTexts.username,
-                        prefixIcon: Icon(Iconsax.user)),
+                      labelText: MyTexts.username,
+                      prefixIcon: Icon(Iconsax.user),
+                    ),
                   ),
                 ],
               ),
-            ), // Formulaire pour le nom d'utilisateur
+            ),
             const SizedBox(height: MySizes.spaceBtwSections),
-
-            // Bouton pour sauvegarder le nouveau nom d'utilisateur
+            // Save Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  controller
-                      .changeUsername(); // Appel de la méthode de changement de nom d'utilisateur
+                  updateUserNameController.updateUserName();
                 },
                 child: const Text('Save'),
               ),

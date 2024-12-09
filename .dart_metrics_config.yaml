@@ -1,0 +1,12 @@
+metrics:
+  cyclomatic-complexity: 10
+  number-of-parameters: 4
+  source-lines-of-code: 50
+  maximum-nesting-level: 4
+  weight-of-class: 0
+
+rules:
+  - no-unused-files
+  - no-unused-imports
+  - avoid-unused-parameters
+  - provide-dependencies

@@ -1,56 +1,55 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-
-import '../../../utils/constants/image_strings.dart';
-import '../enums/post_type.dart';
+import '../../events/models/event.dart';
 
 class PostModel {
-  String id;
-  String userName;
-  String userImage;
-  String location;
-  String postTime;
-  String description;
-  PostType postType;
-  String image;
-  double likes;
-  double comments;
+  final int id;
+  final String name;
+  final String description;
+  final String organizerFirstName;
+  final String organizerLastName;
+  final String organizerImage;
+  final String cityName;
+  final DateTime startDate;
+  final String startTime;
+  final int maxParticipants;
+  final int currentNumParticipants;
+  final String imagePath;
+  final String sportCategoryName;
+  final String sportCategoryIcon;
+
   PostModel({
     required this.id,
-    required this.userImage,
-    required this.userName,
-    required this.location,
-    required this.postTime,
+    required this.name,
     required this.description,
-    required this.postType,
-    required this.image,
-    required this.likes,
-    required this.comments,
+    required this.organizerFirstName,
+    required this.organizerLastName,
+    required this.organizerImage,
+    required this.cityName,
+    required this.startDate,
+    required this.startTime,
+    required this.maxParticipants,
+    required this.currentNumParticipants,
+    required this.imagePath,
+    required this.sportCategoryName,
+    required this.sportCategoryIcon,
   });
-}
 
-List<PostModel> dummyPosts = [
-  PostModel(
-      id: '1',
-      userName: 'John Milke',
-      location: 'Berlin,Germany',
-      postTime: '5m ago',
-      userImage: MyImages.kUser2,
-      description:
-          'At vero eos et accusamus et iusto odio dignissimos ducimus qui dolores et quas molestias excepturi sint occaecati cupiditate non provident',
-      postType: PostType.Run,
-      image: MyImages.kPost1,
-      likes: 5.3,
-      comments: 10.4),
-  PostModel(
-      id: '2',
-      userName: 'Steve Douglas',
-      location: 'New york,USA',
-      postTime: '44m ago',
-      userImage: MyImages.kUser4,
-      description:
-          "Blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident",
-      postType: PostType.BasketBall,
-      image: MyImages.kPost2,
-      likes: 5.3,
-      comments: 10.4),
-];
+  // Constructeur `fromEvent` avec le paramètre `user`
+  factory PostModel.fromEvent(Event event, {required Map<String, dynamic> user}) {
+    return PostModel(
+      id: event.id,
+      name: event.name,
+      description: event.description,
+      organizerFirstName: user['firstName'] ?? 'Inconnu',
+      organizerLastName: user['lastName'] ?? 'Inconnu',
+      organizerImage: user['imagePath'] ?? '',
+      cityName: event.cityName,
+      startDate: DateTime.parse(event.startDate),
+      startTime: event.startTime,
+      maxParticipants: event.maxParticipants,
+      currentNumParticipants: event.currentNumParticipants,
+      imagePath: event.imagePath,
+      sportCategoryName: event.sportCategory.name,
+      sportCategoryIcon: event.sportCategory.iconName,
+    );
+  }
+}

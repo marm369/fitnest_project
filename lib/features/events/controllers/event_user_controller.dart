@@ -24,6 +24,7 @@ class EventUserController extends GetxController {
       userName.value = 'Erreur de récupération';
     }
   }
+
   Future<List<Event>> getEventsByUser(int userId) async {
     try {
       // Await the fetch operation to get the data

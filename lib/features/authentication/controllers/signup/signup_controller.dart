@@ -1,19 +1,22 @@
+import 'dart:convert';
+
+import 'package:fitnest/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'dart:io';
+import '../../../../data/services/category/category_service.dart';
 import '../../../../data/services/authentication/id_check_service.dart';
 import '../../../../data/services/authentication/signup_service.dart';
-import '../../../../data/services/profile/user_service.dart';
 import '../../../../utils/constants/icons.dart';
-import '../../../../utils/constants/image_strings.dart';
 import '../../../../utils/formatters/formatter.dart';
-import '../../../../utils/popups/full_screen_loader.dart';
 import '../../../../utils/popups/loaders.dart';
 import '../../../../utils/validators/validation.dart';
+import '../../../events/models/category.dart';
 import '../../../network_manager.dart';
-
+import '../../screens/signup/verify_email.dart';
 
 class SignupController extends GetxController {
   static SignupController get instance => Get.find();
@@ -21,7 +24,7 @@ class SignupController extends GetxController {
 
   final ImagePicker _picker = ImagePicker();
   final pageController = PageController();
-
+  final box = GetStorage();
   var currentStep = 0.obs;
 
   var profileImageMessageError = ''.obs;
@@ -37,7 +40,8 @@ class SignupController extends GetxController {
   var backImageMessageError = ''.obs;
 
   final selectedInterests = <String, bool>{}.obs;
-  final UserService _userService = UserService();
+  final CategoryService categoryService = CategoryService();
+
   final List<String> goals = [
     'Make new friends',
     'Track health and fitness goals',
@@ -185,7 +189,7 @@ class SignupController extends GetxController {
       File frontIdImage, String firstName, String lastName) async {
     File resizedImage = await Formatter.resizeImage(frontIdImage);
     // Extract text from the ID image
-    final message = await _idCheckService.extractTextFromImage(frontIdImage);
+    final message = await _idCheckService.extractTextFromImage(resizedImage);
     if (message != null) {
       // Check if the extracted text contains the Moroccan ID card phrase
       if (!message!.contains("ROYAUME DU MAROC") &&
@@ -197,33 +201,9 @@ class SignupController extends GetxController {
           !message.toLowerCase().contains(lastName.toLowerCase())) {
         return "First name and last name do not match.";
       }
-      // Check for the validity date, assuming the format "Valide jusqu'au dd.MM.yyyy"
-      else if (message.contains("Valable jusqu'au")) {
-        final dateRegex = RegExp(r"Valable jusqu'au (\d{2}.\d{2}.\d{4})");
-        final dateMatch = dateRegex.firstMatch(message);
-
-        if (dateMatch != null) {
-          final expiryDateString = dateMatch.group(1);
-          final DateTime expiryDate =
-              DateFormat('dd.MM.yyyy').parse(expiryDateString!);
-          print(expiryDate);
-          final DateTime currentDate = DateTime.now();
-
-          if (expiryDate.isBefore(currentDate)) {
-            return "The ID card has expired.";
-          } else {
-            return "The ID card is valid.";
-          }
-        } else {
-          return "Validity date not found on the card.";
-        }
-      }
-
       // Check if the extracted text is valid (not blurry or unreadable)
       else if (message.contains("Erreur") || message.isEmpty) {
         return "The image is blurry, or the text could not be extracted correctly.";
-      } else {
-        return null;
       }
     } else {
       return null;
@@ -265,24 +245,27 @@ class SignupController extends GetxController {
   // Interests Part
   Future<void> loadInterests() async {
     try {
-      // Appel de la méthode du service
-      //final data = await _userService.fetchInterests();
-      final data = null;
-      // Data transformation to match the controller variables
+      final List<Category> data = await categoryService.fetchCategories();
       interests.value = data.map((category) {
-        final iconName = category['iconName'] as String? ?? 'help_outline';
-        final categoryName = category['name'] as String;
+        final String iconName = category.iconName ?? 'help_outline';
+        print("iconName: $iconName");
+        // Nom de la catégorie
+        final String categoryName = category.name;
+
+        // Récupérer l'icône correspondante ou utiliser une icône par défaut
         final iconData = iconMapping[iconName] ?? Icons.help_outline;
 
-        // Initialize interest selection
+        // Initialiser l'état de sélection des intérêts
         selectedInterests[categoryName] = false;
 
+        // Retourner les données formatées
         return {
           'name': categoryName,
           'icon': iconData,
         };
       }).toList();
     } catch (e) {
+      // Gestion des erreurs et log de l'erreur
       print("Erreur lors du chargement des intérêts : $e");
     }
   }
@@ -308,37 +291,38 @@ class SignupController extends GetxController {
   }
 
   Future<void> signup() async {
+    accountInfo = {
+      'username': username.text.trim(),
+      'email': email.text.trim(),
+      'password': password.text.trim(),
+    };
+    print(accountInfo);
+    preparePersonalInfo();
     try {
-      FullScreenLoader.openLoadingDialog(
-          'Processing your information...', MyImages.loadingIllustration);
-      final isConnected = await networkManager.isConnected();
-      if (!isConnected) {
-        Loaders.errorSnackBar(
-          title: 'Connection Failed',
-          message: 'Please check your Internet connection.',
-        );
-        return;
-      }
-
       final emailAndUsernameCheck = await _signUpService.checkEmailAndUsername({
         'username': username.text.trim(),
         'email': email.text.trim(),
       });
       if (emailAndUsernameCheck == true) {
-        /* // Send a verification email instead of creating the account right away
-
-        final verificationToken = await _signUpService.sendVerificationEmail({
-          'email': email.text.trim(),
-        });
-
-        if (verificationToken != null) {
-          Get.to(() => VerifyEmailScreen(email: email.text.trim()));
+        String verificationCode = HelperFunctions.generateVerificationCode();
+        print("-----------MySecretCode-----------");
+        print(verificationCode);
+        // Send a verification email instead of creating the account right away
+        bool success = await _signUpService.sendVerificationEmail(
+            email.text.trim(), verificationCode);
+        if (success) {
+          Future<String?> tokenFuture = createAccount();
+          // Await the token before passing it to savePersonalInfo
+          String? token = await tokenFuture;
+          // Now pass the resolved value (String?) to savePersonalInfo
+          await savePersonalInfo(token);
+          Get.to(() => VerifyEmailScreen(
+              email: email.text.trim(), code: verificationCode));
         } else {
           Loaders.errorSnackBar(
-            title: 'Verification Failed',
-            message: 'Could not send verification email. Please try again.',
-          );
-        }*/
+              title: 'Verification Failed',
+              message: 'Could not send verification email. Please try again.');
+        }
       } else {
         Loaders.errorSnackBar(
           title: 'Registration Failed',
@@ -350,9 +334,96 @@ class SignupController extends GetxController {
     }
   }
 
+  Future<String?> createAccount() async {
+    var token = await _signUpService.createAccount(accountInfo);
+    return token;
+  }
+
+  Future<void> savePersonalInfo(String? token) async {
+    await _signUpService.savePersonalInfo(personalInfo, token);
+  }
+
   @override
   void onClose() {
     birthDate.dispose();
     super.onClose();
+  }
+
+  void preparePersonalInfo() async {
+    // Filter interests
+    List<String> filteredInterests =
+        (selectedInterests.value as Map<String, bool>)
+            .entries
+            .where((entry) => entry.value == true)
+            .map((entry) => entry.key)
+            .toList();
+
+    // Encode images to Base64
+    String idFaceBase64 =
+        await encodeImageToBase64(frontImagePath.value.trim());
+    String idBackBase64 = await encodeImageToBase64(backImagePath.value.trim());
+    String profilePictureBase64 =
+        await encodeImageToBase64(profileImagePath.value.trim());
+
+    // Convert phoneNumber to a number if needed
+    var phoneNumberValue = phoneNumber.text.trim();
+    var phoneNumberNumeric =
+        int.tryParse(phoneNumberValue); // Try to parse as int
+    if (phoneNumberNumeric == null) {
+      print("Le numéro de téléphone n'est pas valide.");
+      phoneNumberNumeric = 0; // Handle as necessary
+    }
+
+    // Convert date of birth to DateTime and format it to yyyy-MM-dd
+    String birthDateString = birthDate.text.trim();
+    DateTime? birthDateParsed;
+    try {
+      // Parse the date using the current format (1/12/2024 or 01/12/2024)
+      birthDateParsed = DateFormat("d/M/yyyy")
+          .parse(birthDateString); // day/month/year format
+    } catch (e) {
+      print("Erreur de format de date : $e");
+      birthDateParsed = null; // Handle as needed, set default or null
+    }
+
+    // Format date to yyyy-MM-dd
+    String? formattedBirthDate = birthDateParsed != null
+        ? DateFormat("yyyy-MM-dd")
+            .format(birthDateParsed) // Convert to the desired format
+        : null;
+
+    // Populate personalInfo
+    personalInfo = {
+      'firstName': firstName.text.trim(),
+      'lastName': lastName.text.trim(),
+      'phoneNumber': phoneNumberNumeric, // Store as number
+      'dateBirth': formattedBirthDate, // Store the formatted date
+      'gender': selectedGender.value.trim(),
+      'description': 'update your Bio',
+      'idFace': idFaceBase64,
+      'idBack': idBackBase64,
+      'profilePicture': profilePictureBase64,
+      'userName': username.text.trim(),
+      'interests': filteredInterests
+    };
+
+    print(personalInfo['dateBirth']); // Debugging output
+  }
+
+// Helper function to encode an image file to Base64
+  Future<String> encodeImageToBase64(String imagePath) async {
+    try {
+      File imageFile = File(imagePath);
+      if (await imageFile.exists()) {
+        List<int> imageBytes = await imageFile.readAsBytes();
+        return base64Encode(imageBytes);
+      } else {
+        print('Image file not found at path: $imagePath');
+        return '';
+      }
+    } catch (e) {
+      print('Error encoding image: $e');
+      return '';
+    }
   }
 }

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import '../../../../../common/widgets/appbar/appbar.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/constants/text_strings.dart';
 import '../../../../../utils/validators/validation.dart';
+import '../../controllers/phonenumber_controller.dart';
 
 class UpdatePhoneNumber extends StatelessWidget {
   const UpdatePhoneNumber({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // If you’re using a controller, make sure it's declared properly.
-    // final controller = Get.put(UpdateNameController());
+    final updatePhoneNumberController = Get.put(UpdatePhoneNumberController());
     return Scaffold(
       // Custom AppBar
       appBar: MyAppBar(
@@ -33,13 +34,11 @@ class UpdatePhoneNumber extends StatelessWidget {
             ),
             const SizedBox(height: MySizes.spaceBtwSections),
             Form(
-              // If using a key, uncomment the next line
-              // key: controller.updateUserNameFormKey,
+              key: updatePhoneNumberController.formKeyPhoneNumber,
               child: Column(
                 children: [
                   TextFormField(
-                    // Uncomment and set controller if needed
-                    // controller: controller.firstName,
+                    controller: updatePhoneNumberController.phoneNumber,
                     validator: (value) =>
                         MyValidator.validatePhoneNumber(value),
                     decoration: const InputDecoration(
@@ -51,14 +50,12 @@ class UpdatePhoneNumber extends StatelessWidget {
               ),
             ),
             const SizedBox(height: MySizes.spaceBtwSections),
-
             // Save Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Add functionality here or uncomment the next line if using a controller
-                  // controller.updateUserName();
+                  updatePhoneNumberController.updatePhoneNumber();
                 },
                 child: const Text('Save'),
               ),

@@ -4,7 +4,7 @@ import 'event_scroll_widget.dart';
 import '../../../common/widgets/tabbutton/tab_item.dart';
 import '../../../utils/constants/sizes.dart';
 import '../controllers/home_controller.dart';
-import '../models/post_model.dart';
+import '../controllers/PostController.dart';
 import 'widgets/components/post_card.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -12,6 +12,8 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     // Instantiate controllers
     final HomeController homeController = Get.put(HomeController());
+    final PostController postController = Get.put(PostController());
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: NestedScrollView(
@@ -35,7 +37,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   SizedBox(height: MySizes.defaultSpace / 2),
                   Obx(
-                    () => SizedBox(
+                        () => SizedBox(
                       height: 60,
                       child: ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -43,28 +45,28 @@ class HomeScreen extends StatelessWidget {
                         itemCount: homeController.categories.length,
                         itemBuilder: (context, index) {
                           final interest =
-                              homeController.categories[index]['name'];
+                          homeController.categories[index]['name'];
                           return Obx(() => GestureDetector(
-                                onTap: () =>
-                                    homeController.toggleCategory(interest),
-                                child: Row(
-                                  children: [
-                                    TabItem(
-                                      text: interest,
-                                      icon: Icon(
-                                        homeController.categories[index]
-                                            ['icon'],
-                                        color: homeController.selectedCategorie[
-                                                    interest] ==
-                                                true
-                                            ? Colors.blue
-                                            : Colors.grey,
-                                      ),
-                                    ),
-                                    SizedBox(width: MySizes.spaceBtwItems),
-                                  ],
+                            onTap: () =>
+                                homeController.toggleCategory(interest),
+                            child: Row(
+                              children: [
+                                TabItem(
+                                  text: interest,
+                                  icon: Icon(
+                                    homeController.categories[index]
+                                    ['icon'],
+                                    color: homeController.selectedCategorie[
+                                    interest] ==
+                                        true
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
                                 ),
-                              ));
+                                SizedBox(width: MySizes.spaceBtwItems),
+                              ],
+                            ),
+                          ));
                         },
                       ),
                     ),
@@ -77,17 +79,33 @@ class HomeScreen extends StatelessWidget {
             ),
           ];
         },
-        body: ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: MySizes.sm),
-          itemBuilder: (context, index) {
-            return PostCard(
-              post: dummyPosts[index],
-              onTap: () {},
+        body: Obx(() {
+          if (postController.isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(),
             );
-          },
-          separatorBuilder: (context, index) => const SizedBox(height: 10),
-          itemCount: dummyPosts.length,
-        ),
+          } else if (postController.posts.isEmpty) {
+            return const Center(
+              child: Text('Aucun post disponible.'),
+            );
+          } else {
+            return ListView.separated(
+              padding: const EdgeInsets.symmetric(horizontal: MySizes.sm),
+              itemBuilder: (context, index) {
+                final post = postController.posts[index];
+                return PostCard(
+                  post: post, // Utilisation des données dynamiques
+                  onTap: () {
+                    // Action lorsque l'utilisateur clique sur un post
+                    Get.snackbar('Post sélectionné', post.name);
+                  },
+                );
+              },
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+              itemCount: postController.posts.length,
+            );
+          }
+        }),
       ),
     );
   }

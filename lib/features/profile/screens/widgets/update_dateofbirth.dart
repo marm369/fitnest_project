@@ -6,15 +6,14 @@ import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/constants/text_strings.dart';
 import '../../../../../utils/validators/validation.dart';
 import '../../../authentication/controllers/signup/signup_controller.dart';
+import '../../controllers/dateofbirth_controller.dart';
 
 class UpdateDateOfBirth extends StatelessWidget {
   const UpdateDateOfBirth({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final SignupController controller = Get.put(SignupController());
-    // If you’re using a controller, make sure it's declared properly.
-    // final controller = Get.put(UpdateNameController());
+    final updateDateOfBirthController = Get.put(UpdateDateOfBirthController());
     return Scaffold(
       // Custom AppBar
       appBar: MyAppBar(
@@ -30,11 +29,11 @@ class UpdateDateOfBirth extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Form(
-              // If using a key, uncomment the next line
-              // key: controller.updateUserNameFormKey,
+              key: updateDateOfBirthController.formKeyDateOfBirth,
               child: Column(
                 children: [
                   TextFormField(
+                    controller: updateDateOfBirthController.dateOfBirth,
                     readOnly: true,
                     decoration: const InputDecoration(
                       labelText: MyTexts.dateOfBirth,
@@ -43,7 +42,8 @@ class UpdateDateOfBirth extends StatelessWidget {
                       contentPadding:
                           EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                     ),
-                    onTap: () => controller.selectDate(context),
+                    onTap: () =>
+                        updateDateOfBirthController.selectDate(context),
                     validator: (value) =>
                         MyValidator.validateEmptyText('Date of Birth', value),
                   ),
@@ -56,8 +56,7 @@ class UpdateDateOfBirth extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Add functionality here or uncomment the next line if using a controller
-                  // controller.updateUserName();
+                  updateDateOfBirthController.updateDateOfBirth();
                 },
                 child: const Text('Save'),
               ),
