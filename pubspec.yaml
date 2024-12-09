@@ -52,6 +52,15 @@ dependencies:
   get:
   get_storage:
 
+ #for notifications
+
+  firebase_core:
+  firebase_messaging:
+  googleapis_auth:
+  googleapis:
+  fluttertoast: ^8.2.8
+  permission_handler: ^11.1.0
+  flutter_local_notifications:
 
 #----------------------- ./ PACKAGES END ----------------------#
 dev_dependencies:
