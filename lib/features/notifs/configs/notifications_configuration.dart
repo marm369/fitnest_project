@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+/*import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitnest/features/notifs/services/fcmToken_service.dart.dart';
@@ -19,3 +19,4 @@ Future<void> ConfigureNotifications() async {
       )
   );
 }
+*/

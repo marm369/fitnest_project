@@ -3,8 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import '../../../configuration/config.dart';
 import '../../../features/events/models/event.dart';
-import '../../../features/profile/models/user_model.dart';
-
+import '../../../features/profile/models/user_model.dart' ;
 class UserService {
   final box = GetStorage();
   String? token;
