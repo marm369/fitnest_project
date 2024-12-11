@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
+
+import '../../../data/services/home/PostService.dart';
 import '../models/post_model.dart';
-import '../service/PostService.dart';
 
 class PostController extends GetxController {
   final PostService postService = PostService();
@@ -26,6 +27,4 @@ class PostController extends GetxController {
       isLoading.value = false;
     }
   }
-
-
 }

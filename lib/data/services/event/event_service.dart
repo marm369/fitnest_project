@@ -184,4 +184,19 @@ class EventService {
     final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
     return parsed.map<Event>((json) => Event.fromJson(json)).toList();
   }
+
+  Future<Event> fetchEvent(int eventId) async {
+    final String apiUrl = "$GatewayUrl/event-service/api/events/$eventId/details";
+    try {
+      final response = await http.get(Uri.parse(apiUrl));
+      if (response.statusCode == 200) {
+        return Event.fromJson(json.decode(response.body)); // Correct parentheses and method call
+      } else {
+        throw Exception(
+            "Failed to load event with status code ${response.statusCode}");
+      }
+    } catch (e) {
+      throw Exception("Error fetching event: $e");
+    }
+  }
 }

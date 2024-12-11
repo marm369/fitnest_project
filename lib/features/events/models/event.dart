@@ -61,7 +61,6 @@ class Route {
   }
 }
 
-
 class Event {
   final int id;
   final String name;

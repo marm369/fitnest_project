@@ -191,7 +191,4 @@ class EventController extends GetxController {
     }
     return null;
   }
-
-
-
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../../../data/services/profile/update_service.dart';
+
 import '../../../data/services/profile/user_service.dart';
 import '../../events/models/event.dart';
 import '../models/user_model.dart';
@@ -22,7 +22,7 @@ class ProfileController extends GetxController {
     super.onInit();
     final int? userId = box.read<int>('user_id');
     if (userId != null) {
-      await initializeProfile(userId); // Attendez la récupération des données
+      await initializeProfile(userId);
     } else {
       print("Error: User ID not found in storage.");
     }
@@ -44,7 +44,7 @@ class ProfileController extends GetxController {
     String token = box.read<String>('token') ?? '';
     if (token.isEmpty) {
       print("Error: Token not found in storage.");
-      isLoading.value = false; // Toujours mettre à jour l'état
+      isLoading.value = false;
       return;
     }
     try {
@@ -60,15 +60,15 @@ class ProfileController extends GetxController {
     } catch (e) {
       print("Error fetching profile data: $e");
     } finally {
-      isLoading.value = false; // Toujours mettre à jour l'état
+      isLoading.value = false;
     }
   }
 
   Future<void> refreshProfile() async {
     final int? userId = box.read<int>('user_id');
     if (userId != null) {
-      await fetchProfileData(userId); // Recharge les données utilisateur
-      userProfile.refresh(); // Notifie l'UI que le profil a changé
+      await fetchProfileData(userId);
+      userProfile.refresh();
     } else {
       print("Error: User ID not found in storage.");
     }
