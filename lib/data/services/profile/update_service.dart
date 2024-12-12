@@ -1,19 +1,22 @@
+import 'dart:convert';
+
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import '../../../configuration/config.dart';
 
 class UpdateService {
   final box = GetStorage();
   int? userId;
+  String? token;
 
   UserService() {
     userId = box.read('user_id');
+    token = box.read('token');
   }
 
   final String updateUrl = '$GatewayUrl/auth-service';
-  // Method to update user information
+
   Future<bool?> updateInfos(
       int userId, Map<String, dynamic> accountInfo) async {
     try {
@@ -25,14 +28,12 @@ class UpdateService {
       // Check the status code of the response
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        return true; // If the response contains a token
+        return true;
       } else {
-        // If the status code is not 200, display the error
         print('Error updating user information: ${response.body}');
-        return false; // Return null if the request fails
+        return false;
       }
     } catch (e) {
-      // Error handling in case of issues with the HTTP request
       print('Error with the HTTP request: $e');
       return false;
     }
@@ -40,11 +41,17 @@ class UpdateService {
 
   Future<bool?> updateUsername(Map<String, dynamic> accountInfo) async {
     try {
+      print("Account Info");
+      print(accountInfo);
       final response = await http.put(
         Uri.parse('$updateUrl/account/update-username'),
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          if (token != null) "Authorization": "Bearer $token",
+        },
         body: jsonEncode(accountInfo),
       );
+      print(response.statusCode);
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
         return true;
@@ -62,7 +69,10 @@ class UpdateService {
     try {
       final response = await http.put(
         Uri.parse('$updateUrl/account/update-email'),
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          if (token != null) "Authorization": "Bearer $token"
+        },
         body: jsonEncode(accountInfo),
       );
       if (response.statusCode == 200) {

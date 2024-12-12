@@ -1,30 +1,34 @@
 import 'dart:convert';
 import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:readmore/readmore.dart';
+
 import '../../../common/widgets/chips/sport_category_chip.dart';
-import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/icons.dart';
 import '../../../utils/constants/sizes.dart';
-import '../../home/controllers/home_controller.dart';
+import '../../../utils/helpers/helper_functions.dart';
+import '../../participation/controllers/participation_controller.dart';
 import '../controllers/event_user_controller.dart';
 import '../models/event.dart';
-import 'widgets/event_participants_info.dart';
+import 'widgets/event_info.dart';
+import 'widgets/event_participants_list.dart';
 
 class EventDetailPage extends StatelessWidget {
   final Event event;
+
   EventDetailPage({required this.event});
 
   @override
   Widget build(BuildContext context) {
-    print("-----------------event-------------");
-    print(event);
-    final EventUserController controller = Get.put(EventUserController());
-    controller.fetchUserName(event.organizerId);
-    // Widget for displaying the image with overlay
+    final dark = HelperFunctions.isDarkMode(context);
+    final EventUserController eventUserController =
+        Get.put(EventUserController());
+    final ParticipationController participationController =
+        Get.put(ParticipationController());
+    eventUserController.fetchUserName(event.organizerId);
     Widget imageWidget;
     try {
       Uint8List imageBytes = base64Decode(event.imagePath);
@@ -51,7 +55,17 @@ class EventDetailPage extends StatelessWidget {
               ),
             ),
           ),
-          // Positioned overlay for event name and details (date, time, location)
+          Positioned(
+            bottom: 330,
+            left: 5,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back,
+                  color: Colors.white, size: MySizes.iconMd),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ),
           Positioned(
             bottom: 16,
             left: 16,
@@ -61,52 +75,51 @@ class EventDetailPage extends StatelessWidget {
                 Row(
                   children: [
                     SportCategoryChip(
-                      categoryName:
-                          event.sportCategory.name, // Pass the category name
+                      categoryName: event.sportCategory.name,
                       categoryIcon: iconMapping[event.sportCategory.iconName] ??
-                          Icons.sports, // Pass the icon using mapping
+                          Icons.sports,
                     ),
                   ],
                 ),
                 Text(
                   utf8.decode(event.name.runes.toList()),
                   style: TextStyle(
-                    fontSize: MySizes.fontSizeLg * 2,
+                    fontSize: MySizes.fontSizeLg * 1.5,
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 SizedBox(width: MySizes.spaceBtwItems / 2),
                 Text(
-                  "Organized By: ${controller.userName.value}",
+                  "Organized By: ${eventUserController.userName.value}",
                   style: TextStyle(
                     fontSize: MySizes.fontSizeSm,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(width: MySizes.spaceBtwItems / 2),
+                SizedBox(height: MySizes.md),
                 Row(
                   children: [
                     Icon(Icons.calendar_today,
-                        color: Colors.white, size: MySizes.iconMd),
+                        color: Colors.white, size: MySizes.iconSm),
                     SizedBox(width: MySizes.spaceBtwItems / 2),
                     Text(
                       "Date: ${event.startDate}",
                       style: TextStyle(
-                          color: Colors.white, fontSize: MySizes.fontSizeMd),
+                          color: Colors.white, fontSize: MySizes.fontSizeSm),
                     ),
                     SizedBox(width: MySizes.spaceBtwItems),
                     if (event.location != null)
                       Row(
                         children: [
                           Icon(Icons.location_on,
-                              color: Colors.white, size: MySizes.iconMd),
+                              color: Colors.white, size: MySizes.iconSm),
                           SizedBox(width: MySizes.spaceBtwItems / 2),
                           Text(
                             "${event.location!.locationName}",
                             style: TextStyle(
                                 color: Colors.white,
-                                fontSize: MySizes.fontSizeMd),
+                                fontSize: MySizes.fontSizeSm),
                           ),
                         ],
                       )
@@ -114,28 +127,28 @@ class EventDetailPage extends StatelessWidget {
                       Row(
                         children: [
                           Icon(Icons.location_on,
-                              color: Colors.white, size: MySizes.iconMd),
+                              color: Colors.white, size: MySizes.iconSm),
                           SizedBox(width: MySizes.spaceBtwItems / 2),
                           Text(
                             "Location: Not available",
                             style: TextStyle(
-                                fontSize: MySizes.fontSizeMd,
+                                fontSize: MySizes.fontSizeSm,
                                 color: Colors.white),
                           ),
                         ],
                       ),
                   ],
                 ),
-                SizedBox(height: MySizes.spaceBtwItems / 2),
+                SizedBox(height: MySizes.xs),
                 Row(
                   children: [
                     Icon(Icons.access_time,
-                        color: Colors.white, size: MySizes.iconMd),
+                        color: Colors.white, size: MySizes.iconSm),
                     SizedBox(width: 8),
                     Text(
                       "${event.startTime}",
                       style: TextStyle(
-                          fontSize: MySizes.fontSizeMd, color: Colors.white),
+                          fontSize: MySizes.fontSizeSm, color: Colors.white),
                     ),
                   ],
                 ),
@@ -157,10 +170,8 @@ class EventDetailPage extends StatelessWidget {
       );
     }
 
-    // Widget for map or route
     Widget mapWidget;
     if (event.sportCategory.requiresRoute && event.route != null) {
-      // Display route if requiresRoute is true and route is not null
       mapWidget = Container(
         margin: EdgeInsets.all(16),
         height: 200,
@@ -168,7 +179,7 @@ class EventDetailPage extends StatelessWidget {
           options: MapOptions(
             center: LatLng(event.route!.coordinatesFromPath[0][0],
                 event.route!.coordinatesFromPath[0][1]),
-            zoom: 15.0, // Zoom plus rapproché
+            zoom: 15.0,
           ),
           children: [
             TileLayer(
@@ -188,7 +199,6 @@ class EventDetailPage extends StatelessWidget {
             ),
             MarkerLayer(
               markers: [
-                // Marqueur pour le point de départ en rouge
                 Marker(
                   point: LatLng(event.route!.coordinatesFromPath[0][0],
                       event.route!.coordinatesFromPath[0][1]),
@@ -251,7 +261,6 @@ class EventDetailPage extends StatelessWidget {
         ),
       );
     } else {
-      // Display "Location unavailable" if neither location nor route is available
       mapWidget = Container(
         margin: EdgeInsets.all(16),
         height: 200,
@@ -264,60 +273,32 @@ class EventDetailPage extends StatelessWidget {
       );
     }
 
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            imageWidget,
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildEventInfo(),
-                  SizedBox(height: 16),
-                  mapWidget, // Insert map widget here
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildEventInfo() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "About Event",
-          style: TextStyle(
-            fontSize: MySizes.fontSizeLg,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
+        imageWidget,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              EventInfo(
+                eventDescription: event.description,
+                maxParticipants: event.maxParticipants,
+                currentNumParticipants: event.currentNumParticipants,
+              ),
+              SizedBox(height: MySizes.sm),
+              Container(
+                height: 300,
+                child: ParticipantsList(
+                  participants: participationController
+                      .getParticipationsByEventId(event.id),
+                ),
+              ),
+              mapWidget,
+              // Insert map widget here
+            ],
           ),
-        ),
-        SizedBox(height: MySizes.spaceBtwItems),
-        ReadMoreText(
-          event.description,
-          style: TextStyle(
-            fontSize: MySizes.fontSizeSm,
-            fontWeight: FontWeight.w400,
-            color: Colors.black87,
-            height: 1.5,
-          ),
-          trimLines: 3,
-          colorClickableText: Colors.blue,
-          trimCollapsedText: ' Read More',
-          trimExpandedText: ' Read Less',
-          textAlign: TextAlign.justify,
-        ),
-        SizedBox(height: MySizes.spaceBtwItems / 2),
-        EventParticipantsInfo(
-          maxParticipants: event.maxParticipants,
-          currentNumParticipants: event.currentNumParticipants,
         ),
       ],
     );

@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../../common/widgets/appbar/appbar.dart';
 import '../../../../utils/constants/sizes.dart';
 import '../../../../utils/constants/text_strings.dart';
 import '../../../../utils/popups/loaders.dart';
 import '../../controllers/signup/signup_controller.dart';
+import 'functions/step_content.dart';
+import 'functions/step_indicator.dart';
 import 'widgets/additional_infos_form.dart';
 import 'widgets/confirm_identity.dart';
 import 'widgets/signup_form.dart';
-import 'functions/step_content.dart';
-import 'functions/step_indicator.dart';
 
 class SignupScreen extends StatelessWidget {
   final SignupController controller = Get.put(SignupController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: MyAppBar(
         title: Text(
           MyTexts.signupTitle,
           style: Theme.of(context).textTheme.headlineMedium,
         ),
+        showBackArrow: true,
+        leadingOnPressed: () {
+          Navigator.pushNamed(context, '/signin');
+        },
       ),
       body: Column(
         children: [

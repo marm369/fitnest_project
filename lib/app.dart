@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'features/authentication/screens/onboarding/onboarding.dart';
 import 'features/authentication/screens/signin/signin.dart';
-import 'navigation_menu.dart';
-import 'test/test1.dart';
+import 'features/home/screens/home.dart';
+import 'features/profile/screens/profile.dart';
 import 'utils/theme/theme.dart';
 
 class App extends StatelessWidget {
@@ -17,6 +18,11 @@ class App extends StatelessWidget {
       themeMode: ThemeMode.system,
       darkTheme: MyAppTheme.darkTheme,
       theme: MyAppTheme.lightTheme,
+      routes: {
+        '/profile': (context) => ProfileScreen(),
+        '/signin': (context) => SignInScreen(),
+        '/home': (context) => HomeScreen(),
+      },
       home: isFirstTime ? OnBoardingScreen() : SignInScreen(),
     );
   }

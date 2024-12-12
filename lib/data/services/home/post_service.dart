@@ -7,12 +7,12 @@ import '../../../features/events/models/event.dart';
 import '../../../features/home/models/post_model.dart';
 
 class PostService {
-  final String postUrl = '$GatewayUrl/api/events'; // URL des événements
+  final String postUrl = '$GatewayUrl/event-service/api/events';
 
   // Méthode pour récupérer tous les posts
   Future<List<PostModel>> fetchPosts() async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/all-details'));
+      final response = await http.get(Uri.parse('$postUrl/all-details'));
 
       if (response.statusCode == 200) {
         final body = json.decode(utf8.decode(response.bodyBytes));

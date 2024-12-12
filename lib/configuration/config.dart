@@ -1,5 +1,4 @@
-const String baseUrl = 'http://192.168.0.121:8080';
-const String GatewayUrl = 'http://192.168.0.124:8888';
+const String GatewayUrl = 'http://localhost:8888';
 
 // LOLITA : 172.20.213.61
 

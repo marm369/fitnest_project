@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:get/get.dart';
+
 import 'package:http/http.dart' as http;
+
 import '../../../configuration/config.dart';
 import '../../../features/events/models/event.dart';
 import '../../../utils/popups/loaders.dart';
@@ -132,7 +133,7 @@ class EventService {
     try {
       final response = await http.get(Uri.parse(apiUrl));
       if (response.statusCode == 200) {
-        List<dynamic> jsonData = json.decode(response.body);
+        List<dynamic> jsonData = jsonDecode(utf8.decode(response.bodyBytes));
         return jsonData.map((event) => Event.fromJson(event)).toList();
       } else {
         throw Exception(
@@ -176,6 +177,35 @@ class EventService {
     } catch (e) {
       print('Error in fetchNearbyEvents: $e');
       throw Exception('Failed to fetch nearby events: $e');
+    }
+  }
+
+  Future<Event> getEventById(int id) async {
+    try {
+      // Construire l'URL avec l'ID
+      final url = Uri.parse('$gatewayEventUrl/api/events/$id/basic');
+
+      // Faire une requête GET
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      // Vérifier les statuts HTTP
+      if (response.statusCode == 200) {
+        // Décoder la réponse JSON en un objet Event
+        final Map<String, dynamic> json =
+            jsonDecode(utf8.decode(response.bodyBytes));
+        return Event.fromJson(json);
+      } else if (response.statusCode == 404) {
+        throw Exception("Event not found with ID: $id");
+      } else {
+        throw Exception(
+            "Failed to fetch event: ${response.statusCode} - ${response.reasonPhrase}");
+      }
+    } catch (error) {
+      throw Exception("An error occurred while fetching the event: $error");
     }
   }
 

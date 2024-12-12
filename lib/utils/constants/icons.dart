@@ -19,3 +19,22 @@ const Map<String, IconData> iconMapping = {
 
   // Ajoutez d'autres icônes au besoin
 };
+
+const Map<String, IconData> interestMapping = {
+  'Running': Icons.run_circle,
+  'Cycling': Icons.directions_bike,
+  'Swimming': Icons.pool,
+  'Skiing': Icons.downhill_skiing,
+  'hiking': Icons.hiking,
+  'Golf': Icons.sports_golf,
+  'Tennis': Icons.sports_tennis,
+  'Baseball': Icons.sports_baseball,
+  'Football': Icons.sports_soccer,
+  'Basketball': Icons.sports_basketball,
+  'Volleyball': Icons.sports_volleyball,
+  'Martial Arts': Icons.sports_kabaddi,
+  'Boxing': Icons.sports_mma,
+  'Surfing': Icons.surfing,
+
+  // Ajoutez d'autres icônes au besoin
+};

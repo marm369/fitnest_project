@@ -1,14 +1,13 @@
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'features/dashboard/dashboard.dart';
+
 import 'features/events/screens/create_event.dart';
 import 'features/home/screens/home.dart';
-import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'features/maps/screens/map_events.dart';
+import 'features/participation/screens/participation_screen.dart';
 import 'features/profile/screens/profile.dart';
-import 'utils/constants/colors.dart';
 import 'utils/helpers/helper_functions.dart';
-import 'features/maps/screens/map_events.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});
@@ -23,7 +22,7 @@ class _LandingPageState extends State<NavigationMenu> {
     HomeScreen(),
     EventsMapPage(),
     EventScreen(),
-    const DashboardScreen(),
+    ParticipationScreen(),
     ProfileScreen(),
   ];
 
@@ -38,9 +37,8 @@ class _LandingPageState extends State<NavigationMenu> {
           initialActiveIndex: selectedIndex,
           elevation: 0,
           style: TabStyle.fixedCircle,
-          color: dark
-              ? Colors.white
-              : Colors.blue, // Adjust color based on dark mode
+          color: dark ? Colors.white : Colors.blue,
+          // Adjust color based on dark mode
           items: [
             TabItem(
               icon: Icon(

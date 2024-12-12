@@ -1,8 +1,9 @@
 import 'dart:convert';
+
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
+
 import '../../../configuration/config.dart';
-import '../../../features/events/models/event.dart';
 import '../../../features/profile/models/user_model.dart';
 
 class UserService {
@@ -13,6 +14,7 @@ class UserService {
   UserService() {
     token = box.read('token');
   }
+
   // Method to fetch the username
   Future<String> fetchUserName(int userId) async {
     final url = Uri.parse('$gatewayAthUrl/user/$userId/username');
@@ -37,8 +39,6 @@ class UserService {
 
 // Method to fetch profile data
   Future<UserModel> fetchProfileData(int userId) async {
-    print("-----------");
-    print(userId);
     final url = Uri.parse('$gatewayAthUrl/user/getUserById/$userId');
     try {
       final response = await http.get(
@@ -69,12 +69,27 @@ class UserService {
         },
       );
       if (response.statusCode == 200) {
-        return jsonDecode(response.body) as Map<String, dynamic>;
+        return jsonDecode(utf8.decode(response.bodyBytes));
       } else {
         throw Exception('Error loading profile data: ${response.statusCode}');
       }
     } catch (e) {
       throw Exception('Connection Error: $e');
+    }
+  }
+
+  Future<List<String>> getUserInterests(int userId) async {
+    final response =
+        await http.get(Uri.parse('$gatewayAthUrl/user/$userId/interests'));
+
+    // Vérifier le code de statut de la réponse
+    if (response.statusCode == 200) {
+      // Décoder la réponse JSON en une liste d'intérêts
+      List<String> interests = List<String>.from(json.decode(response.body));
+      return interests;
+    } else {
+      // Si la réponse est différente de 200, lancer une exception
+      throw Exception('Failed to load interests');
     }
   }
 }

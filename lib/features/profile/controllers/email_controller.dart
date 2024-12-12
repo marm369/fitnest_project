@@ -8,11 +8,11 @@ import '../../../data/services/profile/update_service.dart';
 import '../../../data/services/profile/user_service.dart';
 import '../../../utils/popups/loaders.dart';
 
-class UpdateUserNameController extends GetxController {
-  static UpdateUserNameController get instance => Get.find();
+class UpdateEmailController extends GetxController {
+  static UpdateEmailController get instance => Get.find();
   final box = GetStorage();
-  final formKeyUserName = GlobalKey<FormState>();
-  final userName = TextEditingController();
+  final formKeyEmail = GlobalKey<FormState>();
+  final email = TextEditingController();
   int? userId;
   final UserService userService = UserService();
   final UpdateService updateService = UpdateService();
@@ -30,8 +30,8 @@ class UpdateUserNameController extends GetxController {
   }
 
   // Function to update the user's first name
-  Future<void> updateUserName() async {
-    if (formKeyUserName.currentState?.validate() ?? false) {
+  Future<void> updateEmail() async {
+    if (formKeyEmail.currentState?.validate() ?? false) {
       try {
         // Step 1: Retrieve the current user information
         final userInfo = await userService.fetchProfileDataAsJson(userId!);
@@ -40,20 +40,19 @@ class UpdateUserNameController extends GetxController {
               title: 'Error', message: 'Unable to fetch user information.');
           return;
         }
-        print("username && email");
-        print(userInfo['account']['username']);
-        print(userInfo['account']['email']);
-        bool? check = await signupService.checkEmailAndUsername(
-            {'username': userName.text.trim(), 'email': ''});
+        bool? check = await signupService.checkEmailAndUsername({
+          'username': userInfo['account']['username'],
+          'email': userInfo['account']['email']
+        });
 
         if (check == true) {
-          final result = await updateService.updateUsername({
+          final result = await updateService.updateEmail({
             'accountId': userInfo['account']['id'],
-            'username': userName.text.trim()
+            'email': email.text.trim()
           });
           if (result == true) {
             Loaders.successSnackBar(
-                title: 'Success', message: 'Username updated successfully.');
+                title: 'Success', message: 'Email updated successfully.');
           } else {
             Loaders.errorSnackBar(
                 title: 'Error', message: 'Update failed, please try again.');
@@ -61,14 +60,14 @@ class UpdateUserNameController extends GetxController {
         } else {
           Loaders.warningSnackBar(
               title: 'Warning',
-              message: 'Username already exists, please try again.');
+              message: 'Email already exists, please try again.');
         }
       } catch (e) {
         Loaders.errorSnackBar(title: 'Error', message: 'An error occurred: $e');
       }
     } else {
       Loaders.errorSnackBar(
-          title: 'Error', message: 'Please enter a valid user name.');
+          title: 'Error', message: 'Please enter a valid Email.');
     }
   }
 }
