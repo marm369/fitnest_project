@@ -1,6 +1,8 @@
+import 'dart:convert';
+
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+
 import '../../../configuration/config.dart';
 
 class SignInService {
@@ -19,8 +21,10 @@ class SignInService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         if (jsonResponse['token'] != null) {
+          print("Maintenant je suis ici j'enregistere dans le local storage");
           box.write('user_id', jsonResponse['user_id']);
           box.write('token', jsonResponse['token']);
+          print(box.read('user_id'));
           return jsonResponse['token'];
         } else {
           print('Token is missing in the response');

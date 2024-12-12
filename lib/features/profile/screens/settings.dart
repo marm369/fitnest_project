@@ -177,6 +177,7 @@ class SettingsScreen extends StatelessWidget {
                   Center(
                     child: ElevatedButton(
                       onPressed: () {
+                        print("Maintenant local Storage deleted");
                         box.remove('user_id');
                         box.remove('token');
                         Navigator.pushNamed(context, '/signin');
