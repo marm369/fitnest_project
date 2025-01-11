@@ -8,14 +8,19 @@ class NetworkManager extends GetxController {
   static NetworkManager get instance => Get.find();
 
   final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
+  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
   final Rx<ConnectivityResult> _connectionStatus = ConnectivityResult.none.obs;
 
   @override
   void onInit() {
     super.onInit();
     _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+        _connectivity.onConnectivityChanged.listen((results) {
+          // On suppose que la liste contient les résultats connectés.
+          // Si elle est vide, il n'y a pas de connexion.
+          final result = results.isNotEmpty ? results.first : ConnectivityResult.none;
+          _updateConnectionStatus(result);
+        });
   }
 
   void _updateConnectionStatus(ConnectivityResult result) {

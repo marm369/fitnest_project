@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import '../../../configuration/config.dart';
+import '../../../features/events/models/event.dart';
 
 class ParticipationService {
   final String participationUrl =
@@ -81,6 +82,31 @@ class ParticipationService {
     }
   }
 
+  Future<List<Map<String, dynamic>>> participationsAcceptedRefusedByUserId(
+      int userId) async {
+    try {
+      final url = Uri.parse('$participationUrl/user/$userId/accepted_refused');
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+      if (response.statusCode == 200) {
+        final List<Map<String, dynamic>> participations =
+            jsonDecode(utf8.decode(response.bodyBytes));
+
+        return participations;
+      } else {
+        throw Exception(
+            "Failed to fetch participations: ${response.statusCode} - ${response.reasonPhrase}");
+      }
+    } catch (error) {
+      throw Exception(
+          "An error occurred while fetching participations: $error");
+    }
+  }
+
   Future<void> cancelParticipation(int userId, int eventId) async {
     try {
       final url =
@@ -143,6 +169,32 @@ class ParticipationService {
             .cast<Map<String, dynamic>>()
             .toList();
         return participations;
+      } else {
+        throw Exception(
+            'Erreur lors de la récupération des participations : ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Une erreur est survenue : $e');
+    }
+  }
+
+  Future<List<Event>> getParticipationsByUserId(int userId) async {
+    final url = Uri.parse('$participationUrl/user/$userId/participations');
+
+    try {
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        // Décoder les données JSON
+        final eventsJson = json.decode(utf8.decode(response.bodyBytes));
+
+        if (eventsJson is List) {
+          return eventsJson
+              .where((event) => event != null && event is Map<String, dynamic>)
+              .map((event) => Event.fromJson(event as Map<String, dynamic>))
+              .toList();
+        } else {
+          throw Exception('Unexpected JSON format: expected a List');
+        }
       } else {
         throw Exception(
             'Erreur lors de la récupération des participations : ${response.statusCode}');

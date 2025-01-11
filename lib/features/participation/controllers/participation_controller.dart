@@ -3,6 +3,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../../../../data/services/participation/participation_service.dart';
 import '../../../data/services/profile/user_service.dart';
+import '../../events/models/event.dart';
 import '../../profile/models/user_model.dart';
 
 class ParticipationController extends GetxController {
@@ -62,6 +63,18 @@ class ParticipationController extends GetxController {
       return participants;
     } catch (e) {
       print("Erreur lors de la récupération des participations: $e");
+      return [];
+    }
+  }
+
+  Future<List<Event>> getParticipationsByUserId(int userId) async {
+    try {
+      return await participationService.getParticipationsByUserId(userId);
+    } catch (e) {
+      // Log the error for debugging purposes
+      print('Error fetching user events: $e');
+
+      // Return an empty list in case of an error
       return [];
     }
   }

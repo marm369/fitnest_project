@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+
   # Utility Packages
   http:
   dio:
@@ -20,20 +21,19 @@ dependencies:
   logger:
   lottie:
   url_launcher:
-  connectivity_plus: ^5.0.1
+  connectivity_plus: ^6.1.1
   flutter_native_splash:
   smooth_page_indicator:
   shimmer:
   dynamic_multi_step_form:
   iconsax:
   cupertino_icons:
-  fl_chart: ^0.62.0
-  animated_toggle_switch: ^0.6.2
+  animated_toggle_switch: ^0.8.4
   simple_animation_progress_bar: ^1.6.0
   simple_circular_progress_bar: ^1.0.2
   dotted_dashed_line: ^0.0.3
   google_maps_flutter:
-  readmore: ^2.1.0
+  readmore: ^3.0.0
   image_picker:
   flutter_map: ^4.0.0
   flutter_map_marker_cluster: ^1.1.1
@@ -47,7 +47,8 @@ dependencies:
   json_annotation:
   image:
   flutter_image_compress:
-
+  permission_handler: ^11.3.1
+  flutter_vibrate: ^1.3.0
   # State Management
   get:
   get_storage:
@@ -57,7 +58,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^5.0.0
   flutter_launcher_icons: ^0.13.1
   build_runner:
   json_serializable:

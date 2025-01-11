@@ -29,11 +29,7 @@ class EventUserController extends GetxController {
     try {
       // Await the fetch operation to get the data
       final eventData = await eventService.fetchUserEvents(userId);
-
-      // Update the reactive list
       eventInfos.value = eventData;
-
-      // Return the fetched data
       return eventData;
     } catch (e) {
       // Log the error for debugging purposes

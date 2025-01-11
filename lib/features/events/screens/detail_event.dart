@@ -23,19 +23,23 @@ class EventDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = HelperFunctions.isDarkMode(context);
+    final bool isDarkMode = HelperFunctions.isDarkMode(context);
     final EventUserController eventUserController =
         Get.put(EventUserController());
     final ParticipationController participationController =
         Get.put(ParticipationController());
+
+    // Fetch the organizer's username
     eventUserController.fetchUserName(event.organizerId);
+
     Widget imageWidget;
     try {
       Uint8List imageBytes = base64Decode(event.imagePath);
       imageWidget = Stack(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+            borderRadius:
+                const BorderRadius.vertical(bottom: Radius.circular(16)),
             child: Image.memory(
               imageBytes,
               width: double.infinity,
@@ -46,7 +50,7 @@ class EventDetailPage extends StatelessWidget {
           Container(
             width: double.infinity,
             height: 400,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
               gradient: LinearGradient(
                 colors: [Colors.black54, Colors.transparent],
@@ -56,8 +60,8 @@ class EventDetailPage extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: 330,
-            left: 5,
+            top: 16,
+            left: 16,
             child: IconButton(
               icon: Icon(Icons.arrow_back,
                   color: Colors.white, size: MySizes.iconMd),
@@ -72,15 +76,12 @@ class EventDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    SportCategoryChip(
-                      categoryName: event.sportCategory.name,
-                      categoryIcon: iconMapping[event.sportCategory.iconName] ??
-                          Icons.sports,
-                    ),
-                  ],
+                SportCategoryChip(
+                  categoryName: event.sportCategory.name,
+                  categoryIcon:
+                      iconMapping[event.sportCategory.iconName] ?? Icons.sports,
                 ),
+                const SizedBox(height: MySizes.spaceBtwItems / 2),
                 Text(
                   utf8.decode(event.name.runes.toList()),
                   style: TextStyle(
@@ -89,70 +90,69 @@ class EventDetailPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(width: MySizes.spaceBtwItems / 2),
-                Text(
-                  "Organized By: ${eventUserController.userName.value}",
-                  style: TextStyle(
-                    fontSize: MySizes.fontSizeSm,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(height: MySizes.md),
+                const SizedBox(height: MySizes.spaceBtwItems / 2),
+                Obx(() => Text(
+                      "Organized By: ${eventUserController.userName.value}",
+                      style: TextStyle(
+                        fontSize: MySizes.fontSizeSm,
+                        color: Colors.white,
+                      ),
+                    )),
+                const SizedBox(height: MySizes.md),
                 Row(
                   children: [
                     Icon(Icons.calendar_today,
                         color: Colors.white, size: MySizes.iconSm),
-                    SizedBox(width: MySizes.spaceBtwItems / 2),
+                    const SizedBox(width: MySizes.spaceBtwItems / 2),
                     Text(
                       "Date: ${event.startDate}",
                       style: TextStyle(
                           color: Colors.white, fontSize: MySizes.fontSizeSm),
                     ),
-                    SizedBox(width: MySizes.spaceBtwItems),
-                    if (event.location != null)
-                      Row(
-                        children: [
-                          Icon(Icons.location_on,
-                              color: Colors.white, size: MySizes.iconSm),
-                          SizedBox(width: MySizes.spaceBtwItems / 2),
-                          Text(
-                            "${event.location!.locationName}",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: MySizes.fontSizeSm),
-                          ),
-                        ],
-                      )
-                    else
-                      Row(
-                        children: [
-                          Icon(Icons.location_on,
-                              color: Colors.white, size: MySizes.iconSm),
-                          SizedBox(width: MySizes.spaceBtwItems / 2),
-                          Text(
-                            "Location: Not available",
-                            style: TextStyle(
-                                fontSize: MySizes.fontSizeSm,
-                                color: Colors.white),
-                          ),
-                        ],
-                      ),
                   ],
                 ),
-                SizedBox(height: MySizes.xs),
+                if (event.location != null) ...[
+                  const SizedBox(height: MySizes.spaceBtwItems / 2),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on,
+                          color: Colors.white, size: MySizes.iconSm),
+                      const SizedBox(width: MySizes.spaceBtwItems / 2),
+                      Text(
+                        "${event.location!.locationName}",
+                        style: TextStyle(
+                            color: Colors.white, fontSize: MySizes.fontSizeSm),
+                      ),
+                    ],
+                  ),
+                ] else ...[
+                  const SizedBox(height: MySizes.spaceBtwItems / 2),
+                  Row(
+                    children: [
+                      Icon(Icons.location_on,
+                          color: Colors.white, size: MySizes.iconSm),
+                      const SizedBox(width: MySizes.spaceBtwItems / 2),
+                      Text(
+                        "Location: Not available",
+                        style: TextStyle(
+                            color: Colors.white, fontSize: MySizes.fontSizeSm),
+                      ),
+                    ],
+                  ),
+                ],
+                const SizedBox(height: MySizes.xs),
                 Row(
                   children: [
                     Icon(Icons.access_time,
                         color: Colors.white, size: MySizes.iconSm),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       "${event.startTime}",
                       style: TextStyle(
-                          fontSize: MySizes.fontSizeSm, color: Colors.white),
+                          color: Colors.white, fontSize: MySizes.fontSizeSm),
                     ),
                   ],
                 ),
-                SizedBox(height: MySizes.spaceBtwItems / 2),
               ],
             ),
           ),
@@ -160,18 +160,20 @@ class EventDetailPage extends StatelessWidget {
       );
     } catch (e) {
       imageWidget = Container(
-        margin: EdgeInsets.all(16),
+        margin: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.grey,
           borderRadius: BorderRadius.circular(16),
         ),
         height: 250,
-        child: Center(child: Text('Invalid image')),
+        child: const Center(
+          child: Text('Invalid image', style: TextStyle(color: Colors.white)),
+        ),
       );
     }
-
     Widget mapWidget;
     if (event.sportCategory.requiresRoute && event.route != null) {
+      // Display route if requiresRoute is true and route is not null
       mapWidget = Container(
         margin: EdgeInsets.all(16),
         height: 200,
@@ -179,7 +181,7 @@ class EventDetailPage extends StatelessWidget {
           options: MapOptions(
             center: LatLng(event.route!.coordinatesFromPath[0][0],
                 event.route!.coordinatesFromPath[0][1]),
-            zoom: 15.0,
+            zoom: 15.0, // Zoom plus rapproché
           ),
           children: [
             TileLayer(
@@ -199,6 +201,7 @@ class EventDetailPage extends StatelessWidget {
             ),
             MarkerLayer(
               markers: [
+                // Marqueur pour le point de départ en rouge
                 Marker(
                   point: LatLng(event.route!.coordinatesFromPath[0][0],
                       event.route!.coordinatesFromPath[0][1]),
@@ -228,7 +231,6 @@ class EventDetailPage extends StatelessWidget {
         ),
       );
     } else if (event.location != null) {
-      // Display location marker if location is not null
       final location = event.location!;
       mapWidget = Container(
         margin: EdgeInsets.all(16),
@@ -261,6 +263,7 @@ class EventDetailPage extends StatelessWidget {
         ),
       );
     } else {
+      // Display "Location unavailable" if neither location nor route is available
       mapWidget = Container(
         margin: EdgeInsets.all(16),
         height: 200,
@@ -272,110 +275,120 @@ class EventDetailPage extends StatelessWidget {
         ),
       );
     }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        imageWidget,
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              EventInfo(
-                eventDescription: event.description,
-                maxParticipants: event.maxParticipants,
-                currentNumParticipants: event.currentNumParticipants,
-              ),
-              SizedBox(height: MySizes.sm),
-              Container(
-                height: 300,
-                child: ParticipantsList(
-                  participants: participationController
-                      .getParticipationsByEventId(event.id),
-                ),
-              ),
-              mapWidget,
-              // Insert map widget here
-            ],
-          ),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            imageWidget,
+            EventInfo(
+              eventDescription: event.description,
+              maxParticipants: event.maxParticipants,
+              currentNumParticipants: event.currentNumParticipants,
+            ),
+            ParticipantsList(
+              participants:
+                  participationController.getParticipationsByEventId(event.id),
+            ),
+            mapWidget,
+          ],
         ),
-      ],
+      ),
     );
   }
+}
 
-  Widget _buildMapWithRoute(Event event) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: FlutterMap(
-        options: MapOptions(
-          center: LatLng(
-            event.route!.coordinatesFromPath[0][0],
-            event.route!.coordinatesFromPath[0][1],
+/*
+Future<void> _handleTrackEvent(BuildContext context) async {
+  final box = GetStorage();
+  final userId =
+      box.read('user_id'); // Replace with actual user ID retrieval logic
+  final eventId = event.id;
+  final organizerId = event.organizerId;
+
+  try {
+    final response = await http.get(
+      Uri.parse(
+          'http://localhost:8888/api/participations/participants/$eventId'),
+    );
+
+    if (response.statusCode == 200) {
+      List participants = jsonDecode(response.body);
+      bool isParticipant =
+          participants.any((participant) => participant['id'] == userId);
+      print("Organizer ID: $organizerId");
+
+      if (!isParticipant) {
+        _showDialog(
+          context,
+          "Not a Participant",
+          "You are not a participant in this event.",
+        );
+        return;
+      }
+
+      DateTime eventStartDateTime =
+          DateTime.parse("${event.startDate} ${event.startTime}");
+      DateTime currentDateTime = DateTime.now();
+
+      if (currentDateTime.isBefore(eventStartDateTime)) {
+        _showDialog(
+          context,
+          "Event Not Started",
+          "The event is scheduled to start on ${event.startDate} at ${event.startTime}. Please try again later.",
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                TrackingScreen(organizerId: event.organizerId),
           ),
-          zoom: 15.0,
+        );
+      }
+    } else {
+      _showDialog(
+          context, "Error", "Failed to fetch participants for this event.");
+    }
+  } catch (e) {
+    _showDialog(context, "Error", "An unexpected error occurred: $e");
+  }
+}
+*/
+void _showDialog(BuildContext context, String title, String message) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.0),
         ),
-        children: [
-          TileLayer(
-            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            subdomains: ['a', 'b', 'c'],
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20.0,
+            color: Colors.redAccent, // Title color
           ),
-          PolylineLayer(
-            polylines: [
-              Polyline(
-                points: event.route!.coordinatesFromPath
-                    .map((coord) => LatLng(coord[0], coord[1]))
-                    .toList(),
-                strokeWidth: 4.0,
-                color: Colors.blue,
-              ),
-            ],
+        ),
+        content: Text(
+          message,
+          style: TextStyle(fontSize: 16.0),
+        ),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white, // Text color
+              backgroundColor: Colors.blue, // Button background
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text("OK"),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMapWithLocation(Event event) {
-    final location = event.location!;
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      height: 200,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: FlutterMap(
-        options: MapOptions(
-          center: LatLng(location.latitude, location.longitude),
-          zoom: 15.0,
-        ),
-        children: [
-          TileLayer(
-            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            subdomains: ['a', 'b', 'c'],
-          ),
-          MarkerLayer(
-            markers: [
-              Marker(
-                point: LatLng(location.latitude, location.longitude),
-                width: 80.0,
-                height: 80.0,
-                builder: (ctx) => Icon(
-                  Icons.location_pin,
-                  color: Colors.red,
-                  size: 40,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+      );
+    },
+  );
 }

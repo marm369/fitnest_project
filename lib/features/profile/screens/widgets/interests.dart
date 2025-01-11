@@ -42,14 +42,6 @@ class InterestsWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Interests :',
-                  style: TextStyle(
-                    fontSize: MySizes.fontSizeLg,
-                    fontWeight: FontWeight.w600,
-                    color: MyColors.primary,
-                  ),
-                ),
                 SizedBox(height: MySizes.xs),
                 interests.isEmpty
                     ? Center(

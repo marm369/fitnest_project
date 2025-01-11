@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../common/widgets/custom_shapes/curved_edges/groovy_clipper.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../events/controllers/event_user_controller.dart';
+import '../../participation/controllers/participation_controller.dart';
 import '../controllers/bio_controller.dart';
 import '../controllers/profile_controller.dart';
 import '../models/user_model.dart';
@@ -22,6 +23,8 @@ class ProfileUser extends StatelessWidget {
 
   final EventUserController eventController = Get.put(EventUserController());
   final ProfileController profileController = Get.put(ProfileController());
+  final ParticipationController participationController =
+      Get.put(ParticipationController());
   final BioController bioController = Get.put(BioController());
   final TextEditingController bioEditingController = TextEditingController();
 
@@ -55,7 +58,8 @@ class ProfileUser extends StatelessWidget {
 
           // Chargement des événements utilisateur
           final futureEvents = eventController.getEventsByUser(participantId);
-
+          final futureParticipations =
+              participationController.getParticipationsByUserId(userProfile.id);
           return Scaffold(
             body: SafeArea(
               child: Column(
@@ -277,7 +281,41 @@ class ProfileUser extends StatelessWidget {
                       ),
                     ),
                   ),
-                  EventsSectionWidget(futureEvents: futureEvents),
+                  Text(
+                    "Your Created Events",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  EventsSectionWidget(
+                    futureEvents: futureEvents,
+                    altTitle: "You have not organized any events.",
+                  ),
+                  SizedBox(height: MySizes.spaceBtwSections),
+                  Text(
+                    "Your Participated Events",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
+                  EventsSectionWidget(
+                      futureEvents: futureParticipations,
+                      altTitle: "You have not participated any events."),
+                  Text(
+                    "Interests",
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent,
+                    ),
+                  ),
                   InterestsWidget(userId: userProfile.id),
                 ],
               ),

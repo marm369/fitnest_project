@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class SportCategory {
   final int id;
   final String name;
@@ -46,6 +44,7 @@ class Location {
       longitude: json['longitude'],
     );
   }
+
   @override
   String toString() {
     return 'Location{locationName: $locationName, latitude: $latitude, longitude: $longitude}';
@@ -131,10 +130,9 @@ class Event {
             ? Location.fromJson(json['location'])
             : null,
         route: json['route'] != null ? Route.fromJson(json['route']) : null,
-        sportCategory: SportCategory.fromJson(
-            json['sportCategory']), // Ensure non-nullable
-        startTime: json['startTime'],
-        organizerId: json['organizerId']);
+        sportCategory: SportCategory.fromJson(json['sportCategory'] ?? ''),
+        startTime: json['startTime'] ?? '',
+        organizerId: json['organizerId'] ?? 0);
   }
 
   // toString Method to print all fields

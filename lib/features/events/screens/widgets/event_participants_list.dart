@@ -30,18 +30,15 @@ class ParticipantsList extends StatelessWidget {
               Row(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: MySizes.xs, vertical: 0),
+                    padding: const EdgeInsets.symmetric(horizontal: MySizes.xs),
                     child: Row(
                       children: [
                         Icon(
-                          Icons.groups, // Choisissez l'icône que vous souhaitez
+                          Icons.groups,
                           color: Colors.blueAccent,
                           size: MySizes.iconMd,
                         ),
-                        SizedBox(
-                            width:
-                                MySizes.sm), // Espace entre l'icône et le texte
+                        SizedBox(width: MySizes.sm),
                         Text(
                           "Participants list:",
                           style: TextStyle(
@@ -55,14 +52,17 @@ class ParticipantsList extends StatelessWidget {
                   ),
                 ],
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: participants.length,
-                  itemBuilder: (context, index) {
-                    final user = participants[index];
-                    return ParticipantTile(user: user);
-                  },
-                ),
+              // Use ListView directly instead of wrapping with Expanded
+              ListView.builder(
+                shrinkWrap: true,
+                // Important: allows ListView to take the required height
+                physics: NeverScrollableScrollPhysics(),
+                // Prevents scrolling inside the ListView
+                itemCount: participants.length,
+                itemBuilder: (context, index) {
+                  final user = participants[index];
+                  return ParticipantTile(user: user);
+                },
               ),
             ],
           );

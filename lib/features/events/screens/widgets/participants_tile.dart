@@ -25,13 +25,6 @@ class ParticipantTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final dark = HelperFunctions.isDarkMode(context);
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: dark ? Colors.white : Colors.black,
-          width: 2.0,
-        ),
-        borderRadius: BorderRadius.circular(10.0),
-      ),
       child: Card(
         margin: EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
         color: dark ? Colors.black : Colors.white,
