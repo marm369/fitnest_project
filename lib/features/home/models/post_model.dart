@@ -35,7 +35,7 @@ class PostModel {
     required this.sportCategoryIcon,
   });
 
-  // Constructeur `fromEvent` avec le paramètre `user`
+  // Constructeur fromEvent avec le paramètre user
   factory PostModel.fromEvent(Event event,
       {required Map<String, dynamic> user}) {
     return PostModel(

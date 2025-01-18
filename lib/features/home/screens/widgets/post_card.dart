@@ -34,7 +34,7 @@ class _PostCardState extends State<PostCard> {
   int likeCount = 100;
 
   final ParticipationController participationController =
-      Get.put(ParticipationController());
+  Get.put(ParticipationController());
 
   @override
   Widget build(BuildContext context) {
@@ -93,15 +93,15 @@ class _PostCardState extends State<PostCard> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         image: widget.post.organizerImage != null &&
-                                widget.post.organizerImage!.isNotEmpty
+                            widget.post.organizerImage!.isNotEmpty
                             ? DecorationImage(
-                                image: MemoryImage(
-                                  base64Decode(widget
-                                      .post.organizerImage), // Décodage Base64
-                                ),
-                                fit: BoxFit
-                                    .cover, // Maintient le ratio de l'image
-                              )
+                          image: MemoryImage(
+                            base64Decode(widget
+                                .post.organizerImage), // Décodage Base64
+                          ),
+                          fit: BoxFit
+                              .cover, // Maintient le ratio de l'image
+                        )
                             : null,
                         color: Colors.grey.shade300,
                       ),
@@ -120,7 +120,7 @@ class _PostCardState extends State<PostCard> {
                           ),
                         ),
                         Text(
-                          '${widget.post.cityName ?? "Lieu non spécifié"} • ${widget.post.startTime}',
+                          '${widget.post.cityName ?? "Lieu non spécifié"} ${widget.post.startTime}',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.grey.shade600,
@@ -205,7 +205,7 @@ class _PostCardState extends State<PostCard> {
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   backgroundColor:
-                                      dark ? Colors.black : Colors.white,
+                                  dark ? Colors.black : Colors.white,
                                   contentPadding: EdgeInsets.all(20),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(
@@ -218,7 +218,7 @@ class _PostCardState extends State<PostCard> {
                                         fontSize: 18, // Taille du titre
                                         fontWeight: FontWeight.bold,
                                         color:
-                                            dark ? Colors.white : Colors.black,
+                                        dark ? Colors.white : Colors.black,
                                       ),
                                     ),
                                   ),
@@ -231,7 +231,7 @@ class _PostCardState extends State<PostCard> {
                                         color: dark
                                             ? Colors.white.withOpacity(0.7)
                                             : Colors.black.withOpacity(
-                                                0.7), // Texte légèrement gris
+                                            0.7), // Texte légèrement gris
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -256,7 +256,7 @@ class _PostCardState extends State<PostCard> {
                             decoration: BoxDecoration(
                               color: Colors.white, // Fond blanc
                               borderRadius:
-                                  BorderRadius.circular(20), // Bordure arrondie
+                              BorderRadius.circular(20), // Bordure arrondie
                               border: Border.all(
                                 color: Colors.grey.shade300, // Bordure grise
                                 width: 1,
@@ -269,7 +269,7 @@ class _PostCardState extends State<PostCard> {
                                   fontSize: 14, // Taille du texte ajustée
                                   fontWeight: FontWeight.bold, // Style du texte
                                   color:
-                                      Colors.grey.shade600, // Texte gris clair
+                                  Colors.grey.shade600, // Texte gris clair
                                 ),
                               ),
                             ),

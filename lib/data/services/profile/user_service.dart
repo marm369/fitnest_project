@@ -41,12 +41,8 @@ class UserService {
   Future<UserModel> fetchProfileData(int userId) async {
     final url = Uri.parse('$gatewayAthUrl/user/getUserById/$userId');
     try {
-      final response = await http.get(
-        url,
-        headers: {
-          if (token != null) 'Authorization': 'Bearer $token',
-        },
-      );
+      final response = await http.get(url);
+      print("response,$response");
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         return UserModel.fromJson(data);

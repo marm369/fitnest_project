@@ -42,15 +42,15 @@ class RequestsController extends GetxController {
   Future<List<ParticipationModel>> fetchParticipations(int organizerId) async {
     try {
       final List<Map<String, dynamic>> participationsRaw =
-          await participationService.participationsParOrganizerId(organizerId);
+      await participationService.participationsParOrganizerId(organizerId);
       List<ParticipationModel> participations = [];
 
       for (var participation in participationsRaw) {
         try {
           final UserModel user =
-              await userService.fetchProfileData(participation['userId']);
+          await userService.fetchProfileData(participation['userId']);
           final Event event =
-              await eventService.getEventById(participation['eventId']);
+          await eventService.getEventById(participation['eventId']);
 
           // Créer un modèle de participation complet
           participations.add(

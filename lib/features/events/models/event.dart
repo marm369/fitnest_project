@@ -137,6 +137,35 @@ class Event {
         organizerId: json['organizerId']);
   }
 
+  factory Event.fromJson1(Map<String, dynamic> json) {
+    return Event(
+        id: json['id'],
+        name: json['name'] ?? 'Unnamed event',
+        description: json['description'] ?? 'No description available',
+        cityName: json['cityName'] ?? 'Unknown location',
+        latitude: json['latitude'] ?? 0.0,
+        longitude: json['longitude'] ?? 0.0,
+        startDate: json['startDate'] ?? '',
+        endDate: json['endDate'] ?? '',
+        sportCategoryName: json['sportCategoryName'] ?? 'No category',
+        sportCategoryId: json['sportCategoryId'] ?? 0,
+        maxParticipants: json['maxParticipants'] ?? 0,
+        currentNumParticipants: json['currentNumParticipants'] ?? 0,
+        imagePath: json['imagePath'] ?? '',
+        location: json['location'] != null && json['location'] is Map<String, dynamic>
+            ? Location.fromJson(json['location'])
+            : null,
+        route: json['route'] != null && json['route'] is Map<String, dynamic>
+            ? Route.fromJson(json['route'])
+            : null,
+        sportCategory: json['sportCategory'] != null && json['sportCategory'] is Map<String, dynamic>
+            ? SportCategory.fromJson(json['sportCategory'])
+            : SportCategory(id: 0, name: 'Unknown', iconName: 'unknown', requiresRoute: false),
+        startTime: json['startTime'] ?? '',
+        organizerId: json['organizerId'] ?? 0);
+  }
+
+
   // toString Method to print all fields
   @override
   String toString() {

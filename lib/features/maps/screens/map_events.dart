@@ -19,7 +19,7 @@ import '../../../configuration/config.dart';
 
 class EventsMapPage extends StatefulWidget {
   final EventControllerManagement eventController =
-      EventControllerManagement(eventService: EventService());
+  EventControllerManagement(eventService: EventService());
   final TextEditingController _searchController = TextEditingController();
   final SearchPlace _mapService = SearchPlace(apiKey: ORSAPIKey);
 
@@ -49,8 +49,9 @@ class _EventsMapPageState extends State<EventsMapPage> {
           dateFilter: selectedDateFilter,
           partDay: selectedPartOfDay,
           distance: selectedDistance,
-          latitude: currentLocation?.latitude,
-          longitude: currentLocation?.longitude);
+          latitude:currentLocation?.latitude,
+          longitude:currentLocation?.longitude
+      );
       setState(() {
         events = widget.eventController.events;
       });
@@ -76,7 +77,6 @@ class _EventsMapPageState extends State<EventsMapPage> {
     });
     _fetchEvents();
   }
-
   void _onDistanceSelected(String? distance) {
     print('distance in on distance selected :$distance');
     setState(() {
@@ -84,12 +84,12 @@ class _EventsMapPageState extends State<EventsMapPage> {
     });
     _fetchEvents();
   }
-
   void _onFiltersApplied(EventFilters filters) {
     setState(() {
       selectedDateFilter = filters.date;
       selectedPartOfDay = filters.time;
-      selectedDistance = filters.distance;
+      selectedDistance= filters.distance;
+
     });
     _fetchEvents();
   }
@@ -159,8 +159,7 @@ class _EventsMapPageState extends State<EventsMapPage> {
                   ),
                   children: [
                     TileLayer(
-                      urlTemplate:
-                          "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                       subdomains: ['a', 'b', 'c'],
                     ),
                     MarkerLayer(
@@ -174,57 +173,49 @@ class _EventsMapPageState extends State<EventsMapPage> {
                               size: 40,
                             ),
                           ),
-                        ...events
-                            .map((event) {
-                              if (event.location != null) {
-                                final location = event.location!;
-                                return Marker(
-                                  point: LatLng(
-                                      location.latitude, location.longitude),
-                                  builder: (ctx) => IconButton(
-                                    icon: const Icon(
-                                      Icons.location_on,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              EventDetailPage(event: event),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                );
-                              } else if (event.route != null &&
-                                  event.route!.coordinatesFromPath.isNotEmpty) {
-                                final routeCoordinates =
-                                    event.route!.coordinatesFromPath[0];
-                                if (routeCoordinates.length >= 2) {
-                                  return Marker(
-                                    point: LatLng(routeCoordinates[0],
-                                        routeCoordinates[1]),
-                                    builder: (ctx) => IconButton(
-                                      icon: const Icon(Icons.location_on,
-                                          color: Colors.green),
-                                      onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                EventDetailPage(event: event),
-                                          ),
-                                        );
-                                      },
+                        ...events.map((event) {
+                          if (event.location != null) {
+                            final location = event.location!;
+                            return Marker(
+                              point: LatLng(location.latitude, location.longitude),
+                              builder: (ctx) => IconButton(
+                                icon: const Icon(
+                                  Icons.location_on,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => EventDetailPage(event: event),
                                     ),
                                   );
-                                }
-                              }
-                              return null;
-                            })
-                            .whereType<Marker>()
-                            .toList(),
+                                },
+                              ),
+                            );
+                          }
+                          else if (event.route != null &&
+                              event.route!.coordinatesFromPath.isNotEmpty) {
+                            final routeCoordinates = event.route!.coordinatesFromPath[0];
+                            if (routeCoordinates.length >= 2) {
+                              return Marker(
+                                point: LatLng(routeCoordinates[0], routeCoordinates[1]),
+                                builder: (ctx) => IconButton(
+                                  icon: const Icon(Icons.location_on, color: Colors.green),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => EventDetailPage(event: event),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            }
+                          }
+                          return null;
+                        }).whereType<Marker>().toList(),
                       ],
                     ),
                   ],
@@ -237,7 +228,7 @@ class _EventsMapPageState extends State<EventsMapPage> {
 
                 // Barre de recherche
                 Positioned(
-                  top: 16,
+                  top: 36,
                   left: 16,
                   right: 16,
                   child: Material(
@@ -262,7 +253,7 @@ class _EventsMapPageState extends State<EventsMapPage> {
 
                 // Filtres sous la barre de recherche
                 Positioned(
-                  top: 80,
+                  top: 90,
                   left: 0,
                   right: 0,
                   child: Padding(
@@ -292,8 +283,8 @@ class _EventsMapPageState extends State<EventsMapPage> {
                 ),
 
                 Positioned(
-                  bottom: 150,
-                  right: 20,
+                  bottom: 160,
+                  right: 17,
                   child: FloatingActionButton(
                     onPressed: _locateMe,
                     backgroundColor: Colors.grey,
@@ -309,9 +300,10 @@ class _EventsMapPageState extends State<EventsMapPage> {
     );
   }
 
+
   Widget _buildEventList(BuildContext context) {
     return SizedBox(
-      height: 150,
+      height: 170,
       child: ListView.builder(
         padding: const EdgeInsets.all(8.0),
         scrollDirection: Axis.horizontal,
@@ -323,10 +315,9 @@ class _EventsMapPageState extends State<EventsMapPage> {
       ),
     );
   }
-
   Widget buildEventCard(Event event) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 2.0, horizontal: 2.0),
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -334,165 +325,155 @@ class _EventsMapPageState extends State<EventsMapPage> {
         child: Container(
           color: const Color(0xFFE0E0E0), // Couleur de fond appliquée
           width: 300,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Event Details
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Row for Date and Time
-                          Row(
-                            children: [
-                              const Icon(Icons.calendar_today,
-                                  color: Colors.grey, size: 14),
-                              const SizedBox(width: 6),
-                              Text(
-                                event.startDate,
-                                style: const TextStyle(
-                                  color: Color(0xFFC49D83),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(width: 20),
-                              Text(
-                                event.startTime,
-                                style: const TextStyle(
-                                  color: Color(0xFFC49D83),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            event.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ),
-                          Text(
-                            "${event.currentNumParticipants ?? 'No one'} going",
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              const Icon(Icons.location_on,
-                                  color: Colors.red, size: 16),
-                              GestureDetector(
-                                onTap: () {
-                                  if (event.location != null) {
-                                    _mapController.move(
-                                      LatLng(
-                                        event.location!.latitude,
-                                        event.location!.longitude,
-                                      ),
-                                      15.0,
-                                    );
-                                  } else if (event.route != null &&
-                                      event.route!.coordinatesFromPath
-                                          .isNotEmpty) {
-                                    final routeCoordinates =
-                                        event.route!.coordinatesFromPath[0];
-                                    if (routeCoordinates.length >= 2) {
-                                      _mapController.move(
-                                        LatLng(routeCoordinates[0],
-                                            routeCoordinates[1]),
-                                        15.0,
-                                      );
-                                    }
-                                  }
-                                },
-                                child: const Text(
-                                  "View on Map",
-                                  style: TextStyle(
-                                    color: Colors.blue,
+          child: SingleChildScrollView( // Permet de scroller en cas de contenu trop grand
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Ligne pour la date et l'heure
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today, color: Colors.grey, size: 14),
+                                const SizedBox(width: 6),
+                                Text(
+                                  event.startDate,
+                                  style: const TextStyle(
+                                    color: Color(0xFFC49D83),
                                     fontSize: 12,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
+                                const SizedBox(width: 20),
+                                Text(
+                                  event.startTime,
+                                  style: const TextStyle(
+                                    color: Color(0xFFC49D83),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              event.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Image and Icons
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 8.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.white,
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: Image.memory(
-                              base64Decode(event.imagePath),
-                              width: 100,
-                              height: 60,
-                              fit: BoxFit.cover,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
                             ),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 6.0, vertical: 6.0),
-                        child: Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                // Action de partage
-                              },
-                              icon: Icon(Icons.share,
-                                  size: 24, color: Colors.grey),
-                              padding: EdgeInsets
-                                  .zero, // Supprime le padding interne
-                              constraints:
-                                  BoxConstraints(), // Supprime les marges par défaut
+                            const SizedBox(height: 4),
+                            Text(
+                              "${event.currentNumParticipants ?? 'No one'} going",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black54,
+                              ),
                             ),
-                            SizedBox(
-                                width:
-                                    8), // Espace entre les icônes (ajustez la valeur selon vos besoins)
-                            IconButton(
-                              onPressed: () {
-                                // Action d'enregistrement
-                              },
-                              icon: Icon(Icons.bookmark,
-                                  size: 24, color: Colors.grey),
-                              padding: EdgeInsets
-                                  .zero, // Supprime le padding interne
-                              constraints:
-                                  BoxConstraints(), // Supprime les marges par défaut
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                const Icon(Icons.location_on, color: Colors.red, size: 16),
+                                GestureDetector(
+                                  onTap: () {
+                                    if (event.location != null) {
+                                      _mapController.move(
+                                        LatLng(
+                                          event.location!.latitude,
+                                          event.location!.longitude,
+                                        ),
+                                        15.0,
+                                      );
+                                    } else if (event.route != null &&
+                                        event.route!.coordinatesFromPath.isNotEmpty) {
+                                      final routeCoordinates = event.route!.coordinatesFromPath[0];
+                                      if (routeCoordinates.length >= 2) {
+                                        _mapController.move(
+                                          LatLng(routeCoordinates[0], routeCoordinates[1]),
+                                          15.0,
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: const Text(
+                                    "View on Map",
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ],
+                      ),
+                    ),
+                    // Image et icônes
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.white,
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.memory(
+                                base64Decode(event.imagePath),
+                                width: 100,
+                                height: 60,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 6.0),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  // Action de partage
+                                },
+                                icon: const Icon(Icons.share, size: 24, color: Colors.grey),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                              const SizedBox(width: 8),
+                              IconButton(
+                                onPressed: () {
+                                  // Action d'enregistrement
+                                },
+                                icon: const Icon(Icons.bookmark, size: 24, color: Colors.grey),
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+
 }

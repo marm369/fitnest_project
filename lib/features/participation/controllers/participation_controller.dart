@@ -3,6 +3,7 @@ import 'package:get_storage/get_storage.dart';
 
 import '../../../../data/services/participation/participation_service.dart';
 import '../../../data/services/profile/user_service.dart';
+import '../../events/models/event.dart';
 import '../../profile/models/user_model.dart';
 
 class ParticipationController extends GetxController {
@@ -26,7 +27,6 @@ class ParticipationController extends GetxController {
       String result = await ParticipationService().createParticipation(
         userId: userId,
         eventId: eventId,
-        organizerId: organizerId,
       );
       print('Réponse du service: $result');
       return true;
@@ -44,7 +44,7 @@ class ParticipationController extends GetxController {
     try {
       // Appel du service pour récupérer les participations brutes
       final List<Map<String, dynamic>> participationsRaw =
-          await participationService.getParticipationsByEventId(eventId);
+      await participationService.getParticipationsByEventId(eventId);
 
       // Initialisation de la liste finale
       List<UserModel> participants = [];
@@ -52,7 +52,7 @@ class ParticipationController extends GetxController {
       for (var participation in participationsRaw) {
         try {
           final UserModel user =
-              await userService.fetchProfileData(participation['userId']);
+          await userService.fetchProfileData(participation['userId']);
           participants.add(user);
         } catch (e) {
           print(
@@ -62,6 +62,18 @@ class ParticipationController extends GetxController {
       return participants;
     } catch (e) {
       print("Erreur lors de la récupération des participations: $e");
+      return [];
+    }
+  }
+
+  Future<List<Event>> getParticipationsByUserId(int userId) async {
+    try {
+      return await participationService.getParticipationsByUserId(userId);
+    } catch (e) {
+      print("hello");
+      // Log the error for debugging purposes
+      print('Error fetching user events: $e');
+      // Return an empty list in case of an error
       return [];
     }
   }

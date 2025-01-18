@@ -67,7 +67,7 @@ class HomeController extends GetxController {
   Future<void> loadEventsByCategories(String category) async {
     try {
       final List<EventScroll> data =
-          await categoryService.fetchEventByCategories(category);
+      await categoryService.fetchEventByCategories(category);
       events.value = data; // Met à jour la liste des événements
     } catch (e) {
       print("Error while loading events: $e");
@@ -76,7 +76,9 @@ class HomeController extends GetxController {
 
   Future<Event> getEventById(int id) async {
     try {
-      return await eventService.getEventById(id);
+      Event event= await eventService.getEventById(id);
+      print('------------${event.location}---------------------');
+      return event;
     } catch (e) {
       print("Error fetching event: $e");
       throw Exception("An error occurred while fetching the event: $e");
@@ -86,7 +88,7 @@ class HomeController extends GetxController {
   // Basculer entre les catégories sélectionnées
   void toggleCategory(String category) {
     selectedCategorie.updateAll(
-        (key, value) => false); // Désélectionner toutes les catégories
+            (key, value) => false); // Désélectionner toutes les catégories
     selectedCategorie[category] = true;
     loadEventsByCategories(category); // Sélectionner la catégorie actuelle
   }

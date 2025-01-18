@@ -58,20 +58,20 @@ class HomeScreen extends StatelessWidget {
                           right: 16,
                           child: 8 > 0
                               ? Container(
-                                  padding: const EdgeInsets.all(4),
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Text(
-                                    "8",
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                )
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              "8",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
                               : const SizedBox.shrink(),
                         )
                       ],
@@ -84,11 +84,11 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Obx(
-                    () => Container(
+                        () => Container(
                       color: dark
                           ? Colors.black
                           : Colors
-                              .white, // Couleur d'arrière-plan selon le mode
+                          .white, // Couleur d'arrière-plan selon le mode
                       height: 60,
                       child: ListView.builder(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -96,28 +96,28 @@ class HomeScreen extends StatelessWidget {
                         itemCount: homeController.categories.length,
                         itemBuilder: (context, index) {
                           final interest =
-                              homeController.categories[index]['name'];
+                          homeController.categories[index]['name'];
                           return Obx(() => GestureDetector(
-                                onTap: () =>
-                                    homeController.toggleCategory(interest),
-                                child: Row(
-                                  children: [
-                                    TabItem(
-                                      text: interest,
-                                      icon: Icon(
-                                        homeController.categories[index]
-                                            ['icon'],
-                                        color: homeController.selectedCategorie[
-                                                    interest] ==
-                                                true
-                                            ? Colors.blue
-                                            : Colors.grey,
-                                      ),
-                                    ),
-                                    SizedBox(width: MySizes.spaceBtwItems),
-                                  ],
+                            onTap: () =>
+                                homeController.toggleCategory(interest),
+                            child: Row(
+                              children: [
+                                TabItem(
+                                  text: interest,
+                                  icon: Icon(
+                                    homeController.categories[index]
+                                    ['icon'],
+                                    color: homeController.selectedCategorie[
+                                    interest] ==
+                                        true
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
                                 ),
-                              ));
+                                SizedBox(width: MySizes.spaceBtwItems),
+                              ],
+                            ),
+                          ));
                         },
                       ),
                     ),
@@ -155,7 +155,7 @@ class HomeScreen extends StatelessWidget {
                   );
                 },
                 separatorBuilder: (context, index) =>
-                    const SizedBox(height: 10),
+                const SizedBox(height: 10),
                 itemCount: postController.posts.length,
               );
             }

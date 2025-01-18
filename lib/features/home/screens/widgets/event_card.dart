@@ -60,7 +60,7 @@ class EventCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(MySizes.sm)),
+              BorderRadius.vertical(top: Radius.circular(MySizes.sm)),
               child: Builder(
                 builder: (context) {
                   try {
@@ -108,7 +108,7 @@ class EventCard extends StatelessWidget {
             ),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 5.0, vertical: 2.0),
+              const EdgeInsets.symmetric(horizontal: 5.0, vertical: 2.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -151,7 +151,7 @@ class EventCard extends StatelessWidget {
                               },
                               child: CircleAvatar(
                                 radius:
-                                    MySizes.md, // Ajustez la taille du cercle
+                                MySizes.md, // Ajustez la taille du cercle
                                 backgroundImage: MemoryImage(
                                     imageBytes), // Afficher l'image à partir de la mémoire
                               ),

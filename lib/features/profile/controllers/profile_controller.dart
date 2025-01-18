@@ -41,12 +41,6 @@ class ProfileController extends GetxController {
 
   // Fetch profile data
   Future<UserModel?> fetchProfileData(int userId) async {
-    String token = box.read<String>('token') ?? '';
-    if (token.isEmpty) {
-      print("Error: Token not found in storage.");
-      isLoading.value = false;
-      return null;
-    }
     try {
       print("Fetching profile data for user ID: $userId");
       final profileData = await userService.fetchProfileData(userId);

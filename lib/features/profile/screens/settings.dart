@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import '../../../common/widgets/appbar/appbar.dart';
 import '../../../common/widgets/texts/section_heading.dart';
 import '../../../utils/constants/sizes.dart';
+import '../../authentication/screens/signin/signin.dart';
 import '../controllers/profile_controller.dart';
 import '../controllers/profilepicture_controller.dart';
 import 'widgets/update_dateofbirth.dart';
@@ -176,11 +177,20 @@ class SettingsScreen extends StatelessWidget {
                   // Bouton pour fermer le compte
                   Center(
                     child: ElevatedButton(
-                      onPressed: () {
-                        print("Maintenant local Storage deleted");
+                      onPressed: () async {
+                        final box = GetStorage();
+
+                        // Supprimer des clés spécifiques
                         box.remove('user_id');
                         box.remove('token');
-                        Navigator.pushNamed(context, '/signin');
+
+                        // Naviguer vers l'écran de connexion et effacer l'historique de navigation
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignInScreen()),
+                              (route) => false,
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey, // Couleur principale

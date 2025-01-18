@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:fitnest/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../../common/widgets/custom_shapes/curved_edges/groovy_clipper.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../events/controllers/event_user_controller.dart';
+import '../../participation/controllers/participation_controller.dart';
 import '../controllers/bio_controller.dart';
 import '../controllers/profile_controller.dart';
 import 'settings.dart';
@@ -17,6 +17,8 @@ import 'widgets/stat_widget.dart';
 class ProfileScreen extends StatelessWidget {
   final EventUserController eventController = Get.put(EventUserController());
   final ProfileController profileController = Get.put(ProfileController());
+  final ParticipationController participationController =
+  Get.put(ParticipationController());
   final BioController bioController = Get.put(BioController());
   final TextEditingController bioEditingController = TextEditingController();
 
@@ -29,7 +31,6 @@ class ProfileScreen extends StatelessWidget {
           body: Center(child: CircularProgressIndicator()),
         );
       }
-
       // Gestion des erreurs ou données manquantes
       final userProfile = profileController.userProfile.value;
       if (userProfile == null) {
@@ -37,10 +38,9 @@ class ProfileScreen extends StatelessWidget {
           body: Center(child: Text("Échec de la récupération du profil.")),
         );
       }
-
-      // Chargement des événements utilisateur
       final futureEvents = eventController.getEventsByUser(userProfile.id);
-
+      final futureParticipations =
+      participationController.getParticipationsByUserId(userProfile.id);
       return Scaffold(
         body: SafeArea(
           child: Column(
@@ -132,7 +132,7 @@ class ProfileScreen extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 48,
                           backgroundImage:
-                              getUserProfileImage(userProfile.profilePicture),
+                          getUserProfileImage(userProfile.profilePicture),
                         ),
                       ),
                     ),
@@ -158,10 +158,13 @@ class ProfileScreen extends StatelessWidget {
                                   value: "0",
                                   icon: Icons.group),
                               SizedBox(width: MySizes.xs),
-                              StatWidget(
+                              Obx(
+                                    () => StatWidget(
                                   label: "Events",
-                                  value: "2",
-                                  icon: Icons.event),
+                                  value: eventController.eventsNumber.value,
+                                  icon: Icons.event,
+                                ),
+                              )
                             ],
                           ),
                         ],
@@ -183,7 +186,7 @@ class ProfileScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.blue.shade50, // Fond moderne
                       borderRadius:
-                          BorderRadius.circular(MySizes.borderRadiusLg),
+                      BorderRadius.circular(MySizes.borderRadiusLg),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.3),
@@ -227,29 +230,29 @@ class ProfileScreen extends StatelessWidget {
                               children: [
                                 // Le texte avec gestion de l'extension ou non
                                 Obx(() => AnimatedContainer(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      child: Text(
-                                        bioController.isExpanded.value
-                                            ? bioText
-                                            : bioText.length > 100
-                                                ? '${bioText.substring(0, 100)}...'
-                                                : bioText,
-                                        style: const TextStyle(
-                                          fontSize: MySizes.fontSizeSm - 2,
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        maxLines: bioController.isExpanded.value
-                                            ? null
-                                            : 3,
-                                        // Limite à 3 lignes lorsque non étendu
-                                        overflow: bioController.isExpanded.value
-                                            ? TextOverflow.visible
-                                            : TextOverflow
-                                                .ellipsis, // Gestion du dépassement de texte
-                                      ),
-                                    )),
+                                  duration:
+                                  const Duration(milliseconds: 200),
+                                  child: Text(
+                                    bioController.isExpanded.value
+                                        ? bioText
+                                        : bioText.length > 100
+                                        ? '${bioText.substring(0, 100)}...'
+                                        : bioText,
+                                    style: const TextStyle(
+                                      fontSize: MySizes.fontSizeSm - 2,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    maxLines: bioController.isExpanded.value
+                                        ? null
+                                        : 3,
+                                    // Limite à 3 lignes lorsque non étendu
+                                    overflow: bioController.isExpanded.value
+                                        ? TextOverflow.visible
+                                        : TextOverflow
+                                        .ellipsis, // Gestion du dépassement de texte
+                                  ),
+                                )),
                                 SizedBox(height: MySizes.xs),
                                 if (showReadMore)
                                   TextButton(
@@ -261,18 +264,18 @@ class ProfileScreen extends StatelessWidget {
                                       padding: EdgeInsets.zero,
                                       minimumSize: const Size(0, 0),
                                       tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
+                                      MaterialTapTargetSize.shrinkWrap,
                                     ),
                                     child: Obx(() => Text(
-                                          bioController.isExpanded.value
-                                              ? "Read Less"
-                                              : "Read More", // Texte du bouton
-                                          style: const TextStyle(
-                                            color: Colors.blueAccent,
-                                            fontSize: MySizes.fontSizeXs,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )),
+                                      bioController.isExpanded.value
+                                          ? "Read Less"
+                                          : "Read More", // Texte du bouton
+                                      style: const TextStyle(
+                                        color: Colors.blueAccent,
+                                        fontSize: MySizes.fontSizeXs,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )),
                                   ),
                               ],
                             );
@@ -283,7 +286,41 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              EventsSectionWidget(futureEvents: futureEvents),
+              Text(
+                "Your Created Events",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+              EventsSectionWidget(
+                futureEvents: futureEvents,
+                altTitle: "You have not organized any events.",
+              ),
+              SizedBox(height: MySizes.spaceBtwItems),
+              Text(
+                "Your Participated Events",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+              EventsSectionWidget(
+                  futureEvents: futureParticipations,
+                  altTitle: "You have not participated any events."),
+              Text(
+                "Interests",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
               InterestsWidget(userId: userProfile.id),
             ],
           ),

@@ -24,13 +24,13 @@ class RequestsPage extends StatelessWidget {
         if (requestsController.participations.isEmpty) {
           return const Center(
               child: Text(
-            "No participations requests found.",
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ));
+                "No participations requests found.",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+              ));
         }
         return ListView.builder(
           itemCount: requestsController.participations.length,
@@ -61,15 +61,15 @@ class RequestsPage extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       image: participation.participantImage != null &&
-                              participation.participantImage!.isNotEmpty
+                          participation.participantImage!.isNotEmpty
                           ? DecorationImage(
-                              image: MemoryImage(
-                                base64Decode(participation
-                                    .participantImage!), // Décodage Base64
-                              ),
-                              fit:
-                                  BoxFit.cover, // Maintient le ratio de l'image
-                            )
+                        image: MemoryImage(
+                          base64Decode(participation
+                              .participantImage!), // Décodage Base64
+                        ),
+                        fit:
+                        BoxFit.cover, // Maintient le ratio de l'image
+                      )
                           : null,
                       color: Colors.grey.shade100,
                     ),

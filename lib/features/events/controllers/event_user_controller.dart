@@ -7,6 +7,7 @@ import '../models/event.dart';
 class EventUserController extends GetxController {
   // Observable pour le nom de l'utilisateur
   var userName = ''.obs;
+  var eventsNumber = ''.obs;
   final EventService eventService = EventService();
   var eventInfos = <Event>[].obs;
 
@@ -29,7 +30,7 @@ class EventUserController extends GetxController {
     try {
       // Await the fetch operation to get the data
       final eventData = await eventService.fetchUserEvents(userId);
-
+      //eventsNumber = eventData.length as RxString;
       // Update the reactive list
       eventInfos.value = eventData;
 

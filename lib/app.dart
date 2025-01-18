@@ -5,6 +5,7 @@ import 'features/authentication/screens/onboarding/onboarding.dart';
 import 'features/authentication/screens/signin/signin.dart';
 import 'features/home/screens/home.dart';
 import 'features/profile/screens/profile.dart';
+import 'features/tracking/screens/tracking_organizer_screen.dart';
 import 'utils/theme/theme.dart';
 
 class App extends StatelessWidget {
@@ -19,11 +20,11 @@ class App extends StatelessWidget {
       darkTheme: MyAppTheme.darkTheme,
       theme: MyAppTheme.lightTheme,
       routes: {
-        '/profile': (context) => ProfileScreen(),
+        '/profile': (acontext) => ProfileScreen(),
         '/signin': (context) => SignInScreen(),
         '/home': (context) => HomeScreen(),
       },
-      home: isFirstTime ? OnBoardingScreen() : SignInScreen(),
+      home: SignInScreen() ,
     );
   }
 }

@@ -18,7 +18,7 @@ class EventScrollWidget extends StatelessWidget {
         return Container(
             height: MySizes.xs, color: dark ? Colors.black : Colors.white);
       } else {
-        // Retourner la liste des événements dans un `SizedBox` avec une hauteur de 200
+        // Retourner la liste des événements dans un SizedBox avec une hauteur de 200
         return SizedBox(
           height: 200,
           child: ListView.builder(
@@ -30,7 +30,7 @@ class EventScrollWidget extends StatelessWidget {
               // Construction de la carte d'événement
               return Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
+                const EdgeInsets.symmetric(horizontal: 6.0, vertical: 4.0),
                 child: SizedBox(
                   width: 250,
                   child: EventCard(
