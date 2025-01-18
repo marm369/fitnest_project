@@ -17,7 +17,6 @@ class App extends StatelessWidget {
       darkTheme: MyAppTheme.darkTheme,
       theme: MyAppTheme.lightTheme,
       home: isFirstTime ? OnBoardingScreen() : SignInScreen(),
-      //home: const NotifScreen(userId: 1,), // Pass a valid userId dynamically.
     );
   }
 

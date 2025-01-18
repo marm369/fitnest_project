@@ -25,7 +25,6 @@ class CategoryController extends GetxController {
 
       final fetchedCategories = await categoryService.fetchCategories();
       categories.value = fetchedCategories;
-
       // Assurez-vous qu'une catégorie soit sélectionnée par défaut
       if (categories.isNotEmpty) {
         selectedCategory.value =

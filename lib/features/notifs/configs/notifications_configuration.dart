@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fitnest/features/notifs/models/notif_model.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,41 +7,43 @@ import 'package:fitnest/features/notifs/services/fcmToken_service.dart';
 import 'package:dio/dio.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:http/http.dart' as http;
+import 'package:fitnest/configuration/config.dart';
+import 'package:fitnest/features/notifs/controller/notification_helper.dart';
+
 
 Future<String?> getAccessToken() async {
   final serviceAccountJson = {
     "type": "service_account",
     "project_id": "fitnest-6980d",
-    "private_key_id": "cedbed82d6bd700808106bc3f343f622b0aabcce",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDbdzcyqKSOWh/L\n6OzMVC6cV8MM8/F748s4few4wNFJXn/i7epgoOS5H1QyhBe0M9LDTlYBUOnTEgSr\nqVQbbPmFIIE6FT5okfExnOlTeRNm2cgHy6FxeG2KB8LAow24mA+f4lCP84NSpvKG\n5ETbqoAUdHpNh5I8+mrXudJmhw8dE2OInWUKVFVATQckXDGWeVmDdmUJuP8sUdv7\ntio2O5ejUszn7VVllPsJa73khBa313bvXHgmR71O5Quz09KsiNseUYFSrTTATDCQ\nld3Os6RfJqtFLvMEg5JQ21SmbNZv5Er3l6QSGFt5aHJeBhCoamiP/LoEaLSO/RNd\nuXRfGI4fAgMBAAECggEAFOqJwjQ8aqzANwjd+KNVReU/W66sJyiQp7OoncgSqjFt\ncs1F9yueYN5RgfcA41XFEoQWwk1Z25nuBAZBU9PQ/BUa+9QmfITcPeQ8gI4bgUPk\nQonvuwbFOdB/iSiBGES1yIEjOHT24Ru0JZL/1Qes6UYomdb/4vvizuiQ2uCoWhbf\nqtO3aJ03HH4sl3GUSbqdgQ8IF6nPRziYg6YMXIwBoJeWGR8bdRCZ/wATHKPAQCAS\n3ypX2OFFKYYqD1jDReOzRSzC29pmsl0hyCpwzFdYWRdwnVpDbi7EO3oGPT1dzCDM\nlkg+V/dDJ4VRNuYnPiyjbmCgodJGNjYhtLBSKSwr8QKBgQD+3MQ+6sUg80zdGKbn\nQT3DC2vYcLvYg00nR5YJuiS+BX+8KHqDM4Wmr5LVoOJ5Rr9QhkYm1ew4P8O3Fi04\n3MT18ggWqJf1MhpDvAndKopssyryB+FX+hyGSm7urWlDOjP2k8VwdslyzHiOZQy7\nyi1snhcLrRUm3TWo7TsU8M98IwKBgQDccgA9eM1Eygm16AsLaAymI5Zt1FdIOghn\nza2HavEith7clZfZUfHbnzFu1WzJy0AxlwYgp3LMV7QUCqPzymWpTBc/hY25qb6q\ndhsBQ9Zlo/VsexMLkg8S0Z9ll8+P3pwNmnZy4X4pPNyDz1ucVa1Nd0OUgFuA4wfE\nfliMdFZ31QKBgQCSIHJEwMcWBWnkuuW3YijPVBUZnEmX8nCiPOFB4oB+kxiSAYN9\nBmVzFOfTpNM1ReMbgGFoku9FsQm+R/DV0X78pTEODMxTwc5dV8swC9wiRvgwnWQO\n1VDVjofcQYFBEnYIwuFJglIuiB33RujuIxW4WUxNXYfrKJpDqQFfGFNekQKBgC43\niG1a4k5FvXtxxr8BdYVveJ5WImZ2JET/Dh6SATQx0o6Unl1lnLtayNZf0IsOHctH\nynUWJi9JQ+vfvzfheybfWRBsQ6ZlPCAo2siNHGn60f2IYBnQ6XAcmrqF9XJITZdc\nhvDW7chfhivsUVyZadgP5Q9BSe3fq0U65/2qdmZxAoGAPawq1wdnz6kdHIQs/wve\nLLPxyzzT81QBNlAvcgAEl1AOFdC9OoQ2HQonZE8LB3+4+htM0l7OMpPN33OS0BQa\nRBNhMf5hzIMKO9nShm0rnofzeIlMVV3R/nCFYDZ4lrYPSlCkJuhwoJs3DYdYTghh\nk0rN1m4KA54zC1hW9C+RKss=\n-----END PRIVATE KEY-----\n",
-    "client_email": "fitnestapp@fitnest-6980d.iam.gserviceaccount.com",
-    "client_id": "111665718282322466581",
+    "private_key_id": "6c4853112b4384296699c54fb74945edbb73ff66",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDOcNeqIM23fi2P\nMGu1mdcuTVfk2O3J5FF1eqojmRGEqLBoQVwTO9dj17XgXs+xu+8GwzdgbyvEXWHM\nt9Nsivpw08nDnhBBJ9qC3wZ/wvhepN1j/dCNPqnPHBOHRVsnRaLRHVa44TRa2CW+\n5OJFFvHF6xrCgaAgfLeXNUwqKeLG1Dqh8jn07sCHCvES7angZQtI2C6/uTXS0PVf\n+MSMNh+AtjsOMMj3Q1z1dJ5pPNH+/ycJJgf6Mi8hmEpdx1tz1gfl4qddPoJOtz0b\nTAzW5uCAXSantYTcbYr0GyZqOB/9dDCirvD5LoX+ZTZ/MdIZ+1BBjBwehmaNtRF+\nt0HJLGUvAgMBAAECggEAPsKnjh0y7Vn619FMrYT7miQBWJ1qjTpQWXrVRsU+QipW\nlxtntqE2ti/aJ0ArvEj6PgATUcn6cFRDa01nhVQrFyoL6OCg6G4JTEgpXaYUhBFz\nDPcY9Bfc4A4VEcbQE3xkJ1bYCpTMqeGUeBh1gbOcBSOYmxF1cOr5lYqqgRcCzpcj\nAPaNuM3S4Og/x9qZDD4CSDzBaLi163s33m++t4ejX101KTDHIsXxqNPZ7WldXm9X\n2f5CXEKeUJG2WsqSIGXOawwH9Iq62fGK2eZCSC4u+kM98EbqEx9KPZC/oLZMsmCL\nXu1FelA8yGzDMgujVNz8i0IAmQaEl9UFLmSV7FlNAQKBgQDpJY8oIjInPT3Alv6x\n3/g0UoB2hn3C+p4QEdZXIhIthUtmtR1YB2qNRMGcKluchT4fxj/0TWb2h2B4IyAE\nw2RG67HIZF3lVXLrZ3aW6ak7nsuCHN80c7uYM2xQkpg4fVl8cXgf+rXIyG80rGrP\nJ/NztlUAW6BYt1NVgDbaKWZ/4QKBgQDirSQglPckYVoOGW30eGTXSw3yOtmBsf9a\nxgtwWnxpIRUlkrdweuiirwkCVQpKFnL7HWeJffXLcwDKaRpmopGIBTWct12C9YKM\ndFirp6VEj4N0fnCfvLV6He1REceDELb5etr3wF0z7OiL4u41W5ey6RTuszwEgTLz\nnIT5kyPHDwKBgG/aty3YChvNQ90sFBGelGP12PAEYj2zIzYueJjhHbt9IcmqxuM+\n253fCMw1fjI/sqhn4rMAl49bL6sznt7qJyfnWCn+DRZDwpix0LFidPDHpHdOBsAR\nbkT9FtApJKKlcNNFVQ5yp9gmYUPyHGQ6lJBFP86mJu2pNm/kzWwpRKXBAoGAb2Ha\njbQFGLhJcwIl2GnMS0oTCULHnAYlzqnf9w5Pca0S4gqM3tVWOJI/oAi/bJZJW4Eg\nXhwpyhWxfsRUd7hMQIUmyeIELhSLWI7W/0n6WI0YcAatOqCUn/PSp/JPkeSFtGMc\n835vjdNMlWgl2swt53jGk2A5DpGZwsDXSnd1rhsCgYBiS1ZiCI3Y0Nc4TSzTiPnN\naXS7N3qWQMBOQWkUILJqzJNrh5J9S6bAkb3ANpsd3gv2PYq4kDvlsEIHuNvBk0Hb\naghQEq/avIG334ftZ8rGruLERkCQiZkTxp0GgT5eRKKcS1JJWGGmyzLOqUv0GC/C\nHgtFqqOl2Tdj75braUxP6w==\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-b4on3@fitnest-6980d.iam.gserviceaccount.com",
+    "client_id": "106504251934407321033",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/fitnestapp%40fitnest-6980d.iam.gserviceaccount.com",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-b4on3%40fitnest-6980d.iam.gserviceaccount.com",
     "universe_domain": "googleapis.com"
-  };
+  }
+  ;
 
+  try{
   List<String> scopes = [
-    "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/firebase.database",
     "https://www.googleapis.com/auth/firebase.messaging"
   ];
 
-  try {
-    http.Client client = await auth.clientViaServiceAccount(
-        auth.ServiceAccountCredentials.fromJson(serviceAccountJson), scopes);
-
-    auth.AccessCredentials credentials =
-    await auth.obtainAccessCredentialsViaServiceAccount(
-        auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
-        scopes,
-        client);
-
-    client.close();
-    print("Access Token: ${credentials.accessToken.data}"); // Print Access Token
-    return credentials.accessToken.data;
+  http.Client client = await auth.clientViaServiceAccount(
+      auth.ServiceAccountCredentials.fromJson(serviceAccountJson), scopes);
+  // get the access  token
+  auth.AccessCredentials credentials =
+  await auth.obtainAccessCredentialsViaServiceAccount(
+    auth.ServiceAccountCredentials.fromJson(serviceAccountJson),
+    scopes,
+    client,
+  );
+  client.close();
+  print("Access Token: ${credentials.accessToken.data}"); // Print Access Token
+  return credentials.accessToken.data;
   } catch (e) {
     print("Error getting access token: $e");
     return null;
@@ -98,21 +101,93 @@ Future<void> sendNotifications(NotificationModel notification, String? type) asy
     print("Error sending notification: $e");
   }
 }
+/*
+Future<void> sendNotifications1({
+  required String fcmToken,
+  required String title,
+  required String body,
+  required String userId,
+  String? type,
+}) async {
+  try {
+    // Retrieve the access token
+    var serverKeyAuthorization = await getAccessToken();
+    if (serverKeyAuthorization == null) {
+      throw Exception("Failed to retrieve access token");
+    }
 
-Future<void> ConfigureNotifications(double userid) async {
+    // FCM endpoint
+    const String urlEndPoint =
+        "https://fcm.googleapis.com/v1/projects/fitnest-6980d/messages:send";
 
-  await FirebaseMessaging.instance.requestPermission();
+    // Define the message payload
+    final Map<String, dynamic> message = {
+      "message": {
+        "token": fcmToken,
+        "notification": {
+          "title": title,
+          "body": body,
+        },
+        "data": {
+          "userId": userId,
+          "type": type ?? "message",
+        },
+      }
+    };
 
-  await initializeToken(userid);
+    // Send the notification
+    final response = await http.post(
+      Uri.parse(urlEndPoint),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $serverKeyAuthorization',
+      },
+      body: jsonEncode(message),
+    );
+
+    // Handle the response
+    if (response.statusCode == 200) {
+      print('Notification sent successfully');
+    } else {
+      print('Failed to send notification: ${response.statusCode}');
+      print('Response: ${response.body}');
+    }
+  } catch (e) {
+    print("Error sending notification: $e");
+  }
+}
+*/
+
+Future<void> configureNotifications(double userId) async {
+  final FcmtokenService _fcmTokenService = FcmtokenService();
 
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyAiqgGAGkAAD2RazL_g6wG8WwMlN07YuoE",
-        appId: "1:1068465758439:android:2f37a8d3e960370e360242",
-        messagingSenderId: "1068465758439",
-        projectId: "fitnest-6980d",
-      )
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyAiqgGAGkAAD2RazL_g6wG8WwMlN07YuoE",
+      appId: "1:1068465758439:android:2f37a8d3e960370e360242",
+      messagingSenderId: "1068465758439",
+      projectId: "fitnest-6980d",
+    ),
   );
+
+  print("Notifications configured");
+
+  await FirebaseMessaging.instance.requestPermission();
+
+  final NotificationsHelper notificationsHelper = NotificationsHelper();
+  await notificationsHelper.initNotifications();
+  notificationsHelper.handleBackgroundNotifications();
+
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+  String? deviceToken = await messaging.getToken();
+
+  if (deviceToken != null) {
+    print("FCM Token: $deviceToken");
+    await _fcmTokenService.insertTokenIntoDatabase(deviceToken, userId);
+  } else {
+    print("Failed to retrieve FCM token.");
+  }
 }
+

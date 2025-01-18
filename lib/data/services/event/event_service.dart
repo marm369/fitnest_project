@@ -106,7 +106,7 @@ class EventService {
     }
   }
 
-  Future<void> createEvent(Map<String, dynamic> requestBody) async {
+  Future<Event> createEvent(Map<String, dynamic> requestBody) async {
     try {
       final response = await http.post(
         Uri.parse('$gatewayEventUrl/api/events/createEvent'),
@@ -115,17 +115,22 @@ class EventService {
       );
 
       if (response.statusCode == 201) {
-        Loaders.successSnackBar(
-            title: 'Success', message: "Event created successfully!");
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        final Event createdEvent = Event.fromJson(responseData);
+        return createdEvent;
       } else {
         Loaders.errorSnackBar(
             title: 'Error', message: "Error while creating the event.");
+        throw Exception(
+            'Failed to create event. Status code: ${response.statusCode}');
       }
     } catch (e) {
       Loaders.errorSnackBar(
           title: 'Error', message: "Server connection error: $e");
+      throw Exception('Server connection error: $e');
     }
   }
+
 
   Future<List<Event>> fetchUserEvents(int userId) async {
     final String apiUrl = "$gatewayEventUrl/api/events/user/$userId/events";

@@ -8,12 +8,13 @@ class NotificationsHelper {
 
   Future<void> initNotifications() async {
 
+    print('init notifs -------------------------------------------------' );
+
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
-
     );
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
@@ -23,12 +24,12 @@ class NotificationsHelper {
       _showNotification(message.notification!);
     }
 
-    /*
     print("Notification received: ${message.notification?.title}");
     print("Notification body: ${message.notification?.body}");
-    showToast(
+   /* showToast(
         text: 'Notification received in foreground',
         state: ToastStates.SUCCESS);*/
+
   }
 
   void handleBackgroundNotifications() async {
@@ -46,6 +47,12 @@ class NotificationsHelper {
       }
     });
   }
+
+   /**FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Notification clicked!');
+      // Navigate to event details
+      });
+   */
 
   Future<void> _showNotification(RemoteNotification notification) async {
 
@@ -71,6 +78,5 @@ class NotificationsHelper {
       payload: 'item x',
     );
   }
-
 
 }

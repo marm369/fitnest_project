@@ -1,22 +1,83 @@
+import 'package:fitnest/features/notifs/services/fcmToken_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
+import 'features/events/models/event.dart' as EventModel;
+import 'features/notifs/configs/notifications_configuration.dart';
+import 'features/notifs/controller/notification_handler.dart';
+import 'features/notifs/screens/display_notifs.dart';
 
-import 'app.dart';
+// Example event you can use to test notify_event_creation
+EventModel.Event testEvent = EventModel.Event(
+  id: 1,
+  name: "Test Event",
+  description: "A test event for notification.",
+  cityName: "Sample City",
+  latitude: 37.7749,
+  longitude: -122.4194,
+  startDate: "2025-01-13",
+  endDate: "2025-01-14",
+  location: EventModel.Location(locationName: "Test Location", latitude: 37.7749, longitude: -122.4194),
+  route: EventModel.Route(coordinatesFromPath: []),
+  sportCategoryName: "Soccer",
+  sportCategoryId: 1,
+  maxParticipants: 20,
+  currentNumParticipants: 5,
+  imagePath: "test_image_path",
+  sportCategory: EventModel.SportCategory(id: 1, name: "Soccer", iconName: "soccer_icon", requiresRoute: true),
+  startTime: "09:00",
+  organizerId: 123,
+);
 
 Future<void> main() async {
+  // Initialize notifHandler
+  FcmtokenService fcmtokenService = FcmtokenService();  // Initialize the fcmtokenService
+  NotifHandler notifHandler = NotifHandler(fcmtokenService); // Ensure the service is passed to NotifHandler
+
+  // Initialize widgets and GetStorage
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
 
-  // Vérifier si c'est la première ouverture
-  final storage = GetStorage();
-  bool isFirstTime = storage.read('isFirstTime') ?? true;
+  // Configure notifications using user ID
+  await configureNotifications(1);
 
-  runApp(App(isFirstTime: isFirstTime));
+  // Check if it's the first opening (commented out, not in use here)
+  //final storage = GetStorage();
+  //bool isFirstTime = storage.read('isFirstTime') ?? true;
+  // runApp(App(isFirstTime: isFirstTime));
+  runApp(MyApp1());
 }
 
+class MyApp1 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Notification Demo',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      //home: HomeScreen(),
+      home: NotifScreen(userId: 1, eventId: 1),
+    );
+  }
+}
 
-/*
-git stash          # Saves your changes in a stash and clears your working directory
-git pull           # Pulls the latest changes from the remote
-git stash pop      # Applies the stashed changes back and removes them from the stash list
-*/
+class HomeScreen extends StatelessWidget {
+  final NotifHandler notifHandler;  // Add this as a parameter to the constructor
+
+  // Add the constructor to receive the NotifHandler instance
+  HomeScreen({required this.notifHandler});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Notification Demo')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () async {
+            // Test the event creation notification logic
+            await notifHandler.notifyEventCreation(testEvent);  // This will call the function to send notifications
+            print('Test Event creation notification sent!');
+          },
+          child: const Text('Test Event Creation Notification'),
+        ),
+      ),
+    );
+  }
+}

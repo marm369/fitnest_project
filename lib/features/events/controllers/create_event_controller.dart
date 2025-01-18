@@ -9,6 +9,7 @@ import '../../../data/services/map/geolocalisation_service.dart';
 import '../../../utils/popups/loaders.dart';
 import '../../maps/screens/city_search_screen.dart';
 import '../../maps/screens/create_itineraire.dart';
+import '../../notifs/controller/notification_handler.dart';
 import '../models/event.dart';
 
 class EventController extends GetxController {
@@ -135,8 +136,18 @@ class EventController extends GetxController {
     Map<String, dynamic>? eventRequestBody =
         await _buildEventRequestBody(routeId, locationId, id);
     if (eventRequestBody == null) return;
+    try {
+      // Create the event
+      final Event createdEvent = await eventService.createEvent(eventRequestBody);
 
-    await eventService.createEvent(eventRequestBody);
+      // Show success feedback
+      Loaders.successSnackBar(
+          title: "Success", message: "Event created successfully!");
+    } catch (e) {
+      // Handle errors
+      Loaders.errorSnackBar(
+          title: "Error", message: "Failed to create the event: $e");
+    }
   }
 
   /// Open a map to create a route.
