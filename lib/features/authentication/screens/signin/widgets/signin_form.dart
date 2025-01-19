@@ -14,7 +14,9 @@ class SignInForm extends StatelessWidget {
   SignInForm({
     super.key,
   });
+
   final SignInController controller = Get.put(SignInController());
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -83,17 +85,16 @@ class SignInForm extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () async {
                   // Appelez la fonction d'authentification pour vérifier si l'utilisateur peut se connecter
-                  bool isAuthenticated =
-                      await controller.emailAndPasswordSignIn();
+                  String message = await controller.emailAndPasswordSignIn();
 
-                  if (isAuthenticated) {
+                  if (message == "Login successful!") {
                     // Si l'utilisateur est authentifié, naviguez vers la page principale ou d'accueil
                     Get.to(() =>
                         NavigationMenu()); // Remplacez 'HomeScreen' par la page vers laquelle vous voulez naviguer
                   } else {
                     // Si l'utilisateur n'est pas authentifié, affichez un message d'erreur
                     Loaders.errorSnackBar(
-                      title: 'Authentication Error',
+                      title: 'Authentication Error $message',
                       message: 'Incorrect login or password.',
                     );
                   }

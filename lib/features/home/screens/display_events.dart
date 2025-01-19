@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
+import '../../../configuration/config.dart';
 class EventCardScreen extends StatefulWidget {
   @override
   _EventCardScreenState createState() => _EventCardScreenState();
@@ -10,7 +10,7 @@ class EventCardScreen extends StatefulWidget {
 class _EventCardScreenState extends State<EventCardScreen> {
   Future<List<dynamic>> fetchEvents() async {
     final response = await http
-        .get(Uri.parse('http://192.168.0.121:8080/api/events/getAllEvents'));
+        .get(Uri.parse('$GatewayUrl/api/events/getAllEvents'));
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body); // Pas besoin de mapper vers une classe
@@ -50,9 +50,9 @@ class _EventCardScreenState extends State<EventCardScreen> {
                     event['imagePath'] != null
                         ? Image.memory(base64Decode(event['imagePath']))
                         : SizedBox(
-                            height: 150,
-                            child: Icon(Icons.image, size: 50),
-                          ),
+                      height: 150,
+                      child: Icon(Icons.image, size: 50),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(

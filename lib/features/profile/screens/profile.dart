@@ -1,32 +1,36 @@
 import 'dart:convert';
+
+import 'package:fitnest/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../common/widgets/custom_shapes/curved_edges/groovy_clipper.dart';
-import '../../../utils/constants/colors.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../events/controllers/event_user_controller.dart';
-import '../../events/models/event.dart';
-import '../../events/screens/detail_event.dart';
+import '../../participation/controllers/participation_controller.dart';
 import '../controllers/bio_controller.dart';
 import '../controllers/profile_controller.dart';
-import '../models/user_model.dart';
 import 'settings.dart';
+import 'widgets/event_section.dart';
+import 'widgets/interests.dart';
 import 'widgets/stat_widget.dart';
 
 class ProfileScreen extends StatelessWidget {
   final EventUserController eventController = Get.put(EventUserController());
   final ProfileController profileController = Get.put(ProfileController());
+  final ParticipationController participationController =
+  Get.put(ParticipationController());
   final BioController bioController = Get.put(BioController());
+  final TextEditingController bioEditingController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final dark = HelperFunctions.isDarkMode(context);
     return Obx(() {
       if (profileController.isLoading.value) {
         return const Scaffold(
           body: Center(child: CircularProgressIndicator()),
         );
       }
-
       // Gestion des erreurs ou données manquantes
       final userProfile = profileController.userProfile.value;
       if (userProfile == null) {
@@ -34,10 +38,9 @@ class ProfileScreen extends StatelessWidget {
           body: Center(child: Text("Échec de la récupération du profil.")),
         );
       }
-
-      // Chargement des événements utilisateur
       final futureEvents = eventController.getEventsByUser(userProfile.id);
-
+      final futureParticipations =
+      participationController.getParticipationsByUserId(userProfile.id);
       return Scaffold(
         body: SafeArea(
           child: Column(
@@ -63,10 +66,9 @@ class ProfileScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
+                                    Colors.blue.shade50.withOpacity(0.7),
+                                    Colors.blue.shade100.withOpacity(0.7),
                                     Colors.blue.shade200.withOpacity(0.7),
-                                    Colors.blue.shade400.withOpacity(0.7),
-                                    Colors.blue.shade600.withOpacity(0.9),
-                                    Colors.blue.shade800.withOpacity(0.9),
                                   ],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
@@ -87,22 +89,27 @@ class ProfileScreen extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.arrow_back,
-                                color: Colors.white),
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: dark ? Colors.black : Colors.white,
+                            ),
                             onPressed: () {
-                              Navigator.pop(context);
+                              Navigator.pushNamed(context, '/home');
                             },
                           ),
                           Text(
                             "${userProfile.firstName} ${userProfile.lastName}",
-                            style: const TextStyle(
+                            style: TextStyle(
+                              color: dark ? Colors.black : Colors.white,
                               fontWeight: FontWeight.bold,
                               fontSize: MySizes.fontSizeLg,
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.more_vert,
-                                color: Colors.white),
+                            icon: Icon(
+                              Icons.more_vert,
+                              color: dark ? Colors.black : Colors.white,
+                            ),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -115,7 +122,6 @@ class ProfileScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     // Profile picture
                     Positioned(
                       top: MediaQuery.of(context).size.height * 0.18,
@@ -126,11 +132,10 @@ class ProfileScreen extends StatelessWidget {
                         child: CircleAvatar(
                           radius: 48,
                           backgroundImage:
-                              getUserProfileImage(userProfile.profilePicture),
+                          getUserProfileImage(userProfile.profilePicture),
                         ),
                       ),
                     ),
-
                     // Bottom profile info
                     Positioned(
                       bottom: 20,
@@ -153,10 +158,13 @@ class ProfileScreen extends StatelessWidget {
                                   value: "0",
                                   icon: Icons.group),
                               SizedBox(width: MySizes.xs),
-                              StatWidget(
+                              Obx(
+                                    () => StatWidget(
                                   label: "Events",
-                                  value: "2",
-                                  icon: Icons.event),
+                                  value: eventController.eventsNumber.value,
+                                  icon: Icons.event,
+                                ),
+                              )
                             ],
                           ),
                         ],
@@ -166,6 +174,7 @@ class ProfileScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              SizedBox(height: MySizes.spaceBtwItems),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: MySizes.md),
                 child: Positioned(
@@ -177,7 +186,7 @@ class ProfileScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.blue.shade50, // Fond moderne
                       borderRadius:
-                          BorderRadius.circular(MySizes.borderRadiusLg),
+                      BorderRadius.circular(MySizes.borderRadiusLg),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withOpacity(0.3),
@@ -207,45 +216,43 @@ class ProfileScreen extends StatelessWidget {
                                 size: MySizes.iconSm,
                               ),
                               onPressed: () {
-                                // Action pour modifier le bio
-                                //_editBio(context, userProfile.description ?? "");
+                                _editBio(context);
                               },
                             ),
                           ],
                         ),
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            final bioText =
-                                "Ajoutez votre biographie ici. Ceci est un texte de test long pour vérifier la fonctionnalité 'Read More'. Nous allons ajouter suffisamment de texte ici pour tester comment le bouton 'Read More' fonctionne. La bio s'affichera partiellement au début, et l'utilisateur pourra cliquer sur 'Read More' pour voir le texte complet. Ce texte est volontairement long pour s'assurer que tout fonctionne correctement.";
-                            final showReadMore =
-                                bioText.length > 100; // Limite dynamique
+                            final bioText = userProfile.description;
+                            final showReadMore = bioText.length > 100;
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // Le texte avec gestion de l'extension ou non
                                 Obx(() => AnimatedContainer(
-                                      duration:
-                                          const Duration(milliseconds: 200),
-                                      child: Text(
-                                        bioController.isExpanded.value
-                                            ? bioText
-                                            : bioText.length > 100
-                                                ? '${bioText.substring(0, 100)}...'
-                                                : bioText,
-                                        style: const TextStyle(
-                                          fontSize: MySizes.fontSizeSm - 2,
-                                          color: Colors.black87,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        maxLines: bioController.isExpanded.value
-                                            ? null
-                                            : 3, // Limite à 3 lignes lorsque non étendu
-                                        overflow: bioController.isExpanded.value
-                                            ? TextOverflow.visible
-                                            : TextOverflow
-                                                .ellipsis, // Gestion du dépassement de texte
-                                      ),
-                                    )),
+                                  duration:
+                                  const Duration(milliseconds: 200),
+                                  child: Text(
+                                    bioController.isExpanded.value
+                                        ? bioText
+                                        : bioText.length > 100
+                                        ? '${bioText.substring(0, 100)}...'
+                                        : bioText,
+                                    style: const TextStyle(
+                                      fontSize: MySizes.fontSizeSm - 2,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    maxLines: bioController.isExpanded.value
+                                        ? null
+                                        : 3,
+                                    // Limite à 3 lignes lorsque non étendu
+                                    overflow: bioController.isExpanded.value
+                                        ? TextOverflow.visible
+                                        : TextOverflow
+                                        .ellipsis, // Gestion du dépassement de texte
+                                  ),
+                                )),
                                 SizedBox(height: MySizes.xs),
                                 if (showReadMore)
                                   TextButton(
@@ -257,18 +264,18 @@ class ProfileScreen extends StatelessWidget {
                                       padding: EdgeInsets.zero,
                                       minimumSize: const Size(0, 0),
                                       tapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
+                                      MaterialTapTargetSize.shrinkWrap,
                                     ),
                                     child: Obx(() => Text(
-                                          bioController.isExpanded.value
-                                              ? "Read Less"
-                                              : "Read More", // Texte du bouton
-                                          style: const TextStyle(
-                                            color: Colors.blueAccent,
-                                            fontSize: MySizes.fontSizeXs,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        )),
+                                      bioController.isExpanded.value
+                                          ? "Read Less"
+                                          : "Read More", // Texte du bouton
+                                      style: const TextStyle(
+                                        color: Colors.blueAccent,
+                                        fontSize: MySizes.fontSizeXs,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )),
                                   ),
                               ],
                             );
@@ -279,12 +286,82 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              _buildEventsSection(futureEvents, context),
+              Text(
+                "Your Created Events",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+              EventsSectionWidget(
+                futureEvents: futureEvents,
+                altTitle: "You have not organized any events.",
+              ),
+              SizedBox(height: MySizes.spaceBtwItems),
+              Text(
+                "Your Participated Events",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+              EventsSectionWidget(
+                  futureEvents: futureParticipations,
+                  altTitle: "You have not participated any events."),
+              Text(
+                "Interests",
+                style: TextStyle(
+                  fontSize: 16.0,
+                  // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blueAccent,
+                ),
+              ),
+              InterestsWidget(userId: userProfile.id),
             ],
           ),
         ),
       );
     });
+  }
+
+  void _editBio(BuildContext context) {
+    // Pré-remplir le champ avec le texte actuel
+    bioEditingController.text = bioController.bioText.value;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Edit Bio"),
+        content: TextField(
+          controller: bioEditingController,
+          maxLines: 4,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: "Enter your new bio",
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Fermer la boîte de dialogue
+            },
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              bioController.updateBio(bioEditingController.text);
+              Navigator.pop(context); // Fermer la boîte de dialogue
+            },
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -297,119 +374,4 @@ ImageProvider getUserProfileImage(String? base64Image) {
     }
   }
   return const AssetImage('assets/images/default_user.png');
-}
-
-Widget _buildEventsSection(
-    Future<List<Event>> futureEvents, BuildContext context) {
-  return Flexible(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-          child: Text(
-            "Events organized by me",
-            style: TextStyle(
-              fontSize: MySizes.fontSizeMd,
-              fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
-            ),
-          ),
-        ),
-        FutureBuilder<List<Event>>(
-          future: futureEvents,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
-                child: Text("Erreur : ${snapshot.error}"),
-              );
-            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text("Vous n'avez organisé aucun événement."),
-              );
-            } else {
-              final events = snapshot.data!;
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: events.map((event) {
-                    return GestureDetector(
-                      onTap: () => _showEventDetails(context, event),
-                      child: Container(
-                        width: 200,
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Card(
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ConstrainedBox(
-                            constraints: const BoxConstraints(
-                              minHeight: 100,
-                              maxHeight: 150,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    topRight: Radius.circular(12),
-                                  ),
-                                  child: event.imagePath != null
-                                      ? Image.memory(
-                                          base64Decode(event.imagePath!),
-                                          height: 60,
-                                          fit: BoxFit.cover,
-                                        )
-                                      : Container(
-                                          height: 60,
-                                          color: Colors.grey.shade300,
-                                          child: const Icon(Icons.event,
-                                              size: 30, color: Colors.grey),
-                                        ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        event.name,
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              );
-            }
-          },
-        ),
-      ],
-    ),
-  );
-}
-
-void _showEventDetails(BuildContext context, Event event) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => EventDetailPage(event: event),
-    ),
-  );
 }

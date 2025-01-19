@@ -1,15 +1,15 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fitnest/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'dart:io';
-import '../../../../data/services/category/category_service.dart';
+
 import '../../../../data/services/authentication/id_check_service.dart';
 import '../../../../data/services/authentication/signup_service.dart';
+import '../../../../data/services/category/category_service.dart';
 import '../../../../utils/constants/icons.dart';
 import '../../../../utils/formatters/formatter.dart';
 import '../../../../utils/popups/loaders.dart';
@@ -24,7 +24,6 @@ class SignupController extends GetxController {
 
   final ImagePicker _picker = ImagePicker();
   final pageController = PageController();
-  final box = GetStorage();
   var currentStep = 0.obs;
 
   var profileImageMessageError = ''.obs;
@@ -53,9 +52,9 @@ class SignupController extends GetxController {
   // Utilisation de RxMap pour suivre l'état des objectifs de manière réactive
   final selectedGoals = <String, bool>{}.obs;
 
-  final formKeyStep1 = GlobalKey<FormState>();
-  final formKeyStep2 = GlobalKey<FormState>();
-  final formKeyStep3 = GlobalKey<FormState>();
+  late GlobalKey<FormState> formKeyStep1 = GlobalKey<FormState>();
+  late GlobalKey<FormState> formKeyStep2 = GlobalKey<FormState>();
+  late GlobalKey<FormState> formKeyStep3 = GlobalKey<FormState>();
 
   final hidePassword = true.obs;
 
@@ -105,16 +104,12 @@ class SignupController extends GetxController {
       } else {
         this.privacyPolicyMessageError.value = "";
       }
-
       // Validate Step 1
       if (formKeyStep1.currentState!.validate() &&
           this.privacyPolicy.value &&
           this.profileImagePath.value.isNotEmpty) {
         currentStep.value++;
-        pageController.nextPage(
-          duration: Duration(milliseconds: 300),
-          curve: Curves.ease,
-        );
+        pageController.jumpToPage(1);
       } else {
         Loaders.warningSnackBar(
           title: 'Validation Error',
@@ -148,15 +143,11 @@ class SignupController extends GetxController {
           this.backImagePath.value.isNotEmpty &&
           result == null) {
         currentStep.value++;
-        pageController.nextPage(
-          duration: Duration(milliseconds: 300),
-          curve: Curves.ease,
-        );
+        pageController.jumpToPage(2);
       }
     } else if (currentStep.value == 2) {
       // Continue with Step 3 validation
       if (formKeyStep3.currentState!.validate()) {
-        // Get.to(AccountCreatedScreen());
       } else {
         Loaders.warningSnackBar(
           title: 'Validation Error',
@@ -283,11 +274,50 @@ class SignupController extends GetxController {
         .map((entry) => entry.key)
         .toList();
   }
+
   // Goals Part
 
   // Method to change the selection state of a goal
   void toggleGoal(String goal) {
     selectedGoals[goal] = !selectedGoals[goal]!;
+  }
+
+  void resetForm() {
+    currentStep.value = 0;
+    pageController.jumpToPage(0);
+
+    // Réinitialiser les clés de formulaire
+    formKeyStep1 = GlobalKey<FormState>();
+    formKeyStep2 = GlobalKey<FormState>();
+    formKeyStep3 = GlobalKey<FormState>();
+
+    // Réinitialisez également les données du formulaire si nécessaire
+    profileImagePath.value = '';
+    privacyPolicy.value = false;
+    frontImagePath.value = '';
+    backImagePath.value = '';
+    profileImageMessageError.value = '';
+    privacyPolicyMessageError.value = '';
+    frontImageMessageError.value = '';
+    backImageMessageError.value = '';
+
+    firstName.clear();
+    lastName.clear();
+    username.clear();
+    email.clear();
+    phoneNumber.clear();
+    password.clear();
+    confirmPassword.clear();
+    birthDate.clear();
+    selectedGender.value = '';
+
+    selectedInterests.forEach((key, value) {
+      selectedInterests[key] = false;
+    });
+
+    selectedGoals.forEach((key, value) {
+      selectedGoals[key] = false;
+    });
   }
 
   Future<void> signup() async {
@@ -318,6 +348,7 @@ class SignupController extends GetxController {
           await savePersonalInfo(token);
           Get.to(() => VerifyEmailScreen(
               email: email.text.trim(), code: verificationCode));
+          resetForm();
         } else {
           Loaders.errorSnackBar(
               title: 'Verification Failed',

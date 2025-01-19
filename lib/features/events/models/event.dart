@@ -21,6 +21,11 @@ class SportCategory {
       requiresRoute: json['requiresRoute'],
     );
   }
+
+  @override
+  String toString() {
+    return 'SportCategory{id: $id, name: $name,  iconName: $iconName, requiresRoute: $requiresRoute}';
+  }
 }
 
 class Location {
@@ -41,7 +46,10 @@ class Location {
       longitude: json['longitude'],
     );
   }
-
+  @override
+  String toString() {
+    return 'Location{locationName: $locationName, latitude: $latitude, longitude: $longitude}';
+  }
 }
 
 class Route {
@@ -68,8 +76,6 @@ class Event {
   final String cityName;
   final double latitude;
   final double longitude;
-  final Location location;
-  final Route route;
   final String startDate;
   final String endDate;
   final String sportCategoryName;
@@ -77,10 +83,13 @@ class Event {
   final int maxParticipants;
   final int currentNumParticipants;
   final String imagePath;
+  final Location? location;
+  final Route? route;
   final SportCategory sportCategory;
   final String startTime;
   final int organizerId;
 
+  // Constructor
   Event(
       {required this.id,
       required this.name,
@@ -90,46 +99,76 @@ class Event {
       required this.longitude,
       required this.startDate,
       required this.endDate,
-        required this.location,
-        required this.route,
       required this.sportCategoryName,
       required this.sportCategoryId,
       required this.maxParticipants,
       required this.currentNumParticipants,
       required this.imagePath,
+      this.location,
+      this.route,
       required this.sportCategory, // Add this to the constructor
-        required this.startTime,
+      required this.startTime,
       required this.organizerId // Add this to the constructor
       });
 
+  // JSON Deserialization
   factory Event.fromJson(Map<String, dynamic> json) {
     return Event(
-      id: json['id'],
-      name: json['name'] ?? 'Unnamed event',
-      description: json['description'] ?? 'No description available',
-      cityName: json['location']?['locationName'] ?? 'Unknown location',
-      latitude: json['location']?['latitude'] ?? 0.0,
-      longitude: json['location']?['longitude'] ?? 0.0,
-      startDate: json['startDate'] ?? '',
-      endDate: json['endDate'] ?? '',
-      sportCategoryName: json['sportCategory']?['sportCategoryName'] ?? 'No category',
-      sportCategoryId: json['sportCategory']?['sportCategoryId'] ?? 0,
-      maxParticipants: json['maxParticipants'] ?? 0,
-      currentNumParticipants: json['currentNumParticipants'] ?? 0,
-      location: Location.fromJson(json['location'] ?? {}),
-      route: Route.fromJson(json['route'] ?? {'coordinatesFromPath': []}),
-      imagePath: json['imagePath'] ?? '',
-      sportCategory: json['sportCategory'] != null
-          ? SportCategory.fromJson(json['sportCategory'])
-          : SportCategory(
-        id: 0,
-        name: 'No category',
-        iconName: '',
-        requiresRoute: false,
-      ),
-      startTime: json['startTime'] ?? '00:00:00',
-      organizerId: json['idCoordinator'],
-    );
+        id: json['id'],
+        name: json['name'] ?? 'Unnamed event',
+        description: json['description'] ?? 'No description available',
+        cityName: json['cityName'] ?? 'Unknown location',
+        latitude: json['latitude'] ?? 0.0,
+        longitude: json['longitude'] ?? 0.0,
+        startDate: json['startDate'] ?? '',
+        endDate: json['endDate'] ?? '',
+        sportCategoryName: json['sportCategoryName'] ?? 'No category',
+        sportCategoryId: json['sportCategoryId'] ?? 0,
+        maxParticipants: json['maxParticipants'] ?? 0,
+        currentNumParticipants: json['currentNumParticipants'] ?? 0,
+        imagePath: json['imagePath'] ?? '',
+        location: json['location'] != null
+            ? Location.fromJson(json['location'])
+            : null,
+        route: json['route'] != null ? Route.fromJson(json['route']) : null,
+        sportCategory: SportCategory.fromJson(
+            json['sportCategory']), // Ensure non-nullable
+        startTime: json['startTime'],
+        organizerId: json['organizerId']);
   }
 
+  factory Event.fromJson1(Map<String, dynamic> json) {
+    return Event(
+        id: json['id'],
+        name: json['name'] ?? 'Unnamed event',
+        description: json['description'] ?? 'No description available',
+        cityName: json['cityName'] ?? 'Unknown location',
+        latitude: json['latitude'] ?? 0.0,
+        longitude: json['longitude'] ?? 0.0,
+        startDate: json['startDate'] ?? '',
+        endDate: json['endDate'] ?? '',
+        sportCategoryName: json['sportCategoryName'] ?? 'No category',
+        sportCategoryId: json['sportCategoryId'] ?? 0,
+        maxParticipants: json['maxParticipants'] ?? 0,
+        currentNumParticipants: json['currentNumParticipants'] ?? 0,
+        imagePath: json['imagePath'] ?? '',
+        location: json['location'] != null && json['location'] is Map<String, dynamic>
+            ? Location.fromJson(json['location'])
+            : null,
+        route: json['route'] != null && json['route'] is Map<String, dynamic>
+            ? Route.fromJson(json['route'])
+            : null,
+        sportCategory: json['sportCategory'] != null && json['sportCategory'] is Map<String, dynamic>
+            ? SportCategory.fromJson(json['sportCategory'])
+            : SportCategory(id: 0, name: 'Unknown', iconName: 'unknown', requiresRoute: false),
+        startTime: json['startTime'] ?? '',
+        organizerId: json['organizerId'] ?? 0);
+  }
+
+
+  // toString Method to print all fields
+  @override
+  String toString() {
+    return 'Event{id: $id, name: $name, description: $description, city: $cityName, latitude: $latitude, longitude: $longitude, startDate: $startDate, endDate: $endDate, sportCategoryName: $sportCategoryName, sportCategoryId: $sportCategoryId, maxParticipants: $maxParticipants, currentNumParticipants: $currentNumParticipants,location: $location, route: $route, sportCategory: $sportCategory, startTime: $startTime, organizerId: $organizerId}';
+  }
 }

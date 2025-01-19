@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+
 import '../../../../../common/widgets/appbar/appbar.dart';
 import '../../../../../utils/constants/sizes.dart';
 import '../../../../../utils/constants/text_strings.dart';
 import '../../../../../utils/validators/validation.dart';
+import '../../controllers/email_controller.dart';
 
 class UpdateEmail extends StatelessWidget {
   const UpdateEmail({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // If you’re using a controller, make sure it's declared properly.
-    // final controller = Get.put(UpdateNameController());
+    final controller = Get.put(UpdateEmailController());
     return Scaffold(
       // Custom AppBar
       appBar: MyAppBar(
@@ -26,7 +28,6 @@ class UpdateEmail extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Headings
             Text(
               'Please choose a valid email that is easy to recall.',
               style: Theme.of(context).textTheme.labelMedium,
@@ -35,13 +36,11 @@ class UpdateEmail extends StatelessWidget {
 
             // Text field and Button
             Form(
-              // If using a key, uncomment the next line
-              // key: controller.updateUserNameFormKey,
+              key: controller.formKeyEmail,
               child: Column(
                 children: [
                   TextFormField(
-                    // Uncomment and set controller if needed
-                    // controller: controller.firstName,
+                    controller: controller.email,
                     validator: (value) => MyValidator.validateEmail(value),
                     decoration: const InputDecoration(
                       labelText: MyTexts.email,
@@ -58,8 +57,7 @@ class UpdateEmail extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Add functionality here or uncomment the next line if using a controller
-                  // controller.updateUserName();
+                  controller.updateEmail();
                 },
                 child: const Text('Save'),
               ),

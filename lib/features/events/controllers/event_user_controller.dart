@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import '../../../data/services/event/event_service.dart';
 import '../../../data/services/profile/user_service.dart';
 import '../models/event.dart';
@@ -6,11 +7,11 @@ import '../models/event.dart';
 class EventUserController extends GetxController {
   // Observable pour le nom de l'utilisateur
   var userName = ''.obs;
+  var eventsNumber = ''.obs;
   final EventService eventService = EventService();
   var eventInfos = <Event>[].obs;
 
-  final UserService _userService =
-      UserService(); // Instanciation du service pour récupérer le nom.
+  final UserService _userService = UserService();
 
   // Méthode pour récupérer le nom de l'utilisateur
   Future<void> fetchUserName(int userId) async {
@@ -29,7 +30,7 @@ class EventUserController extends GetxController {
     try {
       // Await the fetch operation to get the data
       final eventData = await eventService.fetchUserEvents(userId);
-
+      //eventsNumber = eventData.length as RxString;
       // Update the reactive list
       eventInfos.value = eventData;
 
@@ -47,6 +48,5 @@ class EventUserController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print("EventUserController initialisé");
   }
 }

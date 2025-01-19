@@ -40,22 +40,18 @@ class ProfileController extends GetxController {
   }
 
   // Fetch profile data
-  Future<void> fetchProfileData(int userId) async {
-    String token = box.read<String>('token') ?? '';
-    if (token.isEmpty) {
-      print("Error: Token not found in storage.");
-      isLoading.value = false;
-      return;
-    }
+  Future<UserModel?> fetchProfileData(int userId) async {
     try {
       print("Fetching profile data for user ID: $userId");
       final profileData = await userService.fetchProfileData(userId);
       if (profileData != null) {
         print("Profile data retrieved successfully.");
         userProfile.value = profileData;
+        return profileData;
       } else {
         print("No profile data found.");
         userProfile.value = null;
+        return null;
       }
     } catch (e) {
       print("Error fetching profile data: $e");
@@ -71,6 +67,21 @@ class ProfileController extends GetxController {
       userProfile.refresh();
     } else {
       print("Error: User ID not found in storage.");
+    }
+  }
+
+  Future<List<String>> getUserInterests(int userId) async {
+    try {
+      var interests = await userService.getUserInterests(userId);
+
+      if (interests != null && interests is List<String>) {
+        return interests;
+      } else {
+        throw Exception('Invalid interests data received');
+      }
+    } catch (e) {
+      print('Error occurred while fetching interests: $e');
+      throw Exception('Failed to load interests');
     }
   }
 }

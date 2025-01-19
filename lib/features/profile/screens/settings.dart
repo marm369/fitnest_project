@@ -4,11 +4,14 @@ import 'dart:io';
 import 'package:fitnest/features/profile/screens/widgets/profile_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+
 import '../../../common/widgets/appbar/appbar.dart';
 import '../../../common/widgets/texts/section_heading.dart';
 import '../../../utils/constants/sizes.dart';
+import '../../authentication/screens/signin/signin.dart';
 import '../controllers/profile_controller.dart';
 import '../controllers/profilepicture_controller.dart';
 import 'widgets/update_dateofbirth.dart';
@@ -18,7 +21,7 @@ import 'widgets/update_phonenumber.dart';
 import 'widgets/update_username.dart';
 
 class SettingsScreen extends StatelessWidget {
-  SettingsScreen({super.key});
+  SettingsScreen({super.key, final VoidCallback? onBackPressed});
 
   final ProfileController controller = Get.put(ProfileController());
   final updateProfilePictureController =
@@ -38,16 +41,20 @@ class SettingsScreen extends StatelessWidget {
       final file = File(pickedFile.path);
       updateProfilePictureController.setImageFile(file);
       await updateProfilePictureController.updateProfilePicture();
-      //await controller.refreshProfile();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final box = GetStorage();
     return Scaffold(
       appBar: MyAppBar(
         title: const Text('Profile'),
         showBackArrow: true,
+        leadingOnPressed: () {
+          Navigator.pushNamed(
+              context, '/profile'); // Route nommée pour ProfilScreen
+        },
       ),
       body: Obx(() {
         final userProfile = controller.userProfile.value;
@@ -58,8 +65,8 @@ class SettingsScreen extends StatelessWidget {
         return RefreshIndicator(
           onRefresh: _refreshProfile, // Appelle la méthode de rafraîchissement
           child: SingleChildScrollView(
-            physics:
-                const AlwaysScrollableScrollPhysics(), // Active le défilement même si le contenu est insuffisant
+            physics: const AlwaysScrollableScrollPhysics(),
+            // Active le défilement même si le contenu est insuffisant
             child: Padding(
               padding: const EdgeInsets.all(MySizes.defaultSpace),
               child: Column(
@@ -121,9 +128,10 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: MySizes.spaceBtwItems / 2),
                   ProfileMenu(
-                      title: 'Email',
-                      value: userProfile.email,
-                      onPressed: () => {}),
+                    title: 'Email',
+                    value: userProfile.email,
+                    onPressed: () => Get.to(() => UpdateUserName()),
+                  ),
                   const SizedBox(height: MySizes.spaceBtwItems),
                   const Divider(),
                   const SizedBox(height: MySizes.spaceBtwItems),
@@ -169,7 +177,21 @@ class SettingsScreen extends StatelessWidget {
                   // Bouton pour fermer le compte
                   Center(
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        final box = GetStorage();
+
+                        // Supprimer des clés spécifiques
+                        box.remove('user_id');
+                        box.remove('token');
+
+                        // Naviguer vers l'écran de connexion et effacer l'historique de navigation
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => SignInScreen()),
+                              (route) => false,
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey, // Couleur principale
                         shape: StadiumBorder(), // Boutons arrondis simples

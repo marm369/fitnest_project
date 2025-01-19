@@ -1,3 +1,4 @@
+import 'package:fitnest/data/services/participation/participation_service.dart';
 import 'package:fitnest/features/notifs/services/fcmToken_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
@@ -30,7 +31,8 @@ EventModel.Event testEvent = EventModel.Event(
 
 Future<void> main() async {
   // Initialize notifHandler
-  FcmtokenService fcmtokenService = FcmtokenService();  // Initialize the fcmtokenService
+  ParticipationService participationService = ParticipationService();
+  FcmtokenService fcmtokenService = FcmtokenService(participationService);  // Initialize the fcmtokenService
   NotifHandler notifHandler = NotifHandler(fcmtokenService); // Ensure the service is passed to NotifHandler
 
   // Initialize widgets and GetStorage
@@ -44,17 +46,19 @@ Future<void> main() async {
   //final storage = GetStorage();
   //bool isFirstTime = storage.read('isFirstTime') ?? true;
   // runApp(App(isFirstTime: isFirstTime));
-  runApp(MyApp1());
+  runApp(MyApp1(notifHandler));
 }
 
 class MyApp1 extends StatelessWidget {
+  NotifHandler notifHandler ;
+  MyApp1(this.notifHandler);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Notification Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      //home: HomeScreen(),
-      home: NotifScreen(userId: 1, eventId: 1),
+      home:  HomeScreen(notifHandler),
+      //home: NotifScreen(userId: 1, eventId: 1),
     );
   }
 }
@@ -63,7 +67,8 @@ class HomeScreen extends StatelessWidget {
   final NotifHandler notifHandler;  // Add this as a parameter to the constructor
 
   // Add the constructor to receive the NotifHandler instance
-  HomeScreen({required this.notifHandler});
+  HomeScreen( this.notifHandler);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

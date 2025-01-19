@@ -1,3 +1,5 @@
+import 'package:fitnest/utils/constants/sizes.dart';
+import 'package:fitnest/utils/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 
 class EventParticipantsInfo extends StatelessWidget {
@@ -11,6 +13,7 @@ class EventParticipantsInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dark = HelperFunctions.isDarkMode(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -18,25 +21,25 @@ class EventParticipantsInfo extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Icon(Icons.people_outline, color: Colors.green, size: 24),
-            SizedBox(width: 8),
+            SizedBox(width: MySizes.sm),
             Text(
               "Max Participants: ",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: dark ? Colors.white : Colors.black,
               ),
             ),
             Text(
               "$maxParticipants",
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.black54,
+                color: dark ? Colors.white : Colors.black54,
               ),
             ),
           ],
         ),
-        SizedBox(height: 8),
+        SizedBox(height: MySizes.sm),
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -45,20 +48,20 @@ class EventParticipantsInfo extends StatelessWidget {
               color: Colors.blue,
               size: 24,
             ),
-            SizedBox(width: 8),
+            SizedBox(width: MySizes.sm),
             Text(
               "Current Participants: ",
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: dark ? Colors.white : Colors.black,
               ),
             ),
             Text(
               "$currentNumParticipants",
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.black54,
+                color: dark ? Colors.white : Colors.black54,
               ),
             ),
           ],

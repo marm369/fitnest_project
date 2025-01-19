@@ -1,9 +1,13 @@
 import 'dart:convert';
+import 'package:fitnest/data/services/participation/participation_service.dart';
 import 'package:http/http.dart' as http;
 import '../../../configuration/config.dart';
 import '../models/fcmtoken_model.dart';
 
 class FcmtokenService {
+  ParticipationService participantsService ;
+  FcmtokenService(this.participantsService);
+
   final String _baseUrl = '$GatewayUrl/notif-service/api/fcm-token';
 
   Future<List<fcmtokenModel>> fetchAll() async {
@@ -28,20 +32,6 @@ class FcmtokenService {
     }
   }
 
-  Future<List<dynamic>> getParticipationsByEventId(int eventId) async {
-    final String url = '$_baseUrl/api/participations/event/$eventId';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        throw Exception('Failed to load participations. Status Code: ${response.statusCode}');
-      }
-    } catch (e) {
-      throw Exception('Error fetching participations: $e');
-    }
-  }
 
   Future<fcmtokenModel?> fetchToken(dynamic userId) async {
     final String apiUrl = "$_baseUrl/get/$userId";
@@ -65,7 +55,7 @@ class FcmtokenService {
 
   Future<List<fcmtokenModel?>> fetchExistingParticipantTokens(int eventId) async {
     try {
-      List<dynamic> participations = await getParticipationsByEventId(eventId);
+      List<dynamic> participations = await participantsService.getParticipationsByEventId(eventId);
       List<fcmtokenModel?> tokens = [];
 
       for (var participation in participations) {

@@ -4,6 +4,7 @@ class PostModel {
   final int id;
   final String name;
   final String description;
+  final int organizerId;
   final String organizerFirstName;
   final String organizerLastName;
   final String organizerImage;
@@ -20,6 +21,7 @@ class PostModel {
     required this.id,
     required this.name,
     required this.description,
+    required this.organizerId,
     required this.organizerFirstName,
     required this.organizerLastName,
     required this.organizerImage,
@@ -33,15 +35,17 @@ class PostModel {
     required this.sportCategoryIcon,
   });
 
-  // Constructeur `fromEvent` avec le paramètre `user`
-  factory PostModel.fromEvent(Event event, {required Map<String, dynamic> user}) {
+  // Constructeur fromEvent avec le paramètre user
+  factory PostModel.fromEvent(Event event,
+      {required Map<String, dynamic> user}) {
     return PostModel(
       id: event.id,
       name: event.name,
       description: event.description,
+      organizerId: user['id'],
       organizerFirstName: user['firstName'] ?? 'Inconnu',
       organizerLastName: user['lastName'] ?? 'Inconnu',
-      organizerImage: user['imagePath'] ?? '',
+      organizerImage: user['profilePicture'] ?? '',
       cityName: event.cityName,
       startDate: DateTime.parse(event.startDate),
       startTime: event.startTime,

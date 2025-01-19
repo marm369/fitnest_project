@@ -5,7 +5,7 @@ class EventScroll {
   final DateTime eventDate;
   String organizerName;
   String organizerImage;
-
+  final organizerId;
   EventScroll({
     required this.eventId,
     required this.eventName,
@@ -13,6 +13,7 @@ class EventScroll {
     required this.eventDate,
     required this.organizerName,
     required this.organizerImage,
+    required this.organizerId,
   });
 
   // Factory method to create an instance from JSON
@@ -24,6 +25,7 @@ class EventScroll {
       eventDate: DateTime.parse(json['startDate'] ?? '2000-01-01'),
       organizerName: '',
       organizerImage: '',
+      organizerId: json['organizerId'],
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:fitnest/features/notifs/models/fcmtoken_model.dart';
 import 'package:fitnest/features/notifs/models/notif_model.dart';
 import '../../events/models/event.dart';
+import '../../participation/models/participation_model.dart';
 import '../configs/notifications_configuration.dart';
 import '../services/fcmToken_service.dart';
 
@@ -56,14 +57,14 @@ class NotifHandler {
     }
   }
 
-  Future<void> notifyRegisterEvent(Participant participant, Event event) async {
+  Future<void> notifyRegisterEvent(ParticipationModel participant, Event event) async {
     fcmtokenModel? token = await _fcmTokenService.fetchToken(event.organizerId);
 
     if (token != null) {
       NotificationModel notif = NotificationModel(
         recipient: participant.id,
         type: "NEW_REGISTRATION",
-        content: "${participant.name} has registered for your event ${event.name}.",
+        content: "${participant.participantName} has registered for your event ${event.name}.",
         timestamp: DateTime.now(),
         token: token.token,
       );
@@ -72,7 +73,7 @@ class NotifHandler {
     }
   }
 
-  Future<void> notifyConfirmedParticipation(Participant participant, Event event) async {
+  Future<void> notifyConfirmedParticipation(ParticipationModel participant, Event event) async {
     fcmtokenModel? token = await _fcmTokenService.fetchToken(participant.id);
 
     if (token != null) {
@@ -88,7 +89,7 @@ class NotifHandler {
     }
   }
 
-  Future<void> notifyRejectedParticipation(Participant participant, Event event) async {
+  Future<void> notifyRejectedParticipation(ParticipationModel participant, Event event) async {
     fcmtokenModel? token = await _fcmTokenService.fetchToken(participant.id);
 
     if (token != null) {
@@ -104,14 +105,6 @@ class NotifHandler {
     }
   }
 
-}
-
-
-class Participant {
-  final int id;
-  final String name;
-
-  Participant({required this.id, required this.name});
 }
 
 //TODO: REMINDER for events participants

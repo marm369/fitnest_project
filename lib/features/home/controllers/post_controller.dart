@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../../data/services/home/PostService.dart';
+import '../../../data/services/home/post_service.dart';
 import '../models/post_model.dart';
 
 class PostController extends GetxController {

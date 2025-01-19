@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:fitnest/data/services/participation/participation_service.dart';
 import 'package:fitnest/features/notifs/models/notif_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -159,7 +160,9 @@ Future<void> sendNotifications1({
 */
 
 Future<void> configureNotifications(double userId) async {
-  final FcmtokenService _fcmTokenService = FcmtokenService();
+
+  final ParticipationService participationService =ParticipationService();
+  final FcmtokenService _fcmTokenService = FcmtokenService(participationService);
 
   WidgetsFlutterBinding.ensureInitialized();
 
