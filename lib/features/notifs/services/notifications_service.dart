@@ -4,7 +4,42 @@ import 'package:fitnest/features/notifs/models/notif_model.dart';
 import '../../../configuration/config.dart';
 import '../configs/notifications_configuration.dart';
 
-Future<List<NotificationModel>> fetchUserNotifications( double userid) async {
+/// Stores a notification by calling the `/post` endpoint.
+Future<void> storeNotification(NotificationModel notification, int eventId) async {
+  const String apiUrl = "$GatewayUrl/notif-service/api/notifs/post";
+
+  try {
+    // Prepare the request body.
+    Map<String, dynamic> requestBody = {
+      "recipient": notification.recipient,
+      "type": notification.type,
+      "content": notification.content,
+      "token": notification.token,
+      "eventid": eventId, // Add event ID to the request body
+    };
+
+    // Make the HTTP POST request.
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: json.encode(requestBody),
+    );
+
+    // Check the response status.
+    if (response.statusCode == 201) {
+      print("Notification stored successfully!");
+    } else {
+      throw Exception(
+          "Failed to store notification with status code ${response.statusCode}");
+    }
+  } catch (e) {
+    throw Exception("Error storing notification: $e");
+  }
+}
+
+Future<List<NotificationModel>> fetchUserNotifications( int userid) async {
   const String apiUrl = "$GatewayUrl/notif-service/api/notifs/get/1";
       //"$GatewayUrl/notif-service/api/notifs/get/$userid";
   try {
@@ -21,3 +56,4 @@ Future<List<NotificationModel>> fetchUserNotifications( double userid) async {
     throw Exception("Error fetching notifs: $e");
   }
 }
+

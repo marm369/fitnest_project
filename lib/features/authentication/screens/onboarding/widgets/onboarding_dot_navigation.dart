@@ -14,7 +14,7 @@ class OnBoardingDotNavigation extends StatelessWidget {
     final controller = OnBoardingController.instance;
 
     return Positioned(
-      bottom: MyDeviceUtils.getBottomNavigationBarHeight() + 100,
+      bottom: MyDeviceUtils.getBottomNavigationBarHeight() + 25,
       left: MySizes.spaceBtwSections * 5,
       child: SmoothPageIndicator(
         controller: controller.pageController,

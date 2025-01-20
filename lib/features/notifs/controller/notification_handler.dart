@@ -1,5 +1,8 @@
+import 'package:fitnest/data/services/event/event_service.dart';
+import 'package:fitnest/data/services/profile/user_service.dart';
 import 'package:fitnest/features/notifs/models/fcmtoken_model.dart';
 import 'package:fitnest/features/notifs/models/notif_model.dart';
+import 'package:fitnest/features/profile/models/user_model.dart';
 import '../../events/models/event.dart';
 import '../../participation/models/participation_model.dart';
 import '../configs/notifications_configuration.dart';
@@ -8,6 +11,8 @@ import '../services/fcmToken_service.dart';
 class NotifHandler {
 
   final FcmtokenService _fcmTokenService;
+  final EventService eventService = EventService();
+  final UserService userService = UserService();
 
   NotifHandler(this._fcmTokenService);
 
@@ -16,11 +21,11 @@ class NotifHandler {
     for (fcmtokenModel fcmtoken in fcmtokens) {
       NotificationModel notif = NotificationModel(
           recipient: fcmtoken.recipient,
-          type: "FitNest",
-          content: "The event ${event.name} was just created, it is located at ${event.cityName} starting from ${event.startDate}",
+          type: "EVENT_CREATED",
+          content: "The event ${event.name} was just created, starting at ${event.startDate} and located in ${event.location} ",
           timestamp: DateTime.now(),
           token: fcmtoken.token);
-      await sendNotifications(notif, null);
+      await sendNotifications(notif,event.id, null);
       print('Notification sent: $notif to token ${fcmtoken.token}');
     }
   }
@@ -31,11 +36,11 @@ class NotifHandler {
       if (token != null) {
         NotificationModel notif = NotificationModel(
             recipient: token.recipient,
-            type: "FitNest",
+            type: "EVENT_CANCELED",
             content: "The event ${event.name} was just canceled",
             timestamp: DateTime.now(),
             token: token.token);
-        await sendNotifications(notif, null);
+        await sendNotifications(notif,event.id,  null);
         print('Notification sent: $notif to token ${token.token}');
       }
     }
@@ -51,56 +56,60 @@ class NotifHandler {
             content: "The event ${event.name} was just updated. Click to know more.",
             timestamp: DateTime.now(),
             token: token.token);
-        await sendNotifications(notif, null);
+        await sendNotifications(notif,event.id,  null);
         print('Notification sent: $notif to token ${token.token}');
       }
     }
   }
 
-  Future<void> notifyRegisterEvent(ParticipationModel participant, Event event) async {
+  Future<void> notifyRegisterEvent(int userid, int eventid) async {
+    Event event = await eventService.getEventById(eventid);
+    UserModel user = await userService.fetchProfileData(userid);
+
     fcmtokenModel? token = await _fcmTokenService.fetchToken(event.organizerId);
-
     if (token != null) {
       NotificationModel notif = NotificationModel(
-        recipient: participant.id,
+        recipient: event.id,
         type: "NEW_REGISTRATION",
-        content: "${participant.participantName} has registered for your event ${event.name}.",
+        content: "${user.firstName } ${user.lastName} has registered for your event ${event.name}.",
         timestamp: DateTime.now(),
         token: token.token,
       );
-      await sendNotifications(notif, null);
+      await sendNotifications(notif,event.id,null);
       print('Notification sent: \$notif to token \${token.token}');
     }
   }
 
-  Future<void> notifyConfirmedParticipation(ParticipationModel participant, Event event) async {
-    fcmtokenModel? token = await _fcmTokenService.fetchToken(participant.id);
+  Future<void> notifyConfirmedParticipation(int participantid, int eventid) async {
+    Event event = await eventService.getEventById(eventid);
+    fcmtokenModel? token = await _fcmTokenService.fetchToken(participantid);
 
     if (token != null) {
       NotificationModel notif = NotificationModel(
-        recipient: participant.id,
-        type: "NEW_REGISTRATION",
-        content: "your registered was confirmed for the event ${event.name}.",
+        recipient: participantid,
+        type: "PARTICIPATION_CONFIRMED",
+        content: "your registeration was confirmed for the event ${event.name}.",
         timestamp: DateTime.now(),
         token: token.token,
       );
-      await sendNotifications(notif, null);
+      await sendNotifications(notif, event.id, null);
       print('Notification sent: \$notif to token \${token.token}');
     }
   }
 
-  Future<void> notifyRejectedParticipation(ParticipationModel participant, Event event) async {
-    fcmtokenModel? token = await _fcmTokenService.fetchToken(participant.id);
+  Future<void> notifyRejectedParticipation(int participantid, int eventid) async {
+    Event event = await eventService.getEventById(eventid);
+    fcmtokenModel? token = await _fcmTokenService.fetchToken(participantid);
 
     if (token != null) {
       NotificationModel notif = NotificationModel(
-        recipient: participant.id,
-        type: "NEW_REGISTRATION",
+        recipient: participantid,
+        type: "PARTICIPATION_DECLINED",
         content: "your registration was rejected for the event ${event.name}.",
         timestamp: DateTime.now(),
         token: token.token,
       );
-      await sendNotifications(notif, null);
+      await sendNotifications(notif,event.id,null);
       print('Notification sent: \$notif to token \${token.token}');
     }
   }

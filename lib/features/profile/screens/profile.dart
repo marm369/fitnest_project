@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../common/widgets/custom_shapes/curved_edges/groovy_clipper.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../events/controllers/event_user_controller.dart';
+import '../../events/models/event.dart';
 import '../../participation/controllers/participation_controller.dart';
 import '../controllers/bio_controller.dart';
 import '../controllers/profile_controller.dart';
@@ -29,6 +30,7 @@ class ProfileScreen extends StatelessWidget {
       if (profileController.isLoading.value) {
         return const Scaffold(
           body: Center(child: CircularProgressIndicator()),
+
         );
       }
       // Gestion des erreurs ou données manquantes
@@ -43,6 +45,7 @@ class ProfileScreen extends StatelessWidget {
       participationController.getParticipationsByUserId(userProfile.id);
       return Scaffold(
         body: SafeArea(
+          child: SingleChildScrollView(
           child: Column(
             children: [
               Container(
@@ -94,7 +97,7 @@ class ProfileScreen extends StatelessWidget {
                               color: dark ? Colors.black : Colors.white,
                             ),
                             onPressed: () {
-                              Navigator.pushNamed(context, '/home');
+                              Navigator.pushNamed(context, '/buttomNavigationBar');
                             },
                           ),
                           Text(
@@ -149,22 +152,42 @@ class ProfileScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               StatWidget(
-                                  label: "Following",
-                                  value: "0",
-                                  icon: Icons.person_add),
+                                label: "Following",
+                                value: "0",
+                                icon: Icons.person_add,
+                              ),
                               SizedBox(width: MySizes.xs),
                               StatWidget(
-                                  label: "Followers",
-                                  value: "0",
-                                  icon: Icons.group),
+                                label: "Followers",
+                                value: "0",
+                                icon: Icons.group,
+                              ),
                               SizedBox(width: MySizes.xs),
-                              Obx(
-                                    () => StatWidget(
-                                  label: "Events",
-                                  value: eventController.eventsNumber.value,
-                                  icon: Icons.event,
-                                ),
-                              )
+                              FutureBuilder<List<Event>>(
+                                future: futureEvents, // Assurez-vous que futureEvents est bien un Future<List<Event>>
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return StatWidget(
+                                      label: "Events",
+                                      value: "Loading...",
+                                      icon: Icons.event,
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return StatWidget(
+                                      label: "Events",
+                                      value: "Error",
+                                      icon: Icons.event,
+                                    );
+                                  } else {
+                                    final eventsCount = snapshot.data?.length ?? 0;
+                                    return StatWidget(
+                                      label: "Events",
+                                      value: eventsCount.toString(),
+                                      icon: Icons.event,
+                                    );
+                                  }
+                                },
+                              ),
                             ],
                           ),
                         ],
@@ -312,18 +335,10 @@ class ProfileScreen extends StatelessWidget {
               EventsSectionWidget(
                   futureEvents: futureParticipations,
                   altTitle: "You have not participated any events."),
-              Text(
-                "Interests",
-                style: TextStyle(
-                  fontSize: 16.0,
-                  // Vous pouvez remplacer MySizes.fontSizeMd par un nombre
-                  fontWeight: FontWeight.bold,
-                  color: Colors.blueAccent,
-                ),
-              ),
               InterestsWidget(userId: userProfile.id),
             ],
           ),
+        ),
         ),
       );
     });

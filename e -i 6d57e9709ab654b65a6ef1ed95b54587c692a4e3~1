@@ -1,0 +1,192 @@
+[33mcommit 355336275b9f6586a25ea55ce7cb837ce9bd6b56[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mkhaoula[m[33m)[m
+Author: khaoula abassi <khawla1abassi@gmail.com>
+Date:   Fri Jan 24 23:29:30 2025 +0100
+
+     added notifs fonctionnalities
+
+[33mcommit f63141440379f98e2250ec5b927162fa930033ae[m
+Author: khaoula abassi <khawla1abassi@gmail.com>
+Date:   Fri Jan 24 23:28:09 2025 +0100
+
+     added notifs fonctionnalities
+
+[33mcommit 40e6f12c46c566af78bf932acd69e845b2cefcee[m
+Author: khaoula abassi <khawla1abassi@gmail.com>
+Date:   Fri Jan 24 23:27:32 2025 +0100
+
+     added notifs fonctionnalities
+
+[33mcommit 6d57e9709ab654b65a6ef1ed95b54587c692a4e3[m
+Merge: 9eeb8cd e8d5a49
+Author: khaoula abassi <khawla1abassi@gmail.com>
+Date:   Fri Jan 24 23:17:12 2025 +0100
+
+     added notifs fonctionnalities
+
+[33mcommit e8d5a49bd20ce2390e25bc1c85d26a8c602c87ec[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Meriem oulja <meriemoulja@gmail.com>
+Date:   Fri Jan 24 14:27:38 2025 +0000
+
+    feedback and participation services
+
+[33mcommit 9eeb8cd205ba7a6634f3db9d96fcd0337ccffd2d[m[33m ([m[1;31morigin/khaoula[m[33m)[m
+Author: khaoula abassi <khawla1abassi@gmail.com>
+Date:   Mon Jan 20 12:45:09 2025 +0100
+
+    commit notifs
+
+[33mcommit 7bba03b26e6d4a22f529e165edde73fb6165cfd9[m
+Merge: 32018d0 2b6ce44
+Author: khaoula abassi <khawla1abassi@gmail.com>
+Date:   Sun Jan 19 02:14:31 2025 +0100
+
+    notifs up
+
+[33mcommit 2b6ce44d29be489e8f1ca09588dbd7fa809e7df9[m
+Author: Meriem oulja <meriemoulja@gmail.com>
+Date:   Sat Jan 18 23:53:52 2025 +0000
+
+    frontend version updated
+
+[33mcommit 32018d0674e99ee8b106a54755db19f951703586[m
+Author: khaoula abassi <khawla1abassi@gmail.com>
+Date:   Sun Jan 19 00:17:20 2025 +0100
+
+    notifs
+
+[33mcommit 44e471fbadd566ed0654095d48375324b6245032[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Thu Dec 12 15:58:50 2024 +0100
+
+    participation modification
+
+[33mcommit f41f20d9a74f66f4261b364904efcce598b336ab[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Thu Dec 12 14:13:53 2024 +0100
+
+    Participation Requests
+
+[33mcommit 015e75398161c6d4a79dfe762be5b6c6626f2784[m[33m ([m[1;32mmaster[m[33m)[m
+Merge: d8027c0 598ce52
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Wed Dec 11 01:17:26 2024 +0100
+
+    commit changes
+
+[33mcommit d8027c0e55e1efd28c1c036be9aadaa6a017fabe[m
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Tue Dec 10 12:55:52 2024 +0100
+
+     commit notif changes
+
+[33mcommit 598ce525eca670bc0f8261f6dd6370914ab5194a[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Mon Dec 9 16:26:09 2024 +0100
+
+    change the emplacement of postService file
+
+[33mcommit d4350ef9394fee50001fcbb0cfd303f1cd1d5fb0[m
+Merge: cf0099f 869a9f3
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Mon Dec 9 15:51:55 2024 +0100
+
+     changes
+
+[33mcommit cf0099f309e75fefa67ce6c62721c2e5ba1604e1[m
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Mon Dec 9 15:40:52 2024 +0100
+
+    commit added notifications
+
+[33mcommit 869a9f305784fc3ba7dcc8b7cdcd2fd8b0926531[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Sun Dec 8 23:18:02 2024 +0100
+
+    front updated
+
+[33mcommit 4aa01a285c9d2eb1a8141ed50124b01bbe2a191b[m
+Merge: 93c0f86 45a3c7c
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Sun Dec 8 15:35:19 2024 +0100
+
+    Merge branch 'master' of https://github.com/marm369/fitnest_project
+
+[33mcommit 45a3c7cbc590212382a2028d19cb23862b39a0a3[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Mon Dec 2 20:39:52 2024 +0100
+
+    selected category bug
+
+[33mcommit d21420fc7ac76997e937eaedd66cf7ec0cd80c31[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Mon Dec 2 20:15:57 2024 +0100
+
+    front home
+
+[33mcommit 93c0f865336184e60bb799e5c31582e455e72a7a[m
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Mon Dec 2 19:35:28 2024 +0100
+
+    changes
+
+[33mcommit 075f3ea97766ddd87f2d4371f988b4150a08c10d[m
+Merge: d7e20cb b9dddae
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Mon Dec 2 18:59:33 2024 +0100
+
+    commit profile user events fetching change
+
+[33mcommit b9dddaeed62986ba18877eedb3b2eebd279884c4[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Mon Dec 2 17:48:31 2024 +0100
+
+    auth v3
+
+[33mcommit d7e20cb19d0de38803c5ce2fbd7f437c8840c2d3[m
+Merge: deee4eb a30fe63
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Mon Dec 2 17:39:18 2024 +0100
+
+    commit profile user events fetching changes
+
+[33mcommit deee4eb930538f44ea212f433e57e819b1c7dedc[m
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Mon Nov 25 21:24:18 2024 +0100
+
+    commit changes
+
+[33mcommit a30fe63dc245fa18291cda7c2a65fff9b3747eca[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Sun Nov 24 17:52:05 2024 +0100
+
+    front create event
+
+[33mcommit 61ef209579356c9bce40cf37aecc1a5849f5ca07[m
+Author: khaoulaAbassi <khaoula.abassi@marketingconfort.com>
+Date:   Thu Nov 14 09:26:30 2024 +0100
+
+    commit changes
+
+[33mcommit 721900c768463c2b0a04c1eb90dc1f8297a612d5[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Mon Nov 11 11:58:22 2024 +0100
+
+    authentication front
+
+[33mcommit 4979138cc7c0ef9f3c478c8b980f37dc063dc267[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Fri Nov 8 17:10:46 2024 +0100
+
+    rename login to sigin
+
+[33mcommit aeb47d1187dd0f11605822f4b23ac27448b848ef[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Mon Nov 4 10:41:17 2024 +0100
+
+    validation
+
+[33mcommit 9699da972bdb8f650bf1769f5311e4eb591c9521[m
+Author: marm369 <126961765+marm369@users.noreply.github.com>
+Date:   Sun Nov 3 16:33:13 2024 +0100
+
+    ui fitnest

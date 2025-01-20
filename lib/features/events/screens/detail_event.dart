@@ -334,7 +334,7 @@ class EventDetailPage extends StatelessWidget {
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TrackingScreen(organizerId: 8,),
+              builder: (context) => TrackingScreen(organizerId: event.organizerId,),
             ),
           ),
           child: Text(

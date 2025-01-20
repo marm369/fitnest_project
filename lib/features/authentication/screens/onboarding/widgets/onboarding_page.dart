@@ -19,7 +19,7 @@ class OnBoardingPage extends StatelessWidget {
       padding: const EdgeInsets.all(MySizes.spaceBtwSections),
       child: Column(
         children: [
-          SizedBox(height: MySizes.spaceBtwSections * 4),
+          SizedBox(height: MySizes.spaceBtwSections * 2),
           Expanded(
             flex: 2,
             child: Container(
@@ -46,7 +46,7 @@ class OnBoardingPage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: MySizes.spaceBtwSections),
+
           Text(
             title,
             style: Theme
@@ -64,6 +64,7 @@ class OnBoardingPage extends StatelessWidget {
                 .bodyMedium,
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: MySizes.spaceBtwItems * 8),
         ],
       ),
     );

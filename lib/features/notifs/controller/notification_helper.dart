@@ -78,5 +78,4 @@ class NotificationsHelper {
       payload: 'item x',
     );
   }
-
 }

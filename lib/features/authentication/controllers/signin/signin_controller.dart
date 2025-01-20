@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-
 import '../../../../data/services/authentication/signin_service.dart';
 import '../../../../utils/popups/loaders.dart';
 import '../../../network_manager.dart';
+import '../../../../features/notifs/configs/notifications_configuration.dart';
 
 class SignInController extends GetxController {
   // Variables
@@ -51,6 +51,10 @@ class SignInController extends GetxController {
       });
 
       if (token != null) {
+        //configure notifications
+        final storage = GetStorage();
+        await configureNotifications( storage.read('user_id'));
+
         return 'Login successful!';
       } else {
         return 'Invalid credentials. Please check your login details and try again.';

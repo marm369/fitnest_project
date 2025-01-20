@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import 'features/authentication/screens/onboarding/onboarding.dart';
 import 'features/authentication/screens/signin/signin.dart';
 import 'features/home/screens/home.dart';
 import 'features/profile/screens/profile.dart';
+<<<<<<< HEAD
+=======
 import 'features/tracking/screens/tracking_organizer_screen.dart';
-import 'features/notifs/screens/display_notifs.dart';
+import 'navigation_menu.dart';
+>>>>>>> e8d5a49 (feedback and participation services)
 import 'utils/theme/theme.dart';
 
 class App extends StatelessWidget {
@@ -17,6 +18,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       themeMode: ThemeMode.system,
       darkTheme: MyAppTheme.darkTheme,
       theme: MyAppTheme.lightTheme,
@@ -24,8 +26,9 @@ class App extends StatelessWidget {
         '/profile': (acontext) => ProfileScreen(),
         '/signin': (context) => SignInScreen(),
         '/home': (context) => HomeScreen(),
+        '/buttomNavigationBar': (context) => NavigationMenu(),
       },
-      home: SignInScreen() ,
+      home: OnBoardingScreen() ,
     );
   }
 }

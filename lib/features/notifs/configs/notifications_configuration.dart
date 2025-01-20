@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:fitnest/data/services/participation/participation_service.dart';
 import 'package:fitnest/features/notifs/models/notif_model.dart';
+import 'package:fitnest/features/notifs/services/notifications_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:fitnest/features/notifs/services/fcmToken_service.dart';
@@ -11,13 +12,12 @@ import 'package:http/http.dart' as http;
 import 'package:fitnest/configuration/config.dart';
 import 'package:fitnest/features/notifs/controller/notification_helper.dart';
 
-
 Future<String?> getAccessToken() async {
   final serviceAccountJson = {
     "type": "service_account",
     "project_id": "fitnest-6980d",
-    "private_key_id": "6c4853112b4384296699c54fb74945edbb73ff66",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDOcNeqIM23fi2P\nMGu1mdcuTVfk2O3J5FF1eqojmRGEqLBoQVwTO9dj17XgXs+xu+8GwzdgbyvEXWHM\nt9Nsivpw08nDnhBBJ9qC3wZ/wvhepN1j/dCNPqnPHBOHRVsnRaLRHVa44TRa2CW+\n5OJFFvHF6xrCgaAgfLeXNUwqKeLG1Dqh8jn07sCHCvES7angZQtI2C6/uTXS0PVf\n+MSMNh+AtjsOMMj3Q1z1dJ5pPNH+/ycJJgf6Mi8hmEpdx1tz1gfl4qddPoJOtz0b\nTAzW5uCAXSantYTcbYr0GyZqOB/9dDCirvD5LoX+ZTZ/MdIZ+1BBjBwehmaNtRF+\nt0HJLGUvAgMBAAECggEAPsKnjh0y7Vn619FMrYT7miQBWJ1qjTpQWXrVRsU+QipW\nlxtntqE2ti/aJ0ArvEj6PgATUcn6cFRDa01nhVQrFyoL6OCg6G4JTEgpXaYUhBFz\nDPcY9Bfc4A4VEcbQE3xkJ1bYCpTMqeGUeBh1gbOcBSOYmxF1cOr5lYqqgRcCzpcj\nAPaNuM3S4Og/x9qZDD4CSDzBaLi163s33m++t4ejX101KTDHIsXxqNPZ7WldXm9X\n2f5CXEKeUJG2WsqSIGXOawwH9Iq62fGK2eZCSC4u+kM98EbqEx9KPZC/oLZMsmCL\nXu1FelA8yGzDMgujVNz8i0IAmQaEl9UFLmSV7FlNAQKBgQDpJY8oIjInPT3Alv6x\n3/g0UoB2hn3C+p4QEdZXIhIthUtmtR1YB2qNRMGcKluchT4fxj/0TWb2h2B4IyAE\nw2RG67HIZF3lVXLrZ3aW6ak7nsuCHN80c7uYM2xQkpg4fVl8cXgf+rXIyG80rGrP\nJ/NztlUAW6BYt1NVgDbaKWZ/4QKBgQDirSQglPckYVoOGW30eGTXSw3yOtmBsf9a\nxgtwWnxpIRUlkrdweuiirwkCVQpKFnL7HWeJffXLcwDKaRpmopGIBTWct12C9YKM\ndFirp6VEj4N0fnCfvLV6He1REceDELb5etr3wF0z7OiL4u41W5ey6RTuszwEgTLz\nnIT5kyPHDwKBgG/aty3YChvNQ90sFBGelGP12PAEYj2zIzYueJjhHbt9IcmqxuM+\n253fCMw1fjI/sqhn4rMAl49bL6sznt7qJyfnWCn+DRZDwpix0LFidPDHpHdOBsAR\nbkT9FtApJKKlcNNFVQ5yp9gmYUPyHGQ6lJBFP86mJu2pNm/kzWwpRKXBAoGAb2Ha\njbQFGLhJcwIl2GnMS0oTCULHnAYlzqnf9w5Pca0S4gqM3tVWOJI/oAi/bJZJW4Eg\nXhwpyhWxfsRUd7hMQIUmyeIELhSLWI7W/0n6WI0YcAatOqCUn/PSp/JPkeSFtGMc\n835vjdNMlWgl2swt53jGk2A5DpGZwsDXSnd1rhsCgYBiS1ZiCI3Y0Nc4TSzTiPnN\naXS7N3qWQMBOQWkUILJqzJNrh5J9S6bAkb3ANpsd3gv2PYq4kDvlsEIHuNvBk0Hb\naghQEq/avIG334ftZ8rGruLERkCQiZkTxp0GgT5eRKKcS1JJWGGmyzLOqUv0GC/C\nHgtFqqOl2Tdj75braUxP6w==\n-----END PRIVATE KEY-----\n",
+    "private_key_id": "90cd9491ae738ca20d5f4649fbb1e1b062120e1a",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCjzmqDHxqt1vEn\nDI3T/QxHOdZxbb517IogZsDu5IkkkPCxJvqhgoUYsXE2Hy6GGC6c3/w6cDv4Yt17\nNjAv//ROq+mIN6St+M9OJV76kOH6H+O/s3voI10XCXns3r+OFQqixC3/ziuDn9pf\nLiFQ87HcaT2Tv1bJzHFZMLvtwKjZ3PBFoohvwdXYSch7C//gn4z7lq1XC7BGPmgh\nlfw+4uom40TtJ3ZLgj86RsiYSQBlKmLjic+UbwBnneZ9TVdIqBzWr0GQgkYWaGG0\nHof4Q10UfBbCmAu7pXrSR9yPre/SIyRDIxAIPYaa2cU8vO15sdUgWRw6OwC4K9oJ\nyndgBPCHAgMBAAECggEADg1JCdKDQWJs8YKcMBFHGl0Vzkkxy3/tIXZvGo80TJS6\ncRf87Bn8PPAL3C60mQA+D2sPghvaqSYiBc3SOGvmk1EgCXVshRgRAI0oJqqDGCfg\nK7PD71gJRk6jzPQWzqNzdB8MKyOOjA4Md5nHdeBR46yLgb8qPMly98m8dVrPoVC1\nekIljSGqXJFiSijmNac+46WbNSc8P1kizDy3SfFLEhQKW5NrQAlvTZHSYZJlRZze\ng4uVpM+dN3Kk7/hzNjsbH1Bo/YzRKnaQnOBVEIG3MpJVW9L97OmMEu7bcNZq0yyg\n/tvZMEPi5v6JH2DIW2m2lsHntzSUFG4tObOFf3GU4QKBgQDcE/T7M7pADBS7ivae\nlh//3dNRkFoz4EBw9GNyqk51fhdCNvd/0agfMeTUwdU3UbsDDp9kjuKoCPnkw9Cf\nG51iBKE9YKGLFxcZGrorQnz4zmgTqBg2agM4n5gB9C8oV8ANVgRNOXwRtamYkep5\noQU30gQCnCyIggFcwcJ9QcrgWQKBgQC+iyBmj/EFzduryTu0Ozkg+X6PpuOxd1LW\nPMrrojbJ7iRrpIegWQkOgFza0iL3nNq9tPIDjBf0mUvseiE7A3/JAilS376L2v4W\nQzIvUY/DP1w8A/0oeIuJfAwuxU2dyUd8xEgyLpqyyIbHCURNlnZtYZ3vZqwN+iN+\nG0gJSG873wKBgQClLUVdlMFheK/G4tGezUZPIAqO2S0aamFzZbmOQkyI2o5SYDb6\ndD0ezK/XD3QcBPe7n6n6K1PqknIcROu7v1osSxVJn9EfN8FaUjkQZuKtSx3KQwuJ\nK6AnS4EnVkJeoR2/5KNt4otAL3yOylWV3EiyUKo520WBXzHukG6M3GiMYQKBgFSs\nOJq7Dk0Y/KwrAXgG9U0c8cveSsJ7FvmTDE2HyTcUt2SKOabcyfSCwECRLu6/6khx\nFzbSU3bjhGSypP+3f1qQtlJYkTFPAKhd9fgnE26dQlx9HUuVvdQ7pqJGFUavwi/E\nfZynLyGRkKr0CEE+QqQ6w9c11fFkHc+VSf6uDJgbAoGAfYI6KdlM5UT+/ysmauH4\nty7Yt69nldImPMP3eyQKC0QYw4wGz+6E/ScoaHwNwQJ81GEai0luLsvnqN2BM89G\n7DadpPUGxTi4Rq2/k7e7S9CbkTf2sfx0mI4iQXzhgHSIkOuUj2xUN3gJ9dxyHRpW\nJHdto8xdEbqXB20gAK1OmlI=\n-----END PRIVATE KEY-----\n",
     "client_email": "firebase-adminsdk-b4on3@fitnest-6980d.iam.gserviceaccount.com",
     "client_id": "106504251934407321033",
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
@@ -25,8 +25,7 @@ Future<String?> getAccessToken() async {
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-b4on3%40fitnest-6980d.iam.gserviceaccount.com",
     "universe_domain": "googleapis.com"
-  }
-  ;
+  };
 
   try{
   List<String> scopes = [
@@ -77,11 +76,13 @@ Map<String, dynamic> getBody({required String fcmToken, required String title, r
 }
 
 //Future<void> sendNotifications({required String fcmToken, required String title, required String body, required String userId, String? type,}) async {
-Future<void> sendNotifications(NotificationModel notification, String? type) async {
+Future<void> sendNotifications(NotificationModel notification, int eventid, String? type) async {
   try {
     var serverKeyAuthorization = await getAccessToken();
 
     const String urlEndPoint = "https://fcm.googleapis.com/v1/projects/fitnest-6980d/messages:send";
+
+    print ("access token : $serverKeyAuthorization");
 
     Dio dio = Dio();
     dio.options.headers['Content-Type'] = 'application/json';
@@ -98,6 +99,7 @@ Future<void> sendNotifications(NotificationModel notification, String? type) asy
       ),
     );
     print("response data : $response");
+    await storeNotification(notification, eventid);
   } catch (e) {
     print("Error sending notification: $e");
   }
@@ -159,7 +161,7 @@ Future<void> sendNotifications1({
 }
 */
 
-Future<void> configureNotifications(double userId) async {
+Future<void> configureNotifications(int userId) async {
 
   final ParticipationService participationService =ParticipationService();
   final FcmtokenService _fcmTokenService = FcmtokenService(participationService);
@@ -189,6 +191,7 @@ Future<void> configureNotifications(double userId) async {
   if (deviceToken != null) {
     print("FCM Token: $deviceToken");
     await _fcmTokenService.insertTokenIntoDatabase(deviceToken, userId);
+    print("token was persisted ");
   } else {
     print("Failed to retrieve FCM token.");
   }

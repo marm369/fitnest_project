@@ -32,7 +32,6 @@ class FcmtokenService {
     }
   }
 
-
   Future<fcmtokenModel?> fetchToken(dynamic userId) async {
     final String apiUrl = "$_baseUrl/get/$userId";
 
@@ -72,15 +71,15 @@ class FcmtokenService {
     }
   }
 
-  Future<void> insertTokenIntoDatabase(String token, double userId) async {
+  Future<void> insertTokenIntoDatabase(String token, int  userId) async {
     final requestBody = {'token': token, 'userid': userId};
-
+     print("request body : $requestBody");
     final response = await http.post(
-      Uri.parse('$_baseUrl/associate'),
+      Uri.parse('$GatewayUrl/notif-service/api/fcm-token/associate'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode(requestBody),
-    );
-
+    ).timeout(const Duration(seconds: 10));
+    print ("response : $response");
     if (response.statusCode == 200) {
       print("Token was set successfully");
     }

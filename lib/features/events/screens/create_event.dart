@@ -24,6 +24,12 @@ class EventScreen extends StatelessWidget {
           fontWeight: FontWeight.bold,
           fontSize: 18.0,
         ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: dark ? Colors.white : Colors.black),
+          onPressed: () {
+            Navigator.pushNamed(context, '/buttomNavigationBar');
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

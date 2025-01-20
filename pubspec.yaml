@@ -92,6 +92,7 @@ flutter:
     - assets/images/static-images/
     - assets/icons/
     - assets/images/
+    - assets/images/thanks.jpg
     - assets/images/default_user.png
 
 

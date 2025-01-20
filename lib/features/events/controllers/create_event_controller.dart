@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:fitnest/data/services/participation/participation_service.dart';
+import 'package:fitnest/features/notifs/services/fcmToken_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -13,6 +15,13 @@ import '../../notifs/controller/notification_handler.dart';
 import '../models/event.dart';
 
 class EventController extends GetxController {
+
+  late final ParticipationService participationService;
+  late final FcmtokenService fcmtokenService;
+  late final NotifHandler notifHandler;
+
+
+
   final EventService eventService = EventService();
   final GeolocalisationService geoService = GeolocalisationService();
   // Text editing controllers
@@ -35,6 +44,15 @@ class EventController extends GetxController {
   final longitude = RxDouble(0.0);
 
   final ImagePicker _picker = ImagePicker();
+
+  @override
+  void onInit() {
+    super.onInit();
+    // Initialize the services in the correct order
+    participationService = Get.put(ParticipationService());
+    fcmtokenService = Get.put(FcmtokenService(participationService));
+    notifHandler = Get.put(NotifHandler(fcmtokenService));
+  }
 
   /// Select a date for either start or end.
   Future<void> selectDate(bool isStart) async {
@@ -139,6 +157,8 @@ class EventController extends GetxController {
     try {
       // Create the event
       final Event createdEvent = await eventService.createEvent(eventRequestBody);
+
+      notifHandler.notifyEventCreation(createdEvent);
 
       // Show success feedback
       Loaders.successSnackBar(
