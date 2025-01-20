@@ -4,10 +4,10 @@ import '../services/notifications_service.dart';
 import 'package:fitnest/features/events/models/event.dart';
 
 class NotifScreen extends StatefulWidget {
-  final double userId;
-  final double eventId;
-
-  const NotifScreen({Key? key, required this.userId, required this.eventId}) : super(key: key);
+  final int userId;
+  // final double eventId;
+  // required this.eventId
+  const NotifScreen({Key? key, required this.userId}) : super(key: key);
 
   @override
   _NotifScreenState createState() => _NotifScreenState();

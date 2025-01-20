@@ -1,3 +1,4 @@
+import 'package:fitnest/app.dart';
 import 'package:fitnest/data/services/participation/participation_service.dart';
 import 'package:fitnest/features/notifs/services/fcmToken_service.dart';
 import 'package:flutter/material.dart';
@@ -30,23 +31,15 @@ EventModel.Event testEvent = EventModel.Event(
 );
 
 Future<void> main() async {
-  // Initialize notifHandler
-  ParticipationService participationService = ParticipationService();
-  FcmtokenService fcmtokenService = FcmtokenService(participationService);  // Initialize the fcmtokenService
-  NotifHandler notifHandler = NotifHandler(fcmtokenService); // Ensure the service is passed to NotifHandler
-
-  // Initialize widgets and GetStorage
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
 
-  // Configure notifications using user ID
-  await configureNotifications(1);
+  // Initialize notifHandler
 
-  // Check if it's the first opening (commented out, not in use here)
-  //final storage = GetStorage();
-  //bool isFirstTime = storage.read('isFirstTime') ?? true;
-  // runApp(App(isFirstTime: isFirstTime));
-  runApp(MyApp1(notifHandler));
+  final storage = GetStorage();
+  bool isFirstTime = storage.read('isFirstTime') ?? true;
+  runApp(App(isFirstTime: isFirstTime));
+  //runApp(MyApp1(notifHandler));
 }
 
 class MyApp1 extends StatelessWidget {

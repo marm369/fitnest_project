@@ -1,14 +1,32 @@
 import 'dart:convert';
 
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../configuration/config.dart';
 import '../../../features/events/models/event.dart';
+import '../../../features/notifs/controller/notification_handler.dart';
+import '../../../features/notifs/services/fcmToken_service.dart';
 
 class ParticipationService {
+
+  late final ParticipationService participationService;
+  late final FcmtokenService fcmtokenService;
+  late final NotifHandler notifHandler;
+
   final String participationUrl =
       '$GatewayUrl/participation-service/api/participations';
   final String gatewayEventUrl = '$GatewayUrl/event-service';
+
+
+  @override
+  void onInit() {
+    // Initialize the services in the correct order
+    participationService = Get.put(ParticipationService());
+    fcmtokenService = Get.put(FcmtokenService(participationService));
+    notifHandler = Get.put(NotifHandler(fcmtokenService));
+  }
 
   /// Méthode pour créer une participation
   Future<String> createParticipation({
@@ -89,6 +107,7 @@ class ParticipationService {
       );
 
       if (response.statusCode == 204) {
+        await notifHandler.notifyRejectedParticipation(userId, eventId);
         print('Participation canceled successfully.');
       } else {
         throw Exception(
@@ -112,6 +131,7 @@ class ParticipationService {
         },
       );
       if (response.statusCode == 204) {
+        await notifHandler.notifyRejectedParticipation(userId, eventId);
         print('Participation accepted successfully.');
       } else {
         throw Exception(

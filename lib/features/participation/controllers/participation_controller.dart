@@ -4,6 +4,8 @@ import 'package:get_storage/get_storage.dart';
 import '../../../../data/services/participation/participation_service.dart';
 import '../../../data/services/profile/user_service.dart';
 import '../../events/models/event.dart';
+import '../../notifs/controller/notification_handler.dart';
+import '../../notifs/services/fcmToken_service.dart';
 import '../../profile/models/user_model.dart';
 
 class ParticipationController extends GetxController {
@@ -13,10 +15,15 @@ class ParticipationController extends GetxController {
   final ParticipationService participationService = ParticipationService();
   final UserService userService = UserService();
 
+  late final FcmtokenService fcmtokenService;
+  late final NotifHandler notifHandler;
+
   @override
   void onInit() {
     super.onInit();
     userId = box.read('user_id');
+    fcmtokenService = Get.put(FcmtokenService(participationService));
+    notifHandler = Get.put(NotifHandler(fcmtokenService));
   }
 
   Future<bool> createParticipation(
@@ -28,6 +35,7 @@ class ParticipationController extends GetxController {
         userId: userId,
         eventId: eventId,
       );
+      await notifHandler.notifyRegisterEvent(userId,eventId);
       print('Réponse du service: $result');
       return true;
     } catch (e) {

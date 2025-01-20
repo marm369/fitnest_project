@@ -1,5 +1,5 @@
 const String baseUrl = 'http://192.168.216.1:8080';
-const String GatewayUrl = 'http://192.168.1.14:8888';
+const String GatewayUrl = 'http://172.20.249.58:8888';
 
 // LOLITA : 172.20.213.61
 

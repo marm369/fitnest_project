@@ -1,10 +1,10 @@
+import 'package:fitnest/features/notifs/screens/display_notifs.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../common/widgets/tabbutton/tab_item.dart';
 import '../../../utils/constants/sizes.dart';
 import '../../../utils/helpers/helper_functions.dart';
-import '../../notification/screens/notification_screen.dart';
 import '../controllers/home_controller.dart';
 import '../controllers/post_controller.dart';
 import 'event_scroll_widget.dart';
@@ -43,7 +43,7 @@ class HomeScreen extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () {
                       // Naviguer vers la page de notifications
-                      Get.to(() => NotificationScreen());
+                      Get.to(() => NotifScreen(userId: homeController.box.read('user_id')));
                     },
                     child: Stack(
                       alignment: Alignment.center,
