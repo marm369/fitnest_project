@@ -158,7 +158,7 @@ Future<void> configureNotifications(int userId) async {
 
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "AIzaSyAiqgGAGkAAD2RazL_g6wG8WwMlN07YuoE",
+      apiKey: "",
       appId: "1:1068465758439:android:2f37a8d3e960370e360242",
       messagingSenderId: "1068465758439",
       projectId: "fitnest-6980d",
