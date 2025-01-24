@@ -9,7 +9,6 @@ import 'package:fitnest/features/notifs/services/fcmToken_service.dart';
 import 'package:dio/dio.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:http/http.dart' as http;
-import 'package:fitnest/configuration/config.dart';
 import 'package:fitnest/features/notifs/controller/notification_helper.dart';
 
 Future<String?> getAccessToken() async {
