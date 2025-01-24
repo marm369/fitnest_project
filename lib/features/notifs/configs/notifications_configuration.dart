@@ -9,6 +9,7 @@ import 'package:fitnest/features/notifs/services/fcmToken_service.dart';
 import 'package:dio/dio.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:http/http.dart' as http;
+import 'package:fitnest/configuration/config.dart';
 import 'package:fitnest/features/notifs/controller/notification_helper.dart';
 
 import '../../../configuration/config.dart';
@@ -70,8 +71,6 @@ Future<void> sendNotifications(NotificationModel notification, int eventid, Stri
 
     const String urlEndPoint = "https://fcm.googleapis.com/v1/projects/fitnest-6980d/messages:send";
 
-    print ("access token : $serverKeyAuthorization");
-
     Dio dio = Dio();
     dio.options.headers['Content-Type'] = 'application/json';
     dio.options.headers['Authorization'] = 'Bearer $serverKeyAuthorization';
@@ -87,7 +86,6 @@ Future<void> sendNotifications(NotificationModel notification, int eventid, Stri
       ),
     );
     print("response data : $response");
-    await storeNotification(notification, eventid);
   } catch (e) {
     print("Error sending notification: $e");
   }
