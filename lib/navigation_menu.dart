@@ -1,5 +1,5 @@
-import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'features/events/screens/create_event.dart';
@@ -8,6 +8,9 @@ import 'features/maps/screens/map_events.dart';
 import 'features/participation/screens/participation_screen.dart';
 import 'features/profile/screens/profile.dart';
 import 'utils/helpers/helper_functions.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:fitnest/features/feedbacks/feedback_service.dart';
+import 'package:fitnest/features/feedbacks/feedback_screen.dart';
 
 class NavigationMenu extends StatefulWidget {
   const NavigationMenu({super.key});
@@ -18,6 +21,8 @@ class NavigationMenu extends StatefulWidget {
 
 class _LandingPageState extends State<NavigationMenu> {
   int selectedIndex = 0;
+  final box = GetStorage();
+  final FeedbackService _feedbackService = FeedbackService(); // Ajout FeedbackService
   List<dynamic> pages = [
     HomeScreen(),
     EventsMapPage(),
@@ -27,8 +32,38 @@ class _LandingPageState extends State<NavigationMenu> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    print("hhhhhhhhhh");
+    _checkAndShowFeedback(); // Appel pour vérifier les feedbacks
+  }
+
+  Future<void> _checkAndShowFeedback() async {
+    try {
+      final finishedEvents = await _feedbackService.fetchEventsByUserId(box.read('user_id'));
+      print('***************$finishedEvents');
+      print('+++ ${box.read('user_id')}');
+      if (finishedEvents.isNotEmpty) {
+        _showFeedbackDialog(finishedEvents); // Affiche les feedbacks si nécessaire
+      }
+    } catch (e) {
+      print('Erreur lors de la récupération des événements : $e');
+    }
+  }
+
+  void _showFeedbackDialog(List<Map<String, dynamic>> events) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return FeedbackDialog(userId: box.read('user_id'), events: events);
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final dark = HelperFunctions.isDarkMode(context);
+
     return Scaffold(
         body: pages[selectedIndex],
         bottomNavigationBar: ConvexAppBar(
@@ -37,8 +72,9 @@ class _LandingPageState extends State<NavigationMenu> {
           initialActiveIndex: selectedIndex,
           elevation: 0,
           style: TabStyle.fixedCircle,
-          color: dark ? Colors.white : Colors.blue,
-          // Adjust color based on dark mode
+          color: dark
+              ? Colors.white
+              : Colors.blue, // Adjust color based on dark mode
           items: [
             TabItem(
               icon: Icon(

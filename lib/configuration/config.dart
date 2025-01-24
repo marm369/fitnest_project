@@ -1,8 +1,8 @@
-const String GatewayUrl = 'http://192.168.1.202:8888';
+const String GatewayUrl = 'http://172.20.212.49:8888';
 
 
 // LOLITA : 172.20.213.61
-
+const String TrackingUrl = 'http://172.20.212.49:8085';
 // API Keys
 const String OCRAPIkey = 'K85889567888957';
 const String ORSAPIKey =

@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:get/get.dart';
 
+import '../../../configuration/config.dart';
 import '../../profile/controllers/profile_controller.dart';
 
 class TrackingScreen extends StatefulWidget {
@@ -41,8 +42,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
   }
 
   Future<void> fetchTrackingData() async {
-    final url = Uri.parse('http://192.168.0.105:8085/api/Tracking/8');
-    try {
+    final url = Uri.parse('$TrackingUrl/api/Tracking/8');
+
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -67,16 +68,8 @@ class _TrackingScreenState extends State<TrackingScreen> {
             SnackBar(content: Text('Données incorrectes : latitude/longitude manquantes.')),
           );
         }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erreur de récupération (${response.statusCode})')),
-        );
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur réseau : $e')),
-      );
-    }
+
   }
   ImageProvider getUserProfileImage(String? base64Image) {
     if (base64Image != null && base64Image.isNotEmpty) {

@@ -135,7 +135,6 @@ class ParticipationService {
           'Content-Type': 'application/json',
         },
       );
-
       if (eventsResponse.statusCode == 200) {
         final List<dynamic> events = jsonDecode(utf8.decode(eventsResponse.bodyBytes));
         final List<Map<String, dynamic>> allParticipations = [];
@@ -158,7 +157,7 @@ class ParticipationService {
 
             // Filtrer les participations avec le statut ACTIVE
             final activeParticipations = participations
-                .where((participation) => participation['status_participation'] == 'ACTIVE')
+                .where((participation) => participation['statusParticipation'] == 'ACTIVE')
                 .cast<Map<String, dynamic>>()
                 .toList();
 
@@ -192,7 +191,7 @@ class ParticipationService {
         jsonDecode(utf8.decode(response.bodyBytes));
         final List<Map<String, dynamic>> participations = decodedResponse
             .where((participation) =>
-        participation['status_participation'] == 'ACCEPTED')
+        participation['statusParticipation'] == 'ACCEPTED')
             .cast<Map<String, dynamic>>()
             .toList();
         return participations;
@@ -216,7 +215,7 @@ class ParticipationService {
 
         if (eventsJson is List) {
           return eventsJson
-              .where((event) => event is Map<String, dynamic>) // Vérification du type
+              .where((event) => event != null && event is Map<String, dynamic>)
               .map((event) => Event.fromJson1(event as Map<String, dynamic>))
               .toList();
         } else {
@@ -230,5 +229,4 @@ class ParticipationService {
       throw Exception('Une erreur est survenue : $e');
     }
   }
-
 }

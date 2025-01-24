@@ -23,7 +23,6 @@ class RequestsController extends GetxController {
   void onInit() {
     super.onInit();
     organizerId = box.read('user_id') ?? 0;
-
     fetchAndSetParticipations();
   }
 
@@ -31,6 +30,8 @@ class RequestsController extends GetxController {
     try {
       isLoading(true); // Début du chargement
       final fetchedParticipations = await fetchParticipations(organizerId);
+      print('-----------------$organizerId');
+      print(fetchedParticipations);
       participations.value = fetchedParticipations; // Remplace toute la liste
     } catch (e) {
       debugPrint("Erreur lors du chargement des participations: $e");
@@ -44,7 +45,7 @@ class RequestsController extends GetxController {
       final List<Map<String, dynamic>> participationsRaw =
       await participationService.participationsParOrganizerId(organizerId);
       List<ParticipationModel> participations = [];
-
+      print(participationsRaw);
       for (var participation in participationsRaw) {
         try {
           final UserModel user =
@@ -60,6 +61,7 @@ class RequestsController extends GetxController {
               user,
             ),
           );
+          print('---------$participations');
         } catch (e) {
           debugPrint(
               "Erreur lors du traitement d'une participation individuelle : $e");

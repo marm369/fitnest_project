@@ -117,7 +117,7 @@ class Event {
         id: json['id'],
         name: json['name'] ?? 'Unnamed event',
         description: json['description'] ?? 'No description available',
-        cityName: json['cityName'] ?? 'Unknown location',
+        cityName: json['cityName'] ?? '',
         latitude: json['latitude'] ?? 0.0,
         longitude: json['longitude'] ?? 0.0,
         startDate: json['startDate'] ?? '',
@@ -142,7 +142,7 @@ class Event {
         id: json['id'],
         name: json['name'] ?? 'Unnamed event',
         description: json['description'] ?? 'No description available',
-        cityName: json['cityName'] ?? 'Unknown location',
+        cityName: json['cityName'] ?? '',
         latitude: json['latitude'] ?? 0.0,
         longitude: json['longitude'] ?? 0.0,
         startDate: json['startDate'] ?? '',
@@ -160,7 +160,7 @@ class Event {
             : null,
         sportCategory: json['sportCategory'] != null && json['sportCategory'] is Map<String, dynamic>
             ? SportCategory.fromJson(json['sportCategory'])
-            : SportCategory(id: 0, name: 'Unknown', iconName: 'unknown', requiresRoute: false),
+            : SportCategory(id: 0, name: '', iconName: 'unknown', requiresRoute: false),
         startTime: json['startTime'] ?? '',
         organizerId: json['organizerId'] ?? 0);
   }

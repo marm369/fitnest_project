@@ -22,7 +22,7 @@ class ParticipationScreen extends StatelessWidget {
             color: dark ? Colors.white : Colors.black,
           ),
           onPressed: () {
-            Navigator.pushNamed(context, '/home');
+            Navigator.pushNamed(context, '/buttomNavigationBar');
           },
         ),
       ),
