@@ -3,11 +3,9 @@ import 'package:get/get.dart';
 import 'features/authentication/screens/signin/signin.dart';
 import 'features/home/screens/home.dart';
 import 'features/profile/screens/profile.dart';
-<<<<<<< HEAD
-=======
+import 'package:fitnest/features/authentication/screens/onboarding/onboarding.dart';
 import 'features/tracking/screens/tracking_organizer_screen.dart';
 import 'navigation_menu.dart';
->>>>>>> e8d5a49 (feedback and participation services)
 import 'utils/theme/theme.dart';
 
 class App extends StatelessWidget {

@@ -11,10 +11,10 @@ import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:http/http.dart' as http;
 import 'package:fitnest/features/notifs/controller/notification_helper.dart';
 
-Future<String?> getAccessToken() async {
-  final serviceAccountJson = {
-  };
+import '../../../configuration/config.dart';
 
+Future<String?> getAccessToken() async {
+  final serviceAccountJson = fcmserverapikey;
   try{
   List<String> scopes = [
     "https://www.googleapis.com/auth/firebase.messaging"
@@ -158,7 +158,7 @@ Future<void> configureNotifications(int userId) async {
 
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "",
+      apiKey: "AIzaSyAiqgGAGkAAD2RazL_g6wG8WwMlN07YuoE",
       appId: "1:1068465758439:android:2f37a8d3e960370e360242",
       messagingSenderId: "1068465758439",
       projectId: "fitnest-6980d",
